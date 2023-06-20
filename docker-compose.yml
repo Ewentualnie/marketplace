@@ -11,3 +11,8 @@ services:
       - sql.env
     volumes:
       - ./dump:/docker-entrypoint-initdb.d
+  server:
+    container_name: marketplace_server
+    build: .
+    ports:
+    - '3000:3000'
