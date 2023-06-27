@@ -1,12 +1,12 @@
 version: '3'
 services:
-  sql_db:
-    container_name: 'sql_db'
-    image: mysql:latest
-    restart: always
-    command: --default-authentication-plugin=mysql_native_password
+  postgres_db:
+    container_name: 'postgtres_db'
+    image: postgres:latest
+    # restart: always
+    # command: --default-authentication-plugin=mysql_native_password
     ports:
-      - '3306:3306'
+      - '5432:5432'
     env_file:
       - sql.env
     volumes:
