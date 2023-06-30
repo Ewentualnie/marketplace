@@ -15,7 +15,7 @@ import { AdvertisementsModule } from './advertisements/advertisements.module';
       password: '4JaXiFxFOoaGvN5ssDw1L9GIodADOEP5',
       database: 'marketplace_fs5r',
       // type: 'postgres',
-      // host: 'localhost',
+      // host: 'postgres_db',
       // port: 5432,
       // username: 'admin',
       // password: 'root',
