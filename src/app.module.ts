@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdvertisementsModule } from './advertisements/advertisements.module';
-import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -26,7 +25,6 @@ import { LoggerModule } from 'nestjs-pino';
     }),
     UsersModule,
     AdvertisementsModule,
-    LoggerModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],
