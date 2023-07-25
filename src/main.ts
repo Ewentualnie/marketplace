@@ -7,9 +7,13 @@ async function bootstrap() {
   app.enableCors();
   app.use(
     session({
+      name: 'session_id',
       secret: 'my-secret',
       resave: false,
       saveUninitialized: false,
+      cookie: {
+        maxAge: 60000,
+      },
     }),
   );
   await app.listen(3000);
