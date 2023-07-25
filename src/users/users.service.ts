@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -13,18 +13,30 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.usersRepository.save(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    try {
+      return await this.usersRepository.save(createUserDto);
+    } catch (error) {
+      throw new HttpException(
+        `User with email ${createUserDto.email} already exists`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async login(loginUserDto: LoginUserDto) {
-    return await this.usersRepository.findOne({
+    const user = await this.usersRepository.findOne({
       select: { id: true },
       where: {
         email: loginUserDto.email,
         password: loginUserDto.password,
       },
     });
+    if (user) return user;
+    throw new HttpException(
+      `User with this email and|or password not found`,
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 
   findAll() {
