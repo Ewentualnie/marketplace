@@ -32,7 +32,9 @@ export class UsersService {
         password: loginUserDto.password,
       },
     });
-    if (user) return user;
+    if (user) {
+      return user;
+    }
     throw new HttpException(
       `User with this email and|or password not found`,
       HttpStatus.INTERNAL_SERVER_ERROR,

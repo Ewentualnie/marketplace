@@ -32,7 +32,7 @@ export class UsersController {
     @Session() session: Record<string, any>,
   ) {
     console.log(session.id);
-    return await this.usersService.login(loginUserDto, session);
+    return await this.usersService.login(loginUserDto);
   }
 
   @Get()
