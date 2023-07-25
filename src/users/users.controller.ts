@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Session,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,6 +16,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')
+@UsePipes(new ValidationPipe())
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -23,13 +26,13 @@ export class UsersController {
   }
 
   @Post('signin')
+  @UsePipes(new ValidationPipe())
   async login(
     @Body() loginUserDto: LoginUserDto,
     @Session() session: Record<string, any>,
   ) {
-    console.log(session);
-
-    return await this.usersService.login(loginUserDto);
+    console.log(session.id);
+    return await this.usersService.login(loginUserDto, session);
   }
 
   @Get()
