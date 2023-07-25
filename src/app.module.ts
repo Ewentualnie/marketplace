@@ -25,7 +25,7 @@ import { AdvertisementsModule } from './advertisements/advertisements.module';
       type: 'postgres',
       host: process.env.HOST || 'localhost',
       port: 5432,
-      username: process.env.HOST || 'admin',
+      username: process.env.USER || 'admin',
       password: process.env.PASS || 'root',
       database: process.env.DATABASE || 'marketplace',
 
