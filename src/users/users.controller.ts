@@ -6,18 +6,38 @@ import {
   Patch,
   Param,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Post('signup')
+  async create(@Body() createUserDto: CreateUserDto) {
+    try {
+      return await this.usersService.create(createUserDto);
+    } catch (error) {
+      throw new HttpException(
+        `User with email ${createUserDto.email} already exists`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('signin')
+  async login(@Body() loginUserDto: LoginUserDto) {
+    const user = await this.usersService.login(loginUserDto);
+    if (user) return user;
+    throw new HttpException(
+      `User with this email and|or password not found`,
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 
   @Get()
