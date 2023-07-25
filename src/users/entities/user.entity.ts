@@ -5,28 +5,12 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  login: string;
-
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
+  password: string;
+
+  @Column()
   name: string;
-
-  @Column()
-  surname: string;
-
-  @Column()
-  residence?: string;
-
-  @Column()
-  expirience?: string;
-
-  @Column()
-  preview?: string;
-
-  languages?: string;
-  workingDays?: Date;
-  workingHours?: string;
 }
