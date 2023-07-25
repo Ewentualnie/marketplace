@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Session,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,7 +23,12 @@ export class UsersController {
   }
 
   @Post('signin')
-  async login(@Body() loginUserDto: LoginUserDto) {
+  async login(
+    @Body() loginUserDto: LoginUserDto,
+    @Session() session: Record<string, any>,
+  ) {
+    console.log(session);
+
     return await this.usersService.login(loginUserDto);
   }
 
