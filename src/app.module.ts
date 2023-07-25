@@ -8,22 +8,9 @@ import { AdvertisementsModule } from './advertisements/advertisements.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      // type: 'postgres',
-      // host: 'dpg-cid99aunqqlb62hi8ic0-a',
-      // port: 5432,
-      // username: 'admin',
-      // password: '4JaXiFxFOoaGvN5ssDw1L9GIodADOEP5',
-      // database: 'marketplace_fs5r',
-
-      // type: 'postgres',
-      // host: 'postgres_db',
-      // port: 5432,
-      // username: 'admin',
-      // password: 'root',
-      // database: 'marketplace',
-
       type: 'postgres',
       host: process.env.POSTGRES_HOST || 'localhost',
+      // host: 'postgres_db',
       port: 5432,
       username: process.env.POSTGRES_USER || 'admin',
       password: process.env.POSTGRES_PASS || 'root',
