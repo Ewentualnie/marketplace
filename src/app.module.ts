@@ -23,11 +23,11 @@ import { AdvertisementsModule } from './advertisements/advertisements.module';
       // database: 'marketplace',
 
       type: 'postgres',
-      host: process.env.HOST || 'localhost',
+      host: process.env.POSTGRES_HOST || 'localhost',
       port: 5432,
-      username: process.env.USER || 'admin',
-      password: process.env.PASS || 'root',
-      database: process.env.DATABASE || 'marketplace',
+      username: process.env.POSTGRES_USER || 'admin',
+      password: process.env.POSTGRES_PASS || 'root',
+      database: process.env.POSTGRES_DATABASE || 'marketplace',
 
       autoLoadEntities: true,
       synchronize: true,
