@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { AdvertisementsService } from './advertisements.service';
 import { CreateAdvertisementDto } from './dto/create-advertisement.dto';
 import { UpdateAdvertisementDto } from './dto/update-advertisement.dto';
@@ -23,7 +31,10 @@ export class AdvertisementsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdvertisementDto: UpdateAdvertisementDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateAdvertisementDto: UpdateAdvertisementDto,
+  ) {
     return this.advertisementsService.update(+id, updateAdvertisementDto);
   }
 
