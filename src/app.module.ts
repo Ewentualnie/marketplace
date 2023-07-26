@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdvertisementsModule } from './advertisements/advertisements.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { AdvertisementsModule } from './advertisements/advertisements.module';
       password: process.env.POSTGRES_PASS || 'root',
       database: process.env.POSTGRES_DATABASE || 'marketplace',
 
-      autoLoadEntities: true,
+      entities: [User],
       synchronize: true,
     }),
     UsersModule,

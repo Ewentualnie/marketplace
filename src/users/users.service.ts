@@ -37,7 +37,7 @@ export class UsersService {
     }
     throw new HttpException(
       `User with this email and|or password not found`,
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      HttpStatus.BAD_REQUEST,
     );
   }
 
