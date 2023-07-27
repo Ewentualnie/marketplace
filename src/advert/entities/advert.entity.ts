@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'advert' })
 export class Advert {
@@ -13,6 +20,10 @@ export class Advert {
 
   @Column()
   fullDescription: string;
+
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
 }
 // @OneToMany()
 // avalLength: [ 30, 60, 120 ];
