@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AdvertService } from './advert.service';
 import { CreateAdvertDto } from './dto/create-advert.dto';
@@ -26,17 +27,20 @@ export class AdvertController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.advertService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.advertService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdvertDto: UpdateAdvertDto) {
-    return this.advertService.update(+id, updateAdvertDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateAdvertDto: UpdateAdvertDto,
+  ) {
+    return this.advertService.update(id, updateAdvertDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.advertService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.advertService.remove(id);
   }
 }
