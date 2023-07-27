@@ -26,7 +26,7 @@ export class UsersService {
 
   async login(loginUserDto: LoginUserDto) {
     const user = await this.usersRepository.findOne({
-      select: { id: true, name: true },
+      select: ['id', 'name'],
       where: {
         email: loginUserDto.email,
         password: loginUserDto.password,
@@ -42,7 +42,9 @@ export class UsersService {
   }
 
   findAll() {
-    return this.usersRepository.find();
+    return this.usersRepository.find({
+      select: ['id', 'name', 'email'],
+    });
   }
 
   findOne(id: number) {
