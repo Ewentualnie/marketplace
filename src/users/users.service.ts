@@ -26,7 +26,7 @@ export class UsersService {
 
   async login(loginUserDto: LoginUserDto) {
     const user = await this.usersRepository.findOne({
-      select: { id: true },
+      select: { id: true, name: true },
       where: {
         email: loginUserDto.email,
         password: loginUserDto.password,
