@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Advert } from 'src/advert/entities/advert.entity';
 import {
   Column,
@@ -16,6 +17,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column()

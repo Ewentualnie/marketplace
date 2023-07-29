@@ -4,18 +4,24 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginUserDto } from './dto/login-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    public usersRepository: Repository<User>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    const { password, ...rest } = createUserDto;
+    const cryptedPass = await bcrypt.hash(
+      password,
+      process.env.SALT_FOR_BCRYPT || 10,
+    );
+    const userToSave = { ...rest, password: cryptedPass };
     try {
-      return await this.usersRepository.save(createUserDto);
+      return await this.usersRepository.save(userToSave);
     } catch (error) {
       throw new HttpException(
         `User with email ${createUserDto.email} already exists`,
@@ -24,27 +30,19 @@ export class UsersService {
     }
   }
 
-  async login(loginUserDto: LoginUserDto) {
-    const user = await this.usersRepository.findOne({
-      select: ['id', 'name'],
-      where: {
-        email: loginUserDto.email,
-        password: loginUserDto.password,
-      },
+  findByEmail(email: string) {
+    const user = this.usersRepository.findOne({
+      where: { email: email },
     });
-    if (user) {
-      return user;
-    }
+    if (user) return user;
     throw new HttpException(
-      `User with this email and|or password not found`,
+      `User with this email not found`,
       HttpStatus.BAD_REQUEST,
     );
   }
 
   findAll() {
-    return this.usersRepository.find({
-      select: ['id', 'name', 'email'],
-    });
+    return this.usersRepository.find();
   }
 
   findOne(id: number) {
