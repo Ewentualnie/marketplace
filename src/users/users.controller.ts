@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Session,
   UsePipes,
   ValidationPipe,
   ParseIntPipe,
@@ -14,7 +13,6 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')
 @UsePipes(new ValidationPipe())
@@ -24,16 +22,6 @@ export class UsersController {
   @Post('signup')
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
-  }
-
-  @Post('signin')
-  @UsePipes(new ValidationPipe())
-  async login(
-    @Body() loginUserDto: LoginUserDto,
-    @Session() session: Record<string, any>,
-  ) {
-    console.log(session.id);
-    return await this.usersService.login(loginUserDto);
   }
 
   @Get()
