@@ -42,7 +42,7 @@ export class UsersService {
   }
 
   findAll() {
-    return this.usersRepository.find();
+    return this.usersRepository.find({ relations: ['advert'] });
   }
 
   findOne(id: number) {
