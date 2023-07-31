@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   HttpException,
   HttpStatus,
@@ -15,6 +14,7 @@ import { Tokens } from 'src/types/tokens.type';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { genSalt } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -125,8 +125,10 @@ export class AuthService {
     };
   }
 
-  hashData(data: string) {
-    return bcrypt.hash(data, 10);
+  async hashData(data: string) {
+    const saltRounds = +process.env.SALT_FOR_BCRYPT || 10;
+    const salt = await genSalt(saltRounds);
+    return await bcrypt.hash(data, salt);
   }
 
   compareHash(password: string, hashDataPass: string) {
