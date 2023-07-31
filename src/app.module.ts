@@ -23,6 +23,7 @@ import { AtGuard } from './auth/guards/at-guard';
 
       entities: [User, Advert],
       synchronize: true,
+      logging: true,
     }),
     UsersModule,
     AdvertModule,
