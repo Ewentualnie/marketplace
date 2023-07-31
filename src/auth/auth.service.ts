@@ -40,7 +40,7 @@ export class AuthService {
       return tokens;
     } catch (error) {
       throw new HttpException(
-        `User with email ${createUserDto.email} already exists`,
+        `User with email ${createUserDto.email} already exists, error is: ${error}`,
         HttpStatus.CONFLICT,
       );
     }
