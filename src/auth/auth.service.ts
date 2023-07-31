@@ -126,7 +126,7 @@ export class AuthService {
   }
 
   hashData(data: string) {
-    return bcrypt.hash(data, process.env.SALT_FOR_BCRYPT || 10);
+    return bcrypt.hash(data, 10);
   }
 
   compareHash(password: string, hashDataPass: string) {
