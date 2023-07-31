@@ -3,21 +3,56 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { Tokens } from 'src/types/tokens.type';
+import { GetCurrentUserId } from './decorators/get-user-id.decorator';
+import { GetCurrentUser } from './decorators/get-user.decorator';
+import { RtGuard } from './guards/rt-guard';
+import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
+  @Public()
+  @Post('signup')
   @UsePipes(new ValidationPipe())
-  signIn(@Body() loginUserDto: LoginUserDto) {
-    return this.authService.login(loginUserDto);
+  @HttpCode(HttpStatus.CREATED)
+  signUp(@Body() createUserDto: CreateUserDto): Promise<Tokens> {
+    return this.authService.signUp(createUserDto);
+  }
+
+  @Public()
+  @Post('signin')
+  @UsePipes(new ValidationPipe())
+  @HttpCode(HttpStatus.OK)
+  signIn(@Body() loginUserDto: LoginUserDto): Promise<Tokens> {
+    return this.authService.signIn(loginUserDto);
+  }
+
+  @Post('logout')
+  @UsePipes(new ValidationPipe())
+  @HttpCode(HttpStatus.OK)
+  logOut(@GetCurrentUserId(ParseIntPipe) userId: number) {
+    return this.authService.logOut(userId);
+  }
+
+  @UseGuards(RtGuard)
+  @Post('refresh')
+  @UsePipes(new ValidationPipe())
+  @HttpCode(HttpStatus.OK)
+  refresh(
+    @GetCurrentUserId(ParseIntPipe) userId: number,
+    @GetCurrentUser('refreshToken') refreshToken: string,
+  ) {
+    return this.authService.refresh(userId, refreshToken);
   }
 }

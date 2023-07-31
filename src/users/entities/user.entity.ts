@@ -18,10 +18,13 @@ export class User {
 
   @Column()
   @Exclude()
-  password: string;
+  hashedPass: string;
 
   @Column()
   name: string;
+
+  @Column({ nullable: true })
+  refreshToken?: string;
 
   @OneToOne(() => Advert)
   @JoinColumn()

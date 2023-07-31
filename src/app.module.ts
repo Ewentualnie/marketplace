@@ -7,7 +7,8 @@ import { User } from './users/entities/user.entity';
 import { AdvertModule } from './advert/advert.module';
 import { Advert } from './advert/entities/advert.entity';
 import { AuthModule } from './auth/auth.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { AtGuard } from './auth/guards/at-guard';
 
 @Module({
   imports: [
@@ -33,6 +34,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AtGuard,
     },
   ],
 })
