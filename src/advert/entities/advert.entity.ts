@@ -3,9 +3,11 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Hobby } from './hobby.entity';
 
 @Entity({ name: 'advert' })
 export class Advert {
@@ -19,12 +21,20 @@ export class Advert {
   shortDescription: string;
 
   @Column()
-  fullDescription: string;
+  imagePath: string;
+
+  @OneToMany(() => Hobby, (hobby) => hobby.advert)
+  @JoinColumn()
+  hobbys: Hobby[];
 
   @OneToOne(() => User)
   @JoinColumn()
   user: User;
 }
+
+// @Column()
+// fullDescription: string;
+
 // @OneToMany()
 // avalLength: [ 30, 60, 120 ];
 // @OneToMany()
