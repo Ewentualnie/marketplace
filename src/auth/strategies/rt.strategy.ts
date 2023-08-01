@@ -19,7 +19,6 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
       .header('authorization')
       .replace('Bearer', '')
       .trim();
-
     return { ...payload, refreshToken };
   }
 }

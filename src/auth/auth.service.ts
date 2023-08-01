@@ -80,7 +80,7 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    if (!this.compareHash(rt, user.refreshToken)) {
+    if (!this.compareHash(rt, user.refreshToken) || !user.refreshToken) {
       throw new ForbiddenException('Access denied');
     }
 
