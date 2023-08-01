@@ -15,6 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { genSalt } from 'bcrypt';
+import { UserRes } from 'src/types/user-response';
 
 @Injectable()
 export class AuthService {
@@ -25,19 +26,19 @@ export class AuthService {
     private usersService: UsersService,
   ) {}
 
-  async signUp(createUserDto: CreateUserDto): Promise<Tokens> {
+  async signUp(createUserDto: CreateUserDto): Promise<UserRes> {
     try {
-      const newUser = this.usersRepository.create(createUserDto);
+      const user = this.usersRepository.create(createUserDto);
 
-      const tokens = await this.getTokens(newUser.id, newUser.email);
+      const tokens = await this.getTokens(user.id, user.email);
 
-      newUser.hashedPass = await this.hashData(createUserDto.password);
+      user.hashedPass = await this.hashData(createUserDto.password);
 
-      await this.usersRepository.save(newUser);
+      await this.usersRepository.save(user);
 
-      await this.updateRtHash(newUser.id, tokens.refreshToken);
+      await this.updateRtHash(user.id, tokens.refreshToken);
 
-      return tokens;
+      return { user, tokens };
     } catch (error) {
       throw new HttpException(
         `User with email ${createUserDto.email} already exists`,
@@ -46,7 +47,7 @@ export class AuthService {
     }
   }
 
-  async signIn(loginUserDto: LoginUserDto): Promise<Tokens> {
+  async signIn(loginUserDto: LoginUserDto): Promise<UserRes> {
     const user = await this.usersRepository.findOne({
       where: { email: loginUserDto.email },
     });
@@ -66,14 +67,14 @@ export class AuthService {
 
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refreshToken);
-    return tokens;
+    return { user, tokens };
   }
 
   async logOut(userId: number) {
     await this.usersRepository.update(userId, { refreshToken: null });
   }
 
-  async refresh(userId: number, rt: string) {
+  async refresh(userId: number, rt: string): Promise<UserRes> {
     const user = await this.usersRepository.findOneBy({ id: userId });
 
     if (!user) {
@@ -86,7 +87,7 @@ export class AuthService {
 
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refreshToken);
-    return tokens;
+    return { user, tokens };
   }
 
   async updateRtHash(userId: number, rt: string) {

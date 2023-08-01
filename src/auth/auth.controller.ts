@@ -12,11 +12,11 @@ import {
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { Tokens } from 'src/types/tokens.type';
 import { GetCurrentUserId } from './decorators/get-user-id.decorator';
 import { GetCurrentUser } from './decorators/get-user.decorator';
 import { RtGuard } from './guards/rt-guard';
 import { Public } from './decorators/public.decorator';
+import { UserRes } from 'src/types/user-response';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +26,7 @@ export class AuthController {
   @Post('signup')
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.CREATED)
-  signUp(@Body() createUserDto: CreateUserDto): Promise<Tokens> {
+  signUp(@Body() createUserDto: CreateUserDto): Promise<UserRes> {
     return this.authService.signUp(createUserDto);
   }
 
@@ -34,7 +34,7 @@ export class AuthController {
   @Post('signin')
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.OK)
-  signIn(@Body() loginUserDto: LoginUserDto): Promise<Tokens> {
+  signIn(@Body() loginUserDto: LoginUserDto): Promise<UserRes> {
     return this.authService.signIn(loginUserDto);
   }
 
@@ -53,7 +53,7 @@ export class AuthController {
   refresh(
     @GetCurrentUserId(ParseIntPipe) userId: number,
     @GetCurrentUser('refreshToken') refreshToken: string,
-  ) {
+  ): Promise<UserRes> {
     return this.authService.refresh(userId, refreshToken);
   }
 }
