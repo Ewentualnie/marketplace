@@ -24,6 +24,7 @@ export class User {
   name: string;
 
   @Column({ nullable: true })
+  @Exclude()
   refreshToken?: string;
 
   @OneToOne(() => Advert)
