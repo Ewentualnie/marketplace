@@ -23,7 +23,6 @@ export class AuthService {
     @InjectRepository(User)
     public usersRepository: Repository<User>,
     public jwtService: JwtService,
-    private usersService: UsersService,
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<UserRes> {
