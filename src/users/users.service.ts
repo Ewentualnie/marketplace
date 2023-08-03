@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Advert } from 'src/advert/entities/advert.entity';
 
 @Injectable()
 export class UsersService {
@@ -30,8 +30,8 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id: id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update(id, updateUserDto);
+  update(id: number, advert: Advert) {
+    return this.usersRepository.update(id, { advert: advert });
   }
 
   remove(id: number) {
