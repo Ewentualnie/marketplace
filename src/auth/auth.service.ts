@@ -30,14 +30,12 @@ export class AuthService {
     try {
       const user = this.usersRepository.create(createUserDto);
 
-      const tokens = await this.getTokens(user.id, user.email);
-
       user.hashedPass = await this.hashData(createUserDto.password);
 
       await this.usersRepository.save(user);
 
+      const tokens = await this.getTokens(user.id, user.email);
       await this.updateRtHash(user.id, tokens.refreshToken);
-
       return { user, tokens };
     } catch (error) {
       throw new HttpException(
