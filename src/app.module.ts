@@ -24,7 +24,7 @@ import { Hobby } from './advert/entities/hobby.entity';
 
       entities: [User, Advert, Hobby],
       synchronize: true,
-      logging: ['query', 'info', 'warn', 'error'],
+      logging: ['query', 'warn', 'error'],
     }),
     UsersModule,
     AdvertModule,
