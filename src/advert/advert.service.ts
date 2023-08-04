@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAdvertDto } from './dto/create-advert.dto';
 import { UpdateAdvertDto } from './dto/update-advert.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,7 +26,11 @@ export class AdvertService {
     if (!user) {
       throw new NotFoundException(`User with id ${userId} not found`);
     }
-
+    if (user.advert != null) {
+      throw new ConflictException(
+        `User already has an advert and cannot have another advert.`,
+      );
+    }
     const newAdvert = this.advertRepository.create(createAdvertDto);
     newAdvert.user = user;
     const savedAdvert = await this.advertRepository.save(newAdvert);
