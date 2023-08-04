@@ -13,7 +13,7 @@ import { CreateAdvertDto } from './dto/create-advert.dto';
 import { UpdateAdvertDto } from './dto/update-advert.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
 
-@Controller('advert')
+@Controller('adverts')
 export class AdvertController {
   constructor(private readonly advertService: AdvertService) {}
 
