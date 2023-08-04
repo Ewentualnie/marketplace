@@ -19,13 +19,15 @@ export class AdvertService {
     const user = await this.userService.findOne(userId);
 
     if (!user) {
-      throw new NotFoundException(`User wirh id ${userId} not found`);
+      throw new NotFoundException(`User with id ${userId} not found`);
     }
 
     const newAdvert = this.advertRepository.create(createAdvertDto);
     newAdvert.user = user;
-    this.userService.update(userId, newAdvert);
-    return await this.advertRepository.save(newAdvert);
+    const savedAdvert = await this.advertRepository.save(newAdvert);
+    this.userService.updateAdvert(user.id, newAdvert);
+
+    return savedAdvert;
   }
 
   findAll() {
