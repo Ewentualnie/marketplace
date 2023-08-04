@@ -17,7 +17,7 @@ export class UsersService {
     });
     if (user) return user;
     throw new HttpException(
-      `User with this email not found`,
+      `User with email ${email} not found`,
       HttpStatus.BAD_REQUEST,
     );
   }
@@ -30,7 +30,7 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id: id });
   }
 
-  update(id: number, advert: Advert) {
+  updateAdvert(id: number, advert: Advert) {
     return this.usersRepository.update(id, { advert: advert });
   }
 
