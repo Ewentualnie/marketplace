@@ -1,11 +1,12 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
+import { IsValidPrice } from 'src/auth/decorators/price-validator';
 
 export class CreateAdvertDto {
   @IsNotEmpty()
   shortDescription: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsValidPrice()
   price: number;
 
   imagePath: string;
