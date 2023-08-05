@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Headers,
 } from '@nestjs/common';
 import { AdvertService } from './advert.service';
 import { CreateAdvertDto } from './dto/create-advert.dto';
@@ -17,12 +18,12 @@ import { Public } from 'src/auth/decorators/public.decorator';
 export class AdvertController {
   constructor(private readonly advertService: AdvertService) {}
 
-  @Post(':id')
+  @Post('')
   create(
-    @Param('id', ParseIntPipe) userId: number,
     @Body() createAdvertDto: CreateAdvertDto,
+    @Headers('authorization') accesToken: string,
   ) {
-    return this.advertService.create(userId, createAdvertDto);
+    return this.advertService.create(createAdvertDto, accesToken);
   }
 
   @Public()

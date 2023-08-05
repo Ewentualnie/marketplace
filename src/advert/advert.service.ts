@@ -10,6 +10,8 @@ import { Advert } from './entities/advert.entity';
 import { Repository } from 'typeorm';
 import { Hobby } from './entities/hobby.entity';
 import { UsersService } from 'src/users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AdvertService {
@@ -17,14 +19,12 @@ export class AdvertService {
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
     @InjectRepository(Hobby) private hobbyRepository: Repository<Hobby>,
     private userService: UsersService,
+    public jwtService: JwtService,
   ) {}
 
-  async create(userId: number, createAdvertDto: CreateAdvertDto) {
-    const user = await this.userService.findOne(userId);
+  async create(createAdvertDto: CreateAdvertDto, accesToken: string) {
+    const user = await this.getIdFromToken(accesToken);
 
-    if (!user) {
-      throw new NotFoundException(`User with id ${userId} not found`);
-    }
     if (user.advert != null) {
       throw new ConflictException(`User cannot have more then one advert.`);
     }
@@ -51,5 +51,17 @@ export class AdvertService {
 
   remove(id: number) {
     return this.advertRepository.delete(id);
+  }
+
+  async getIdFromToken(accesToken: string): Promise<User> {
+    const jwt = accesToken.replace('Bearer', '').trim();
+    const userId = this.jwtService.decode(jwt).sub;
+    const user = await this.userService.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    return user;
   }
 }
