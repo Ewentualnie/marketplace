@@ -27,7 +27,10 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return this.usersRepository.findOneBy({ id: id });
+    return this.usersRepository.findOne({
+      where: { id },
+      relations: ['advert'],
+    });
   }
 
   updateAdvert(id: number, advert: Advert) {
