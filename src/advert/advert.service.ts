@@ -26,10 +26,9 @@ export class AdvertService {
       throw new NotFoundException(`User with id ${userId} not found`);
     }
     if (user.advert != null) {
-      throw new ConflictException(
-        `User already has an advert and cannot have another advert.`,
-      );
+      throw new ConflictException(`User cannot have more then one advert.`);
     }
+
     const newAdvert = this.advertRepository.create(createAdvertDto);
     newAdvert.user = user;
     const savedAdvert = await this.advertRepository.save(newAdvert);
