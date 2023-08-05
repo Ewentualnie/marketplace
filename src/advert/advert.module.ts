@@ -6,9 +6,10 @@ import { Advert } from './entities/advert.entity';
 import { Hobby } from './entities/hobby.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Advert, Hobby])],
+  imports: [TypeOrmModule.forFeature([User, Advert, Hobby]), JwtModule],
   controllers: [AdvertController],
   providers: [AdvertService, UsersService],
 })
