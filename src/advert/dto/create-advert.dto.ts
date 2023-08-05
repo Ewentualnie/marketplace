@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { IsValidPrice } from 'src/auth/decorators/price-validator';
+import { IsValidPrice } from 'src/utils/validators/price-validator';
 
 export class CreateAdvertDto {
   @IsNotEmpty()
