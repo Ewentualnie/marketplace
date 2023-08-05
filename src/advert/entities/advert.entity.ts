@@ -14,7 +14,7 @@ export class Advert {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column('decimal')
   price: number;
 
   @Column()
