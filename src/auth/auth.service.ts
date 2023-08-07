@@ -1,7 +1,6 @@
 import {
+  ConflictException,
   ForbiddenException,
-  HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -36,9 +35,8 @@ export class AuthService {
       await this.updateRtHash(user.id, tokens.refreshToken);
       return { user, tokens };
     } catch (error) {
-      throw new HttpException(
+      throw new ConflictException(
         `User with email ${createUserDto.email} already exists`,
-        HttpStatus.CONFLICT,
       );
     }
   }
