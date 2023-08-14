@@ -3,7 +3,8 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToMany,
+  JoinTable,
+  ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -14,7 +15,7 @@ export class Advert {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('decimal')
+  @Column('decimal', { scale: 2 })
   price: number;
 
   @Column()
@@ -23,9 +24,9 @@ export class Advert {
   @Column()
   imagePath: string;
 
-  @OneToMany(() => Hobby, (hobby) => hobby.advert)
-  @JoinColumn()
-  hobbys: Hobby[];
+  @ManyToMany(() => Hobby, (hobby) => hobby.advert, { cascade: true })
+  @JoinTable()
+  hobbies: Hobby[];
 
   @OneToOne(() => User)
   @JoinColumn()
