@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -23,22 +24,38 @@ export class AdvertService {
   ) {}
 
   async create(createAdvertDto: CreateAdvertDto, accesToken: string) {
-    const user = await this.getIdFromToken(accesToken);
+    try {
+      const user = await this.getUserFromToken(accesToken);
+      if (user.advert != null) {
+        throw new ConflictException(`User cannot have more then one advert.`);
+      }
+      const newAdvert = this.advertRepository.create(createAdvertDto);
+      newAdvert.user = user;
 
-    if (user.advert != null) {
-      throw new ConflictException(`User cannot have more then one advert.`);
+      const hobbies: Hobby[] = [];
+      for (const hobbyData of createAdvertDto.hobbies) {
+        let hobby = await this.hobbyRepository.findOne({
+          where: { hobby: hobbyData.hobby },
+        });
+        if (!hobby) {
+          hobby = new Hobby();
+          hobby.hobby = hobbyData.hobby;
+          await this.hobbyRepository.save(hobby);
+        }
+        hobbies.push(hobby);
+      }
+      newAdvert.hobbies = hobbies;
+
+      const savedAdvert = await this.advertRepository.save(newAdvert);
+      this.userService.updateAdvert(user.id, newAdvert);
+      return savedAdvert;
+    } catch (error) {
+      throw new BadRequestException(error);
     }
-
-    const newAdvert = this.advertRepository.create(createAdvertDto);
-    newAdvert.user = user;
-    const savedAdvert = await this.advertRepository.save(newAdvert);
-    this.userService.updateAdvert(user.id, newAdvert);
-
-    return savedAdvert;
   }
 
   findAll() {
-    return this.advertRepository.find({ relations: ['user'] });
+    return this.advertRepository.find({ relations: ['user', 'hobbies'] });
   }
 
   findOne(id: number) {
@@ -53,7 +70,7 @@ export class AdvertService {
     return this.advertRepository.delete(id);
   }
 
-  async getIdFromToken(accesToken: string): Promise<User> {
+  async getUserFromToken(accesToken: string): Promise<User> {
     const jwt = accesToken.replace('Bearer', '').trim();
     const userId = this.jwtService.decode(jwt).sub;
     const user = await this.userService.findOne(userId);
