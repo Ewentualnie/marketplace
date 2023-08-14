@@ -1,5 +1,5 @@
-import { Transform, Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, Matches } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsPositive, Max } from 'class-validator';
+import { Hobby } from '../entities/hobby.entity';
 
 export class CreateAdvertDto {
   @IsNotEmpty()
@@ -7,13 +7,11 @@ export class CreateAdvertDto {
 
   @IsNotEmpty()
   @IsNumber()
-  @Matches(/^(?!-0?$)(?!0*$)(\d{1,4}(\.\d{1,2})?|\.\d{1,2})$/, {
-    message:
-      'Invalid price format. Price must be a number following pattern  XXXX.XX or XXXXX more then 0.',
-  })
-  @Transform(({ value }) => parseFloat(value))
-  @Type(() => Number)
+  @IsPositive({ message: 'Price must be greater than 0.' })
+  @Max(9999, { message: 'Price must be less than or equal to 9999.' })
   price: number;
 
   imagePath: string;
+
+  hobbies: Hobby[];
 }
