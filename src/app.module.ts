@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AtGuard } from './auth/guards/at-guard';
 import { Hobby } from './advert/entities/hobby.entity';
+import { Language } from './advert/entities/language.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { Hobby } from './advert/entities/hobby.entity';
       password: process.env.POSTGRES_PASS || 'root',
       database: process.env.POSTGRES_DATABASE || 'marketplace',
 
-      entities: [User, Advert, Hobby],
+      entities: [User, Advert, Hobby, Language],
       synchronize: true,
       logging: ['warn', 'error'],
     }),
