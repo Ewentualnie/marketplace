@@ -1,9 +1,11 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Advert } from './advert.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Hobby {
   @PrimaryGeneratedColumn()
+  @Exclude()
   id: number;
 
   @Column({ unique: true })
@@ -11,11 +13,4 @@ export class Hobby {
 
   @ManyToMany(() => Advert, (advert) => advert.hobbies)
   advert: Advert;
-
-  equals(other: Hobby): boolean {
-    console.log(this.hobby);
-    console.log(other.hobby);
-
-    return this.hobby === other.hobby;
-  }
 }
