@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Hobby } from './hobby.entity';
+import { Language } from './language.entity';
 
 @Entity({ name: 'advert' })
 export class Advert {
@@ -31,10 +32,18 @@ export class Advert {
   @OneToOne(() => User)
   @JoinColumn()
   user: User;
+
+  @ManyToMany(() => Language, (language) => language.spokenLanguages)
+  @JoinTable()
+  spokenLanguages: Language[];
+
+  @ManyToMany(() => Language, (language) => language.teachingLanguages)
+  @JoinTable()
+  teachingLanguages: Language[];
 }
 
 // @Column()
-// fullDescription: string;
+// fullDescription: string; а воно треба взагалі?
 
 // @OneToMany()
 // avalLength: [ 30, 60, 120 ];
@@ -42,11 +51,6 @@ export class Advert {
 // avalShedule: [ "monday" : [[13, 15.5], [18, 18.5]], "thursday" : [[8, 12]] ];
 // @OneToMany()
 // tagsSpecialization: [ "improvement", "basics" ];
-// @OneToMany()
-// tagsHobby: [ "fishing", "gardening", "board games" ];
-// @OneToMany()
-// tagsSpokenLang: [ "ukrainian", "english", "german" ];
-// @OneToMany()
-// tagsTeachingLang: [ "english", "german" ];
+
 // @OneToMany()
 // tagsNativeLang: [ "ukrainian" ];

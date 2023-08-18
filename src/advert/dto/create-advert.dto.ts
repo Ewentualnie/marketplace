@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsNumber, IsPositive, Max } from 'class-validator';
 import { Hobby } from '../entities/hobby.entity';
+import { Language } from '../entities/language.entity';
 
 export class CreateAdvertDto {
   @IsNotEmpty()
@@ -14,4 +15,8 @@ export class CreateAdvertDto {
   imagePath: string;
 
   hobbies: Hobby[];
+
+  spokenLanguages: Language[];
+
+  teachingLanguages: Language[];
 }
