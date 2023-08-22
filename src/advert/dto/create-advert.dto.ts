@@ -16,7 +16,9 @@ export class CreateAdvertDto {
 
   hobbies: Hobby[];
 
+  @IsNotEmpty()
   spokenLanguages: Language[];
 
+  @IsNotEmpty()
   teachingLanguages: Language[];
 }
