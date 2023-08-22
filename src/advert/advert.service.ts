@@ -54,12 +54,19 @@ export class AdvertService {
     });
   }
 
-  findOne(id: number) {
-    return this.advertRepository.find({
-      where: { id },
-      relations: ['user', 'hobbies', 'spokenLanguages', 'teachingLanguages'],
-      take: 1,
-    });
+  async findOne(id: number) {
+    const advert = (
+      await this.advertRepository.find({
+        where: { id },
+        relations: ['user', 'hobbies', 'spokenLanguages', 'teachingLanguages'],
+        take: 1,
+      })
+    )[0];
+
+    if (!advert) {
+      throw new NotFoundException('Page not found');
+    }
+    return advert;
   }
 
   update(id: number, updateAdvertDto: UpdateAdvertDto) {
