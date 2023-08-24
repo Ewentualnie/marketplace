@@ -42,12 +42,16 @@ export class AdvertController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
+    @Headers('authorization') accessToken: string,
   ) {
-    return this.advertService.update(id, updateAdvertDto);
+    return this.advertService.update(id, updateAdvertDto, accessToken);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.advertService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Headers('authorization') accessToken: string,
+  ) {
+    return this.advertService.remove(id, accessToken);
   }
 }
