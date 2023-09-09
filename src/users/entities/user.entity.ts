@@ -1,9 +1,11 @@
 import { Exclude } from 'class-transformer';
 import { Advert } from 'src/advert/entities/advert.entity';
+import { Role } from 'src/utils/role.enum';
 import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -22,6 +24,9 @@ export class User {
 
   @Column()
   name: string;
+
+  @Column({ default: Role.User })
+  role: Role;
 
   @Column({ nullable: true })
   @Exclude()
