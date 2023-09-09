@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -7,7 +8,13 @@ import { CreateAdvertDto } from './dto/create-advert.dto';
 import { UpdateAdvertDto } from './dto/update-advert.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Advert } from './entities/advert.entity';
-import { Repository } from 'typeorm';
+import {
+  Connection,
+  EntityMetadata,
+  Repository,
+  getConnection,
+  getMetadataArgsStorage,
+} from 'typeorm';
 import { Hobby } from './entities/hobby.entity';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -23,6 +30,7 @@ export class AdvertService {
     private languageRepository: Repository<Language>,
     private userService: UsersService,
     public jwtService: JwtService,
+    private connection: Connection,
   ) {}
 
   async create(createAdvertDto: CreateAdvertDto, accesToken: string) {
@@ -48,9 +56,38 @@ export class AdvertService {
     return savedAdvert;
   }
 
-  findAll() {
+  findAll(query: any) {
+    // const { sort } = query;
+    // const sortFields = [];
+
+    // if (sort) {
+    //   sort.split(',').forEach((item) => {
+    //     const [sortBy, sortDirection] = item.split(':');
+    //     sortFields.push({ [sortBy]: sortDirection });
+    //   });
+    // }
+
+    // const order = {};
+
+    // for (const sortField of sortFields) {
+    //   const sortBy = Object.keys(sortField)[0];
+    //   const sortDirection = sortField[sortBy];
+    //   order[sortBy] = sortDirection as 'ASC' | 'DESC';
+    // }
+
+    // Object.keys(order).forEach(async (val) => {
+    //   const res = await this.isOrderValid(val);
+    //   console.log(res);
+    //   if (!res) {
+    //     throw new BadRequestException(
+    //       `sort parameter ${val} does not exist in the advert database`,
+    //     );
+    //   }
+    // });
+
     return this.advertRepository.find({
       relations: ['user', 'hobbies', 'spokenLanguages', 'teachingLanguages'],
+      // order,
     });
   }
 
@@ -69,16 +106,18 @@ export class AdvertService {
     return advert;
   }
 
-  update(id: number, updateAdvertDto: UpdateAdvertDto) {
+  update(id: number, updateAdvertDto: UpdateAdvertDto, accessToken: string) {
+    const user = this.getUserFromToken(accessToken);
     return this.advertRepository.update(id, updateAdvertDto);
   }
 
-  remove(id: number) {
+  remove(id: number, accessToken: string) {
+    const user = this.getUserFromToken(accessToken);
     return this.advertRepository.delete(id);
   }
 
-  async getUserFromToken(accesToken: string): Promise<User> {
-    const jwt = accesToken.replace('Bearer', '').trim();
+  async getUserFromToken(accessToken: string): Promise<User> {
+    const jwt = accessToken.replace('Bearer', '').trim();
     const userId = this.jwtService.decode(jwt).sub;
     const user = await this.userService.findOne(userId);
 
@@ -119,5 +158,13 @@ export class AdvertService {
         );
       }),
     );
+  }
+
+  async isOrderValid(order: string): Promise<boolean> {
+    const entityMetadata = this.connection.getMetadata(Advert);
+    const columnNames = entityMetadata.columns.map(
+      (column) => column.databaseName,
+    );
+    return columnNames.includes(order);
   }
 }
