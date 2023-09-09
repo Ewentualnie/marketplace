@@ -32,7 +32,7 @@ export class AuthService {
 
       await this.usersRepository.save(user);
 
-      const tokens = await this.getTokens(user.id, user.email);
+      const tokens = await this.getTokens(user.id, user.email, user.role);
       await this.updateRtHash(user.id, tokens.refreshToken);
       return { user, tokens };
     } catch (error) {
@@ -60,7 +60,7 @@ export class AuthService {
       throw new ForbiddenException('Access denied');
     }
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRtHash(user.id, tokens.refreshToken);
     return { user, tokens };
   }
@@ -80,7 +80,7 @@ export class AuthService {
       throw new ForbiddenException('Access denied');
     }
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRtHash(user.id, tokens.refreshToken);
     return { user, tokens };
   }
@@ -91,15 +91,15 @@ export class AuthService {
     });
     if (!admin) {
       const adminUser = new User();
-      adminUser.email = process.env.ADMIN_USER || 'admin_email';
+      adminUser.email = process.env.ADMIN_USER || 'admin@email.com';
       adminUser.hashedPass = await this.hashData(
-        process.env.ADMIN_PASS || 'pass',
+        process.env.ADMIN_PASS || 'passW0rd',
       );
       adminUser.name = 'ADMIN';
       adminUser.role = Role.Admin;
 
       const admin = await this.usersRepository.save(adminUser);
-      const tokens = await this.getTokens(admin.id, admin.email);
+      const tokens = await this.getTokens(admin.id, admin.email, admin.role);
       await this.updateRtHash(admin.id, tokens.refreshToken);
       console.log('Admin user created');
     }
@@ -112,12 +112,17 @@ export class AuthService {
     });
   }
 
-  async getTokens(userId: number, email: string): Promise<Tokens> {
+  async getTokens(
+    userId: number,
+    email: string,
+    role: string,
+  ): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
           email,
+          role: role,
         },
         {
           secret: 'at-secret',
@@ -128,6 +133,7 @@ export class AuthService {
         {
           sub: userId,
           email,
+          role: role,
         },
         {
           secret: 'rt-secret',
