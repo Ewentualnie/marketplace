@@ -1,6 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -24,6 +25,12 @@ export class Advert {
 
   @Column()
   imagePath: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Column({ default: false })
+  isDeleted: boolean;
 
   @ManyToMany(() => Hobby, (hobby) => hobby.advert, { cascade: true })
   @JoinTable()
