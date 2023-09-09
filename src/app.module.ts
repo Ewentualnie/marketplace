@@ -12,7 +12,6 @@ import { AtGuard } from './utils/guards/at-guard';
 import { Hobby } from './advert/entities/hobby.entity';
 import { Language } from './advert/entities/language.entity';
 import { AdminModule } from './admin/admin.module';
-import { RolesGuard } from './utils/guards/roles.guard';
 
 @Module({
   imports: [
@@ -37,10 +36,6 @@ import { RolesGuard } from './utils/guards/roles.guard';
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
