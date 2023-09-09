@@ -14,6 +14,7 @@ import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { genSalt } from 'bcrypt';
 import { UserRes } from 'src/types/user-response';
+import { Role } from 'src/utils/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -82,6 +83,26 @@ export class AuthService {
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refreshToken);
     return { user, tokens };
+  }
+
+  async createAdminUser() {
+    const admin = await this.usersRepository.findOneBy({
+      email: process.env.ADMIN_USER,
+    });
+    if (!admin) {
+      const adminUser = new User();
+      adminUser.email = process.env.ADMIN_USER || 'admin_email';
+      adminUser.hashedPass = await this.hashData(
+        process.env.ADMIN_PASS || 'pass',
+      );
+      adminUser.name = 'ADMIN';
+      adminUser.role = Role.Admin;
+
+      const admin = await this.usersRepository.save(adminUser);
+      const tokens = await this.getTokens(admin.id, admin.email);
+      await this.updateRtHash(admin.id, tokens.refreshToken);
+      console.log('Admin user created');
+    }
   }
 
   async updateRtHash(userId: number, rt: string) {

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
 import { ValidationPipe } from '@nestjs/common';
+import { AuthService } from 'src/auth/auth.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,5 +20,7 @@ async function bootstrap() {
     }),
   );
   await app.listen(3000);
+  const authService = app.get(AuthService);
+  await authService.createAdminUser();
 }
 bootstrap();
