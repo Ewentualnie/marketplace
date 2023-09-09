@@ -12,10 +12,10 @@ import {
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { GetCurrentUserId } from './decorators/get-user-id.decorator';
-import { GetCurrentUser } from './decorators/get-user.decorator';
-import { RtGuard } from './guards/rt-guard';
-import { Public } from './decorators/public.decorator';
+import { GetCurrentUserId } from '../utils/decorators/get-user-id.decorator';
+import { GetCurrentUser } from '../utils/decorators/get-user.decorator';
+import { RtGuard } from '../utils/guards/rt-guard';
+import { Public } from '../utils/decorators/public.decorator';
 import { UserRes } from 'src/types/user-response';
 
 @Controller('auth')

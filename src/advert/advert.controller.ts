@@ -8,11 +8,12 @@ import {
   Delete,
   ParseIntPipe,
   Headers,
+  Query,
 } from '@nestjs/common';
 import { AdvertService } from './advert.service';
 import { CreateAdvertDto } from './dto/create-advert.dto';
 import { UpdateAdvertDto } from './dto/update-advert.dto';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from 'src/utils/decorators/public.decorator';
 
 @Controller('adverts')
 export class AdvertController {
@@ -28,8 +29,8 @@ export class AdvertController {
 
   @Public()
   @Get()
-  findAll() {
-    return this.advertService.findAll();
+  findAll(@Query() query: any) {
+    return this.advertService.findAll(query);
   }
 
   @Public()
