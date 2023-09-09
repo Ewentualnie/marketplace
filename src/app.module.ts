@@ -8,9 +8,11 @@ import { AdvertModule } from './advert/advert.module';
 import { Advert } from './advert/entities/advert.entity';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { AtGuard } from './auth/guards/at-guard';
+import { AtGuard } from './utils/guards/at-guard';
 import { Hobby } from './advert/entities/hobby.entity';
 import { Language } from './advert/entities/language.entity';
+import { AdminModule } from './admin/admin.module';
+import { RolesGuard } from './utils/guards/roles.guard';
 
 @Module({
   imports: [
@@ -30,10 +32,15 @@ import { Language } from './advert/entities/language.entity';
     UsersModule,
     AdvertModule,
     AuthModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
