@@ -1,4 +1,12 @@
-import { Controller, ForbiddenException, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 import { AdvertService } from 'src/advert/advert.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -18,10 +26,34 @@ export class AdminController {
       const adverts = await this.advertService.findAll(query);
       const users = await this.usersService.findAll();
       return { adverts, users };
+    } else this.errorExeption('to this page');
+  }
+
+  @Delete('users/:id')
+  async deleteUser(
+    @GetCurrentUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    if (user.role == Role.Admin) {
+      await this.usersService.remove(id);
     } else {
-      throw new ForbiddenException(
-        'Only administrators have access to this page',
-      );
+      this.errorExeption('to delete users');
     }
+  }
+
+  @Delete('adverts/:id')
+  async deleteAdvert(
+    @GetCurrentUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    if (user.role == Role.Admin) {
+      await this.advertService.remove(id, user);
+    } else {
+      this.errorExeption('to delete adverts');
+    }
+  }
+
+  errorExeption(message: string) {
+    throw new ForbiddenException('Only administrators have access ' + message);
   }
 }
