@@ -106,13 +106,11 @@ export class AdvertService {
     return advert;
   }
 
-  update(id: number, updateAdvertDto: UpdateAdvertDto, accessToken: string) {
-    const user = this.getUserFromToken(accessToken);
+  update(id: number, updateAdvertDto: UpdateAdvertDto, user: User) {
     return this.advertRepository.update(id, updateAdvertDto);
   }
 
-  remove(id: number, accessToken: string) {
-    const user = this.getUserFromToken(accessToken);
+  remove(id: number, user: User) {
     return this.advertRepository.delete(id);
   }
 

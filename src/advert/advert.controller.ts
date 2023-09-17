@@ -14,6 +14,8 @@ import { AdvertService } from './advert.service';
 import { CreateAdvertDto } from './dto/create-advert.dto';
 import { UpdateAdvertDto } from './dto/update-advert.dto';
 import { Public } from 'src/utils/decorators/public.decorator';
+import { GetCurrentUser } from 'src/utils/decorators/get-user.decorator';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('adverts')
 export class AdvertController {
@@ -43,16 +45,13 @@ export class AdvertController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
-    @Headers('authorization') accessToken: string,
+    @GetCurrentUser() user: User,
   ) {
-    return this.advertService.update(id, updateAdvertDto, accessToken);
+    return this.advertService.update(id, updateAdvertDto, user);
   }
 
   @Delete(':id')
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') accessToken: string,
-  ) {
-    return this.advertService.remove(id, accessToken);
+  remove(@Param('id', ParseIntPipe) id: number, @GetCurrentUser() user: User) {
+    return this.advertService.remove(id, user);
   }
 }
