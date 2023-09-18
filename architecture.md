@@ -34,3 +34,70 @@
    "spokenLanguages":[{"language":"polski"},{"language":"ukrainian"}],
    "teachingLanguages":[{"language":"polski"}]
    }
+
+адмін панель (GET /admin):
+
+1. таблиця усіх оголошень
+2. таблиця усіх користувачів
+таблиця оголошень:
+   1. id
+   2. shortDescription
+   3. price
+   4. createdAt
+   5. spokenLanguages
+   6. teachingLanguages
+   7. imagePath (imagePathes)
+   8. hobbies
+   9. userId (or user)
+   10. Кнопка "Edit advert"
+   11. Кнопка "Delete advert"
+
+кнопка "Edit Advert" (POST /admin/adverts/:id):
+   1. shortDescription
+   2. price
+   3. spokenLanguages
+   4. teachingLanguages
+   5. imagePath (imagePathes)
+   6. hobbies
+   example:
+      POST /admin/adverts/5
+      body: {
+      "shortDescription": "the best promotion",
+      "price": 50,
+      "imagePath": "images/image889.jpg",
+      "hobbies": [{"hobby":"run"},{"hobby":"develop"},{"hobby":"swim"},{"hobby":"дивитись на мертвих москалів"}],
+      "spokenLanguages":[{"language":"english"},{"language":"polski"},{"language":"ukrainian"}],
+      "teachingLanguages":[{"language":"polski"},{"language":"english"}]
+      }
+
+кнопка "Delete advert" (DELETE admin/adverts/:id)
+
+таблиця користувачів:
+   1. id
+   2. firstName
+   3. lastName
+   4. registeredAt
+   5. hobbies
+   6. motherland
+   7. pathToPhoto
+   8. advertId (or NULL if advert is null)
+   9. Кнопка "Edit user info"
+   10. Кнопка "Delete user"
+
+кнопка "Edit user info" (POST /admin/users/:id):
+   1. firstName
+   2. lastName
+   3. hobbies
+   4. motherland
+   5. pathToPhoto
+   example:
+      POST /admin/users/2
+      body: {
+      "firstName": "Stepan",
+      "lastName": "Bandera",
+      "hobbies": [{"hobby":"run"},{"hobby":"різати русню"}],
+      "motherland":"Ukraine",
+      "pathToPhoto":"/images/photoBandera.jpg"
+      }
+      
+кнопка "Delete user" (DELETE admin/users/:id)
