@@ -5,7 +5,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -27,6 +26,9 @@ export class User {
 
   @Column({ default: Role.User })
   role: Role;
+
+  @Column({ default: false })
+  isDeleted: boolean;
 
   @Column({ nullable: true })
   @Exclude()
