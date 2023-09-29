@@ -8,6 +8,7 @@ import { Advert } from 'src/advert/entities/advert.entity';
 import { Hobby } from 'src/advert/entities/hobby.entity';
 import { Language } from 'src/advert/entities/language.entity';
 import { User } from 'src/users/entities/user.entity';
+import { AdminService } from './admin.service';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { User } from 'src/users/entities/user.entity';
     JwtModule,
   ],
   controllers: [AdminController],
-  providers: [AdvertService, UsersService],
+  providers: [AdvertService, UsersService, AdminService],
 })
 export class AdminModule {}
