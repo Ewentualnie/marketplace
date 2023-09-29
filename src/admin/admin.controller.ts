@@ -1,32 +1,26 @@
 import {
+  Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Query,
 } from '@nestjs/common';
-import { AdvertService } from 'src/advert/advert.service';
 import { User } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
 import { GetCurrentUser } from 'src/utils/decorators/get-user.decorator';
-import { Role } from 'src/utils/role.enum';
+import { AdminService } from './admin.service';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { UpdateAdvertDto } from 'src/advert/dto/update-advert.dto';
 
 @Controller('admin')
 export class AdminController {
-  constructor(
-    private readonly advertService: AdvertService,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly adminService: AdminService) {}
 
   @Get()
-  async getAllAdverts(@GetCurrentUser() user: User, @Query() query: any) {
-    if (user.role == Role.Admin) {
-      const adverts = await this.advertService.findAll(query);
-      const users = await this.usersService.findAll();
-      return { adverts, users };
-    } else this.errorExeption('to this page');
+  async getAll(@GetCurrentUser() user: User, @Query() query: any) {
+    return await this.adminService.getAll(user, query);
   }
 
   @Delete('users/:id')
@@ -34,11 +28,7 @@ export class AdminController {
     @GetCurrentUser() user: User,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    if (user.role == Role.Admin) {
-      await this.usersService.remove(id);
-    } else {
-      this.errorExeption('to delete users');
-    }
+    return await this.adminService.deleteUser(user, id);
   }
 
   @Delete('adverts/:id')
@@ -46,14 +36,24 @@ export class AdminController {
     @GetCurrentUser() user: User,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    if (user.role == Role.Admin) {
-      await this.advertService.remove(id, user);
-    } else {
-      this.errorExeption('to delete adverts');
-    }
+    return await this.adminService.deleteAdvert(user, id);
   }
 
-  errorExeption(message: string) {
-    throw new ForbiddenException('Only administrators have access ' + message);
+  @Patch('users/:id')
+  async editUserInfo(
+    @GetCurrentUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return await this.adminService.editUser(user, id, updateUserDto);
+  }
+
+  @Patch('adverts/:id')
+  async editAdvertInfo(
+    @GetCurrentUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateAdvertDto: UpdateAdvertDto,
+  ) {
+    return await this.adminService.editAdvert(user, id, updateAdvertDto);
   }
 }
