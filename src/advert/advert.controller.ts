@@ -24,15 +24,15 @@ export class AdvertController {
   @Post('')
   create(
     @Body() createAdvertDto: CreateAdvertDto,
-    @Headers('authorization') accesToken: string,
+    @GetCurrentUser() user: User,
   ) {
-    return this.advertService.create(createAdvertDto, accesToken);
+    return this.advertService.create(createAdvertDto, user);
   }
 
   @Public()
   @Get()
   findAll(@Query() query: any) {
-    return this.advertService.findAll(query);
+    return this.advertService.findAllowedAdverts(query);
   }
 
   @Public()
@@ -50,8 +50,8 @@ export class AdvertController {
     return this.advertService.update(id, updateAdvertDto, user);
   }
 
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @GetCurrentUser() user: User) {
-    return this.advertService.remove(id, user);
+  @Delete()
+  remove(@GetCurrentUser() user: User) {
+    return this.advertService.removeOwnAdvert(user);
   }
 }
