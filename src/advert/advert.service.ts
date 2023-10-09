@@ -14,6 +14,7 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { Language } from './entities/language.entity';
+import { error } from 'console';
 
 @Injectable()
 export class AdvertService {
@@ -30,21 +31,24 @@ export class AdvertService {
     if (user.advert != null) {
       throw new ConflictException(`User cannot have more then one advert.`);
     }
+    try {
+      const newAdvert = this.advertRepository.create(createAdvertDto);
 
-    const newAdvert = this.advertRepository.create(createAdvertDto);
+      newAdvert.user = user;
+      newAdvert.hobbies = await this.getHobbies(createAdvertDto.hobbies);
+      newAdvert.spokenLanguages = await this.getLanguages(
+        createAdvertDto.spokenLanguages,
+      );
+      newAdvert.teachingLanguages = await this.getLanguages(
+        createAdvertDto.teachingLanguages,
+      );
 
-    newAdvert.user = user;
-    newAdvert.hobbies = await this.getHobbies(createAdvertDto.hobbies);
-    newAdvert.spokenLanguages = await this.getLanguages(
-      createAdvertDto.spokenLanguages,
-    );
-    newAdvert.teachingLanguages = await this.getLanguages(
-      createAdvertDto.teachingLanguages,
-    );
-
-    const savedAdvert = await this.advertRepository.save(newAdvert);
-    this.userService.updateAdvert(user.id, newAdvert);
-    return savedAdvert;
+      const savedAdvert = await this.advertRepository.save(newAdvert);
+      this.userService.updateAdvert(user.id, newAdvert);
+      return savedAdvert;
+    } catch (err) {
+      throw new ConflictException(error);
+    }
   }
 
   async findAllowedAdverts(query: any) {
