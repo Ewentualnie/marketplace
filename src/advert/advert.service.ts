@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -47,7 +49,7 @@ export class AdvertService {
       this.userService.updateAdvert(user.id, newAdvert);
       return savedAdvert;
     } catch (err) {
-      throw new ConflictException(error);
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
