@@ -16,7 +16,6 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { Language } from './entities/language.entity';
-import { error } from 'console';
 
 @Injectable()
 export class AdvertService {
@@ -29,13 +28,14 @@ export class AdvertService {
     public jwtService: JwtService,
   ) {}
 
-  async create(createAdvertDto: CreateAdvertDto, user: User) {
+  async create(createAdvertDto: CreateAdvertDto, userId: number) {
+    const user = await this.getCurrentUser(userId);
+
     if (user.advert != null) {
       throw new ConflictException(`User cannot have more then one advert.`);
     }
     try {
       const newAdvert = this.advertRepository.create(createAdvertDto);
-
       newAdvert.user = user;
       newAdvert.hobbies = await this.getHobbies(createAdvertDto.hobbies);
       newAdvert.spokenLanguages = await this.getLanguages(
@@ -82,19 +82,21 @@ export class AdvertService {
     return advert;
   }
 
-  async update(id: number, updateAdvertDto: UpdateAdvertDto, user: User) {
+  async update(id: number, updateAdvertDto: UpdateAdvertDto, userId: number) {
     // return await this.advertRepository.update(id, updateAdvertDto);
     return 'not implement yet';
   }
 
-  async removeOwnAdvert(user: User) {
+  async removeOwnAdvert(userId: number) {
+    const user = await this.getCurrentUser(userId);
     if (user.advert == null) {
       throw new BadRequestException(`User with ID ${user.id} has no advert`);
     }
     return await this.softDeleteAdvert(user.advert.id);
   }
 
-  async restoreOwnAdvert(user: User) {
+  async restoreOwnAdvert(userId: number) {
+    const user = await this.getCurrentUser(userId);
     if (user.advert == null) {
       throw new BadRequestException(`User with ID ${user.id} has no advert`);
     }
@@ -143,5 +145,9 @@ export class AdvertService {
         );
       }),
     );
+  }
+
+  async getCurrentUser(id: number): Promise<User> {
+    return await this.userService.findOne(id);
   }
 }

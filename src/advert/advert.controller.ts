@@ -7,15 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  Headers,
   Query,
 } from '@nestjs/common';
 import { AdvertService } from './advert.service';
 import { CreateAdvertDto } from './dto/create-advert.dto';
 import { UpdateAdvertDto } from './dto/update-advert.dto';
 import { Public } from 'src/utils/decorators/public.decorator';
-import { GetCurrentUser } from 'src/utils/decorators/get-user.decorator';
-import { User } from 'src/users/entities/user.entity';
+import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 
 @Controller('adverts')
 export class AdvertController {
@@ -24,9 +22,9 @@ export class AdvertController {
   @Post('')
   create(
     @Body() createAdvertDto: CreateAdvertDto,
-    @GetCurrentUser() user: User,
+    @GetCurrentUserId() userId: number,
   ) {
-    return this.advertService.create(createAdvertDto, user);
+    return this.advertService.create(createAdvertDto, userId);
   }
 
   @Public()
@@ -45,13 +43,13 @@ export class AdvertController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
-    @GetCurrentUser() user: User,
+    @GetCurrentUserId() userId: number,
   ) {
-    return this.advertService.update(id, updateAdvertDto, user);
+    return this.advertService.update(id, updateAdvertDto, userId);
   }
 
   @Delete()
-  remove(@GetCurrentUser() user: User) {
-    return this.advertService.removeOwnAdvert(user);
+  remove(@GetCurrentUserId() userId: number) {
+    return this.advertService.removeOwnAdvert(userId);
   }
 }
