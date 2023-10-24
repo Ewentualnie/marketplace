@@ -14,7 +14,9 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { CreateFeedback } from './dto/add-feedback.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('users')
 @UsePipes(new ValidationPipe())
 export class UsersController {
