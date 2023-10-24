@@ -12,18 +12,13 @@ import {
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('User')
 @Controller('users')
 @UsePipes(new ValidationPipe())
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
