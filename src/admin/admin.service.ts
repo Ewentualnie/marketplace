@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AdvertService } from 'src/advert/advert.service';
 import { UpdateAdvertDto } from 'src/advert/dto/update-advert.dto';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
@@ -27,6 +31,11 @@ export class AdminService {
       this.errorExeption('delete users');
     }
     const user = await this.usersService.findOne(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     if (user.advert != null) {
       await this.advertService.softDeleteAdvert(user.advert.id);
     }

@@ -17,11 +17,41 @@ import { GetCurrentUser } from '../utils/decorators/get-user.decorator';
 import { RtGuard } from '../utils/guards/rt-guard';
 import { Public } from '../utils/decorators/public.decorator';
 import { UserRes } from 'src/types/user-response';
+import {
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiOperation({ summary: 'Create a user' })
+  @ApiResponse({
+    status: 201,
+    description: 'User information ',
+    content: {
+      'application/json': {
+        example: {
+          user: {
+            email: 'dekeucasukou-4452@yopmail.com',
+            name: 'Boris',
+            id: 3,
+            role: 'user',
+            isDeleted: 'boolean',
+          },
+          tokens: {
+            accessToken: 'accessToken',
+            refreshToken: 'refreshToken',
+          },
+        },
+      },
+    },
+  })
   @Public()
   @Post('signup')
   @UsePipes(new ValidationPipe())
@@ -30,6 +60,28 @@ export class AuthController {
     return this.authService.signUp(createUserDto);
   }
 
+  @ApiOperation({ summary: 'Login by user' })
+  @ApiResponse({
+    status: 200,
+    description: 'User information ',
+    content: {
+      'application/json': {
+        example: {
+          user: {
+            email: 'dekeucasukou-4452@yopmail.com',
+            name: 'Boris',
+            id: 3,
+            role: 'user',
+            isDeleted: 'boolean',
+          },
+          tokens: {
+            accessToken: 'accessToken',
+            refreshToken: 'refreshToken',
+          },
+        },
+      },
+    },
+  })
   @Public()
   @Post('signin')
   @UsePipes(new ValidationPipe())
@@ -38,13 +90,42 @@ export class AuthController {
     return this.authService.signIn(loginUserDto);
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Logout' })
+  @ApiResponse({ status: 204, description: 'No Content' })
+  @Public()
   @Post('logout')
+  @UseGuards(RtGuard)
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.OK)
   logOut(@GetCurrentUserId(ParseIntPipe) userId: number) {
+    console.log('userId2');
     return this.authService.logOut(userId);
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Refresh tokens' })
+  @ApiResponse({
+    status: 200,
+    description: 'User information ',
+    content: {
+      'application/json': {
+        example: {
+          user: {
+            email: 'dekeucasukou-4452@yopmail.com',
+            name: 'Boris',
+            id: 3,
+            role: 'user',
+            isDeleted: 'boolean',
+          },
+          tokens: {
+            accessToken: 'accessToken',
+            refreshToken: 'refreshToken',
+          },
+        },
+      },
+    },
+  })
   @Public()
   @UseGuards(RtGuard)
   @Post('refresh')
