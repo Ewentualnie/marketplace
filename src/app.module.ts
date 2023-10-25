@@ -12,6 +12,7 @@ import { AtGuard } from './utils/guards/at-guard';
 import { Hobby } from './advert/entities/hobby.entity';
 import { Language } from './advert/entities/language.entity';
 import { AdminModule } from './admin/admin.module';
+import { FeedBack } from './users/entities/feedback.entity';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { AdminModule } from './admin/admin.module';
       password: process.env.POSTGRES_PASS || 'root',
       database: process.env.POSTGRES_DATABASE || 'marketplace',
 
-      entities: [User, Advert, Hobby, Language],
+      entities: [User, Advert, Hobby, Language, FeedBack],
       synchronize: true,
       logging: ['warn', 'error'],
     }),
