@@ -5,9 +5,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { FeedBack } from './feedback.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -37,4 +41,14 @@ export class User {
   @OneToOne(() => Advert)
   @JoinColumn()
   advert: Advert;
+
+  @OneToMany(() => FeedBack, (feedbacks) => feedbacks.toUser, { cascade: true })
+  @JoinTable()
+  feedbacks: FeedBack[];
+
+  @ManyToMany(() => FeedBack, (feedbacks) => feedbacks.fromUsers, {
+    cascade: true,
+  })
+  @JoinTable()
+  writtenFeedbacks: FeedBack[];
 }
