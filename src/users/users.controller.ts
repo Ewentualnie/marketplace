@@ -8,10 +8,12 @@ import {
   UsePipes,
   ValidationPipe,
   ParseIntPipe,
+  Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
+import { CreateFeedback } from './dto/add-feedback.dto';
 
 @Controller('users')
 @UsePipes(new ValidationPipe())
@@ -36,5 +38,14 @@ export class UsersController {
   @Delete()
   remove(@GetCurrentUserId() id: number) {
     return this.usersService.softUserDelete(id);
+  }
+
+  @Post(':id/feedback')
+  addFeedback(
+    @Param('id', ParseIntPipe) userId: number,
+    @GetCurrentUserId() currentUserId: number,
+    @Body() feedback: CreateFeedback,
+  ) {
+    return this.usersService.addFeedback(userId, currentUserId, feedback);
   }
 }
