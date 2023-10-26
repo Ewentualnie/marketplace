@@ -9,11 +9,12 @@ import { AtStrategy } from './strategies/at.strategy';
 import { RtStrategy } from './strategies/rt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { FeedBack } from 'src/users/entities/feedback.entity';
 
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, FeedBack]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: 'at-secret' }),
   ],

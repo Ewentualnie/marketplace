@@ -8,10 +8,11 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { JwtModule } from '@nestjs/jwt';
 import { Language } from './entities/language.entity';
+import { FeedBack } from 'src/users/entities/feedback.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Advert, Hobby, Language]),
+    TypeOrmModule.forFeature([User, Advert, Hobby, Language, FeedBack]),
     JwtModule,
   ],
   controllers: [AdvertController],

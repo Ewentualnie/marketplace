@@ -9,11 +9,12 @@ import { Hobby } from 'src/advert/entities/hobby.entity';
 import { Language } from 'src/advert/entities/language.entity';
 import { User } from 'src/users/entities/user.entity';
 import { AdminService } from './admin.service';
+import { FeedBack } from 'src/users/entities/feedback.entity';
 import { JwtAdminStrategy } from './strategies/admin.jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Advert, Hobby, Language]),
+    TypeOrmModule.forFeature([User, Advert, Hobby, Language, FeedBack]),
     JwtModule.register({
       secret: 'at-secret',
     }),
