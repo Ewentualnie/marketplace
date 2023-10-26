@@ -3,9 +3,11 @@ import { AppModule } from './app.module';
 import * as session from 'express-session';
 import { ValidationPipe } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.use(
@@ -19,7 +21,18 @@ async function bootstrap() {
       },
     }),
   );
+  const options = new DocumentBuilder()
+    .setTitle('API Marketplace')
+    .setDescription('API Marketplace docs')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('docs', app, document);
+
   await app.listen(3000);
+
   const authService = app.get(AuthService);
   await authService.createAdminUser();
 }
