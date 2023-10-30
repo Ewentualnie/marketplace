@@ -25,7 +25,7 @@ import { FeedBack } from './users/entities/feedback.entity';
       password: process.env.POSTGRES_PASS || 'root',
       database: process.env.POSTGRES_DATABASE || 'marketplace',
 
-      entities: [User, Advert, Hobby, Language, FeedBack],
+      entities: ['dist/**/*entity.js'],
       synchronize: true,
       logging: ['warn', 'error'],
     }),
