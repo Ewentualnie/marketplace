@@ -42,13 +42,13 @@ export class User {
   @JoinColumn()
   advert: Advert;
 
-  @OneToMany(() => FeedBack, (feedbacks) => feedbacks.toUser, { cascade: true })
-  @JoinTable()
+  @OneToMany(() => FeedBack, (feedback) => feedback.toUser, { cascade: true })
+  @JoinColumn({ name: 'toUserId' })
   feedbacks: FeedBack[];
 
   @ManyToMany(() => FeedBack, (feedbacks) => feedbacks.fromUsers, {
     cascade: true,
   })
-  @JoinTable()
+  @JoinTable({ name: 'user_feedback' })
   writtenFeedbacks: FeedBack[];
 }

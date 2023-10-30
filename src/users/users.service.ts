@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -55,31 +59,25 @@ export class UsersService {
     userId: number,
     currentUserId: number,
     feedback: CreateFeedback,
-  ) {
+  ): Promise<void> {
     const user = await this.findOne(userId);
     const currentUser = await this.findOne(currentUserId);
-    const newFeedback: FeedBack = await this.feedbackRepository.create(
-      feedback,
-    );
 
-    // console.log('before', newFeedback);
-    user.feedbacks.push(newFeedback);
-    currentUser.writtenFeedbacks.push(newFeedback);
-    // add new feedback to user, working good, need to save changes in user entity
-    // add new writtenfeedback to current user, working good, need to save changes in current user entity
-    this.usersRepository.update(user, { feedbacks: user.feedbacks });
-    // не зберігається поле фідбеків
-    console.log(user);
+    if (!user || !currentUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    const newFeedback = this.feedbackRepository.create(feedback);
 
     newFeedback.toUser = user;
-    // newFeedback.fromUsers.push(currentUser);
-    //тут поля фромюзерс взагалі нема
 
-    console.log(newFeedback);
+    user.feedbacks.push(newFeedback);
 
-    // this.feedbackRepository.save(newFeedback);
+    currentUser.writtenFeedbacks.push(newFeedback);
 
-    // throw new Error('Method not implemented.');
+    await this.usersRepository.save(user);
+    await this.usersRepository.save(currentUser);
+    await this.feedbackRepository.save(newFeedback);
 
     return null;
   }

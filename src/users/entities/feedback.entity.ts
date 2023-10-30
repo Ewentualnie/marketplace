@@ -27,10 +27,10 @@ export class FeedBack {
   createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.feedbacks)
-  @JoinTable()
+  @JoinColumn({ name: 'toUserId' })
   toUser: User;
 
   @ManyToMany(() => User, (user) => user.writtenFeedbacks)
-  @JoinTable()
+  @JoinTable({ name: 'user_feedback' })
   fromUsers: User[];
 }
