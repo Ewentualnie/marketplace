@@ -61,11 +61,8 @@ export class UsersService {
     feedback: CreateFeedback,
   ): Promise<void> {
     const user = await this.findOne(userId);
-    const currentUser = await this.findOne(currentUserId);
 
-    if (!user || !currentUser) {
-      throw new NotFoundException('User not found');
-    }
+    const currentUser = await this.findOne(currentUserId);
 
     const newFeedback = this.feedbackRepository.create(feedback);
 
