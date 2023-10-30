@@ -14,9 +14,10 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { CreateFeedback } from './dto/add-feedback.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('User')
+@ApiBearerAuth()
 @Controller('users')
 @UsePipes(new ValidationPipe())
 export class UsersController {
@@ -37,12 +38,13 @@ export class UsersController {
     return this.usersService.softUserDelete(id);
   }
 
+  @ApiOperation({ summary: 'Create a feedback' })
   @Post(':id/feedback')
   addFeedback(
     @Param('id', ParseIntPipe) userId: number,
     @GetCurrentUserId() currentUserId: number,
     @Body() feedback: CreateFeedback,
-  ) {
+  ): Promise<void> {
     return this.usersService.addFeedback(userId, currentUserId, feedback);
   }
 }
