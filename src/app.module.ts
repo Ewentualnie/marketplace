@@ -3,32 +3,16 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/entities/user.entity';
 import { AdvertModule } from './advert/advert.module';
-import { Advert } from './advert/entities/advert.entity';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AtGuard } from './utils/guards/at-guard';
-import { Hobby } from './advert/entities/hobby.entity';
-import { Language } from './advert/entities/language.entity';
 import { AdminModule } from './admin/admin.module';
-import { FeedBack } from './users/entities/feedback.entity';
+import { dataSourceOptionst } from './database/database-config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST || 'localhost',
-      // host: 'postgres_db',    //need for run in local docker
-      port: 5432,
-      username: process.env.POSTGRES_USER || 'admin',
-      password: process.env.POSTGRES_PASS || 'root',
-      database: process.env.POSTGRES_DATABASE || 'marketplace',
-
-      entities: [User, Advert, Hobby, Language, FeedBack],
-      synchronize: true,
-      logging: ['warn', 'error'],
-    }),
+    TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,
     AdvertModule,
     AuthModule,
