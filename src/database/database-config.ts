@@ -10,6 +10,7 @@ export const dataSourceOptionst: DataSourceOptions = {
   entities: ['dist/**/*entity.js'],
   migrations: ['dist/database/migrations/*.js'],
   migrationsRun: true,
+  logging: ['warn', 'error'],
 };
 
 export const dataSourse = new DataSource(dataSourceOptionst);
