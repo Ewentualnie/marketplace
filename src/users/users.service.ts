@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,12 +6,14 @@ import { Advert } from 'src/advert/entities/advert.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateFeedback } from './dto/add-feedback.dto';
 import { FeedBack } from './entities/feedback.entity';
+import { Hobby } from './entities/hobby.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) public usersRepository: Repository<User>,
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
+    @InjectRepository(Hobby) private hobbyRepository: Repository<Hobby>,
   ) {}
 
   async findByEmail(email: string) {
@@ -33,7 +31,7 @@ export class UsersService {
   async findOne(id: number) {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['advert', 'feedbacks', 'writtenFeedbacks'],
+      relations: ['advert', 'hobby', 'feedbacks', 'writtenFeedbacks'],
     });
     if (user) return user;
     throw new BadRequestException(`User with id ${id} not found`);
@@ -52,16 +50,25 @@ export class UsersService {
   }
 
   async updateUserInfo(id: number, updateUserDto: UpdateUserDto) {
-    return 'not implemented yet';
+    const user = await this.findOne(id);
+
+    user.email = updateUserDto.email ?? user.email;
+    user.firstName = updateUserDto.firstName ?? user.firstName;
+    user.lastName = updateUserDto.lastName ?? user.lastName;
+    user.country = updateUserDto.country ?? user.country;
+    user.hobbies = updateUserDto.hobbies
+      ? await this.getHobbies(updateUserDto.hobbies)
+      : user.hobbies;
+
+    return this.usersRepository.save(user);
   }
 
   async addFeedback(
     userId: number,
     currentUserId: number,
     feedback: CreateFeedback,
-  ): Promise<void> {
+  ): Promise<FeedBack> {
     const user = await this.findOne(userId);
-
     const currentUser = await this.findOne(currentUserId);
 
     const newFeedback = this.feedbackRepository.create(feedback);
@@ -69,13 +76,26 @@ export class UsersService {
     newFeedback.toUser = user;
 
     user.feedbacks.push(newFeedback);
-
     currentUser.writtenFeedbacks.push(newFeedback);
 
     await this.usersRepository.save(user);
     await this.usersRepository.save(currentUser);
-    await this.feedbackRepository.save(newFeedback);
+    return await this.feedbackRepository.save(newFeedback);
+  }
 
-    return null;
+  async getHobbies(hobbies: Hobby[]): Promise<Hobby[]> {
+    return Promise.all(
+      hobbies.map(async (data) => {
+        const hobby = await this.hobbyRepository.findOne({
+          where: { hobby: data.hobby },
+        });
+        return (
+          hobby ||
+          this.hobbyRepository.save(
+            Object.assign(new Hobby(), { hobby: data.hobby }),
+          )
+        );
+      }),
+    );
   }
 }
