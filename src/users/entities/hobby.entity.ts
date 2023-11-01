@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Advert } from './advert.entity';
 import { Exclude } from 'class-transformer';
+import { User } from 'src/users/entities/user.entity';
 
-@Entity()
+@Entity({ name: 'hobby' })
 export class Hobby {
   @PrimaryGeneratedColumn()
   @Exclude()
@@ -11,6 +11,6 @@ export class Hobby {
   @Column({ unique: true })
   hobby: string;
 
-  @ManyToMany(() => Advert, (advert) => advert.hobbies)
-  advert: Advert;
+  @ManyToMany(() => User, (user) => user.hobbies)
+  user: User[];
 }
