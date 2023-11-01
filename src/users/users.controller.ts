@@ -15,6 +15,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { CreateFeedback } from './dto/add-feedback.dto';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { FeedBack } from './entities/feedback.entity';
+import { User } from './entities/user.entity';
+import { UpdateResult } from 'typeorm';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -24,17 +27,20 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOne(id);
   }
 
   @Patch()
-  update(@GetCurrentUserId() id: number, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @GetCurrentUserId() id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
     return this.usersService.updateUserInfo(id, updateUserDto);
   }
 
   @Delete()
-  remove(@GetCurrentUserId() id: number) {
+  remove(@GetCurrentUserId() id: number): Promise<UpdateResult> {
     return this.usersService.softUserDelete(id);
   }
 
@@ -44,7 +50,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) userId: number,
     @GetCurrentUserId() currentUserId: number,
     @Body() feedback: CreateFeedback,
-  ): Promise<void> {
+  ): Promise<FeedBack> {
     return this.usersService.addFeedback(userId, currentUserId, feedback);
   }
 }
