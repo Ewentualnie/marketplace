@@ -10,8 +10,10 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { FeedBack } from './feedback.entity';
+import { Hobby } from './hobby.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -26,13 +28,22 @@ export class User {
   hashedPass: string;
 
   @Column()
-  name: string;
+  firstName: string;
+
+  @Column()
+  lastName: string;
 
   @Column({ default: Role.User })
   role: Role;
 
   @Column({ default: false })
   isDeleted: boolean;
+
+  @UpdateDateColumn()
+  lastVisit: Date;
+
+  @Column()
+  country: string;
 
   @Column({ nullable: true })
   @Exclude()
@@ -41,6 +52,10 @@ export class User {
   @OneToOne(() => Advert)
   @JoinColumn()
   advert: Advert;
+
+  @ManyToMany(() => Hobby, (hobby) => hobby.user, { cascade: true })
+  @JoinTable()
+  hobbies: Hobby[];
 
   @OneToMany(() => FeedBack, (feedback) => feedback.toUser, { cascade: true })
   @JoinColumn({ name: 'toUserId' })
