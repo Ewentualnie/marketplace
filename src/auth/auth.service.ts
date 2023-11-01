@@ -95,7 +95,7 @@ export class AuthService {
       adminUser.hashedPass = await this.hashData(
         process.env.ADMIN_PASS || 'passW0rd',
       );
-      adminUser.name = 'ADMIN';
+      adminUser.firstName = 'ADMIN';
       adminUser.role = Role.Admin;
 
       const admin = await this.usersRepository.save(adminUser);
