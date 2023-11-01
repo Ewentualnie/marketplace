@@ -11,7 +11,7 @@ import { UpdateAdvertDto } from './dto/update-advert.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Advert } from './entities/advert.entity';
 import { Repository } from 'typeorm';
-import { Hobby } from './entities/hobby.entity';
+import { Hobby } from '../users/entities/hobby.entity';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
@@ -37,7 +37,7 @@ export class AdvertService {
     try {
       const newAdvert = this.advertRepository.create(createAdvertDto);
       newAdvert.user = user;
-      newAdvert.hobbies = await this.getHobbies(createAdvertDto.hobbies);
+      // newAdvert.hobbies = await this.getHobbies(createAdvertDto.hobbies);
       newAdvert.spokenLanguages = await this.getLanguages(
         createAdvertDto.spokenLanguages,
       );
@@ -63,7 +63,7 @@ export class AdvertService {
 
   async findAllAdverts() {
     return await this.advertRepository.find({
-      relations: ['user', 'hobbies', 'spokenLanguages', 'teachingLanguages'],
+      relations: ['user', 'spokenLanguages', 'teachingLanguages'],
     });
   }
 
@@ -71,7 +71,7 @@ export class AdvertService {
     const advert = (
       await this.advertRepository.find({
         where: { id },
-        relations: ['user', 'hobbies', 'spokenLanguages', 'teachingLanguages'],
+        relations: ['user', 'spokenLanguages', 'teachingLanguages'],
         take: 1,
       })
     )[0];
