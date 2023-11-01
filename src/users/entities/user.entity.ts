@@ -30,7 +30,7 @@ export class User {
   @Column()
   firstName: string;
 
-  @Column()
+  @Column({ nullable: true })
   lastName: string;
 
   @Column({ default: Role.User })
@@ -42,7 +42,7 @@ export class User {
   @UpdateDateColumn()
   lastVisit: Date;
 
-  @Column()
+  @Column({ nullable: true })
   country: string;
 
   @Column({ nullable: true })
@@ -54,7 +54,7 @@ export class User {
   advert: Advert;
 
   @ManyToMany(() => Hobby, (hobby) => hobby.user, { cascade: true })
-  @JoinTable()
+  @JoinTable({ name: 'user_hobbies' })
   hobbies: Hobby[];
 
   @OneToMany(() => FeedBack, (feedback) => feedback.toUser, { cascade: true })

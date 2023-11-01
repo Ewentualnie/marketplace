@@ -19,5 +19,5 @@ export class CreateUserDto {
   @ApiProperty({ example: 'Boris' })
   @IsNotEmpty()
   @IsValidName()
-  name: string;
+  firstName: string;
 }

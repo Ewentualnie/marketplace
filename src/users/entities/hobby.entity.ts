@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { User } from 'src/users/entities/user.entity';
 
@@ -12,5 +18,6 @@ export class Hobby {
   hobby: string;
 
   @ManyToMany(() => User, (user) => user.hobbies)
+  @JoinTable({ name: 'users_hobby' })
   user: User[];
 }
