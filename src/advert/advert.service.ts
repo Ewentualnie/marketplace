@@ -11,7 +11,6 @@ import { UpdateAdvertDto } from './dto/update-advert.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Advert } from './entities/advert.entity';
 import { Repository } from 'typeorm';
-import { Hobby } from './entities/hobby.entity';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
@@ -21,7 +20,6 @@ import { Language } from './entities/language.entity';
 export class AdvertService {
   constructor(
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
-    @InjectRepository(Hobby) private hobbyRepository: Repository<Hobby>,
     @InjectRepository(Language)
     private languageRepository: Repository<Language>,
     private userService: UsersService,
@@ -37,7 +35,6 @@ export class AdvertService {
     try {
       const newAdvert = this.advertRepository.create(createAdvertDto);
       newAdvert.user = user;
-      newAdvert.hobbies = await this.getHobbies(createAdvertDto.hobbies);
       newAdvert.spokenLanguages = await this.getLanguages(
         createAdvertDto.spokenLanguages,
       );
@@ -63,7 +60,7 @@ export class AdvertService {
 
   async findAllAdverts() {
     return await this.advertRepository.find({
-      relations: ['user', 'hobbies', 'spokenLanguages', 'teachingLanguages'],
+      relations: ['user', 'spokenLanguages', 'teachingLanguages'],
     });
   }
 
@@ -71,7 +68,7 @@ export class AdvertService {
     const advert = (
       await this.advertRepository.find({
         where: { id },
-        relations: ['user', 'hobbies', 'spokenLanguages', 'teachingLanguages'],
+        relations: ['user', 'spokenLanguages', 'teachingLanguages'],
         take: 1,
       })
     )[0];
@@ -113,22 +110,6 @@ export class AdvertService {
     return await this.advertRepository.update(id, {
       isDeleted: false,
     });
-  }
-
-  async getHobbies(hobbies: Hobby[]): Promise<Hobby[]> {
-    return Promise.all(
-      hobbies.map(async (data) => {
-        const hobby = await this.hobbyRepository.findOne({
-          where: { hobby: data.hobby },
-        });
-        return (
-          hobby ||
-          this.hobbyRepository.save(
-            Object.assign(new Hobby(), { hobby: data.hobby }),
-          )
-        );
-      }),
-    );
   }
 
   async getLanguages(languages: Language[]): Promise<Language[]> {

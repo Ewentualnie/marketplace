@@ -9,7 +9,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Hobby } from './hobby.entity';
 import { Language } from './language.entity';
 
 @Entity({ name: 'advert' })
@@ -21,7 +20,7 @@ export class Advert {
   price: number;
 
   @Column()
-  shortDescription: string;
+  description: string;
 
   @Column()
   imagePath: string;
@@ -31,10 +30,6 @@ export class Advert {
 
   @Column({ default: false })
   isDeleted: boolean;
-
-  @ManyToMany(() => Hobby, (hobby) => hobby.advert, { cascade: true })
-  @JoinTable()
-  hobbies: Hobby[];
 
   @OneToOne(() => User)
   @JoinColumn()
@@ -48,16 +43,3 @@ export class Advert {
   @JoinTable()
   teachingLanguages: Language[];
 }
-
-// @Column()
-// fullDescription: string; а воно треба взагалі?
-
-// @OneToMany()
-// avalLength: [ 30, 60, 120 ];
-// @OneToMany()
-// avalShedule: [ "monday" : [[13, 15.5], [18, 18.5]], "thursday" : [[8, 12]] ];
-// @OneToMany()
-// tagsSpecialization: [ "improvement", "basics" ];
-
-// @OneToMany()
-// tagsNativeLang: [ "ukrainian" ];

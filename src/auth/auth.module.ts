@@ -10,11 +10,12 @@ import { RtStrategy } from './strategies/rt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { FeedBack } from 'src/users/entities/feedback.entity';
+import { Hobby } from 'src/users/entities/hobby.entity';
 
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forFeature([User, FeedBack]),
+    TypeOrmModule.forFeature([User, FeedBack, Hobby]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: 'at-secret' }),
   ],
