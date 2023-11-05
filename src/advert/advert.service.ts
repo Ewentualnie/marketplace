@@ -52,7 +52,7 @@ export class AdvertService {
 
   async findAllowedAdverts(query: any) {
     return await this.advertRepository.find({
-      relations: ['user', 'hobbies', 'spokenLanguages', 'teachingLanguages'],
+      relations: ['user', 'spokenLanguages', 'teachingLanguages'],
       where: { isDeleted: false },
       // order,
     });
