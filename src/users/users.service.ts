@@ -25,7 +25,9 @@ export class UsersService {
   }
 
   async findAll() {
-    return await this.usersRepository.find({ relations: ['advert'] });
+    return await this.usersRepository.find({
+      relations: ['advert', 'feedbacks'],
+    });
   }
 
   async findOne(id: number) {
