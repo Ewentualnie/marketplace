@@ -58,6 +58,8 @@ export class UsersService {
     user.firstName = updateUserDto.firstName ?? user.firstName;
     user.lastName = updateUserDto.lastName ?? user.lastName;
     user.country = updateUserDto.country ?? user.country;
+    user.birthday = updateUserDto.birthday ?? user.birthday;
+    user.sex = updateUserDto.sex ?? user.sex;
     user.hobbies = updateUserDto.hobbies
       ? await this.getHobbies(updateUserDto.hobbies)
       : user.hobbies;
