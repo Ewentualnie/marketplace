@@ -73,13 +73,12 @@ export class UsersService {
 
     const newFeedback = this.feedbackRepository.create(feedback);
 
-    newFeedback.toUser = user;
-
     user.feedbacks.push(newFeedback);
     currentUser.writtenFeedbacks.push(newFeedback);
 
     await this.usersRepository.save(user);
     await this.usersRepository.save(currentUser);
+
     return await this.feedbackRepository.save(newFeedback);
   }
 
