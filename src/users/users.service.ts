@@ -75,6 +75,12 @@ export class UsersService {
     const user = await this.findOne(userId);
     const currentUser = await this.findOne(currentUserId);
 
+    if (user == currentUser) {
+      throw new BadRequestException(
+        'The user cannot write feedback to himself',
+      );
+    }
+
     const newFeedback = this.feedbackRepository.create(feedback);
 
     user.feedbacks.push(newFeedback);
