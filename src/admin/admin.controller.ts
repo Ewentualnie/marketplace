@@ -52,42 +52,39 @@ export class AdminController {
     },
   })
   @Get('users')
-  async getAll(@GetCurrentUser() user: User, @Query() query: any) {
-    return await this.adminService.getAll(user, query);
+  async getUsers() {
+    return await this.adminService.getUsers();
+  }
+
+  @Get('adverts')
+  async getAdverts() {
+    return await this.adminService.getAdverts();
   }
 
   @ApiOperation({ summary: 'Deleting user by admin' })
   @Delete('users/:id')
-  async deleteUser(
-    @GetCurrentUser() user: User,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    return await this.adminService.deleteUser(user, id);
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
+    return await this.adminService.deleteUser(id);
   }
 
   @Delete('adverts/:id')
-  async deleteAdvert(
-    @GetCurrentUser() user: User,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    return await this.adminService.deleteAdvert(user, id);
+  async deleteAdvert(@Param('id', ParseIntPipe) id: number) {
+    return await this.adminService.deleteAdvert(id);
   }
 
   @Patch('users/:id')
   async editUserInfo(
-    @GetCurrentUser() user: User,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.adminService.editUser(user, id, updateUserDto);
+    return await this.adminService.editUser(id, updateUserDto);
   }
 
   @Patch('adverts/:id')
   async editAdvertInfo(
-    @GetCurrentUser() user: User,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
   ) {
-    return await this.adminService.editAdvert(user, id, updateAdvertDto);
+    return await this.adminService.editAdvert(id, updateAdvertDto);
   }
 }
