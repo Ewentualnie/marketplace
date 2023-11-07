@@ -6,20 +6,12 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Query,
   UseGuards,
 } from '@nestjs/common';
-import { User } from 'src/users/entities/user.entity';
-import { GetCurrentUser } from 'src/utils/decorators/get-user.decorator';
 import { AdminService } from './admin.service';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { UpdateAdvertDto } from 'src/advert/dto/update-advert.dto';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Admin')
@@ -29,65 +21,39 @@ import { AuthGuard } from '@nestjs/passport';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  @ApiOperation({ summary: 'Get information of all users by admin' })
-  @ApiResponse({
-    status: 200,
-    description: 'List of users and adverts',
-    content: {
-      'application/json': {
-        example: {
-          adverts: [],
-          users: [
-            {
-              id: 1,
-              email: 'example@email.com',
-              name: 'Name',
-              role: 'role',
-              isDeleted: 'boolean',
-              advert: 'null',
-            },
-          ],
-        },
-      },
-    },
-  })
   @Get('users')
-  async getAll(@GetCurrentUser() user: User, @Query() query: any) {
-    return await this.adminService.getAll(user, query);
+  async getUsers() {
+    return await this.adminService.getUsers();
   }
 
-  @ApiOperation({ summary: 'Deleting user by admin' })
+  @Get('adverts')
+  async getAdverts() {
+    return await this.adminService.getAdverts();
+  }
+
   @Delete('users/:id')
-  async deleteUser(
-    @GetCurrentUser() user: User,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    return await this.adminService.deleteUser(user, id);
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
+    return await this.adminService.deleteUser(id);
   }
 
   @Delete('adverts/:id')
-  async deleteAdvert(
-    @GetCurrentUser() user: User,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    return await this.adminService.deleteAdvert(user, id);
+  async deleteAdvert(@Param('id', ParseIntPipe) id: number) {
+    return await this.adminService.deleteAdvert(id);
   }
 
   @Patch('users/:id')
   async editUserInfo(
-    @GetCurrentUser() user: User,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.adminService.editUser(user, id, updateUserDto);
+    return await this.adminService.editUser(id, updateUserDto);
   }
 
   @Patch('adverts/:id')
   async editAdvertInfo(
-    @GetCurrentUser() user: User,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
   ) {
-    return await this.adminService.editAdvert(user, id, updateAdvertDto);
+    return await this.adminService.editAdvert(id, updateAdvertDto);
   }
 }
