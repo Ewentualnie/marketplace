@@ -32,10 +32,14 @@ export class AdminService {
   }
 
   async editUser(userId: number, updateUserDto: UpdateUserDto) {
-    return 'not implement yet';
+    return this.usersService.updateUserInfo(userId, updateUserDto);
   }
 
-  async editAdvert(userId: number, updateAdvertDto: UpdateAdvertDto) {
-    return 'not implement yet';
+  async editAdvert(
+    id: number,
+    updateAdvertDto: UpdateAdvertDto,
+    userId: number,
+  ) {
+    return this.advertService.updateAdvertInfo(id, updateAdvertDto, userId);
   }
 }
