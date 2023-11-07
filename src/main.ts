@@ -4,6 +4,7 @@ import * as session from 'express-session';
 import { ValidationPipe } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { UtilsService } from './utils/utils.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -35,5 +36,8 @@ async function bootstrap() {
 
   const authService = app.get(AuthService);
   await authService.createAdminUser();
+
+  const ustilsService = app.get(UtilsService);
+  await ustilsService.createLanguages();
 }
 bootstrap();
