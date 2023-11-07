@@ -3,6 +3,7 @@ import { Advert } from 'src/advert/entities/advert.entity';
 import { Role } from 'src/utils/role.enum';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -14,6 +15,7 @@ import {
 } from 'typeorm';
 import { FeedBack } from './feedback.entity';
 import { Hobby } from './hobby.entity';
+import { IsDate, IsIn } from 'class-validator';
 
 @Entity({ name: 'user' })
 export class User {
@@ -41,6 +43,17 @@ export class User {
 
   @UpdateDateColumn()
   lastVisit: Date;
+
+  @CreateDateColumn()
+  registeredAt: Date;
+
+  @Column({ nullable: true })
+  @IsDate()
+  birthday: Date;
+
+  @Column({ nullable: true })
+  @IsIn(['male', 'female'])
+  sex: string;
 
   @Column({ nullable: true })
   country: string;

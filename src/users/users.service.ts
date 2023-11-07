@@ -25,7 +25,9 @@ export class UsersService {
   }
 
   async findAll() {
-    return await this.usersRepository.find({ relations: ['advert'] });
+    return await this.usersRepository.find({
+      relations: ['advert', 'feedbacks'],
+    });
   }
 
   async findOne(id: number) {
@@ -56,6 +58,8 @@ export class UsersService {
     user.firstName = updateUserDto.firstName ?? user.firstName;
     user.lastName = updateUserDto.lastName ?? user.lastName;
     user.country = updateUserDto.country ?? user.country;
+    user.birthday = updateUserDto.birthday ?? user.birthday;
+    user.sex = updateUserDto.sex ?? user.sex;
     user.hobbies = updateUserDto.hobbies
       ? await this.getHobbies(updateUserDto.hobbies)
       : user.hobbies;
@@ -70,6 +74,12 @@ export class UsersService {
   ): Promise<FeedBack> {
     const user = await this.findOne(userId);
     const currentUser = await this.findOne(currentUserId);
+
+    if (user == currentUser) {
+      throw new BadRequestException(
+        'The user cannot write feedback to himself',
+      );
+    }
 
     const newFeedback = this.feedbackRepository.create(feedback);
 
