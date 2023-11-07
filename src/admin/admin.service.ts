@@ -35,6 +35,10 @@ export class AdminService {
     return this.languageRepository.find();
   }
 
+  async getSpecializations() {
+    return 'not implemented yet';
+  }
+
   async deleteUser(id: number) {
     const user = await this.usersService.findOne(id);
     if (user.advert != null) {
