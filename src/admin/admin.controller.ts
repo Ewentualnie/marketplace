@@ -32,6 +32,11 @@ export class AdminController {
     return await this.adminService.getAdverts();
   }
 
+  @Get('feedbacks')
+  async getFeedbacks() {
+    return this.adminService.getFeedbacks();
+  }
+
   @Delete('users/:id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return await this.adminService.deleteUser(id);
