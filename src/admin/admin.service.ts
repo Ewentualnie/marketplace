@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { AdvertService } from 'src/advert/advert.service';
 import { UpdateAdvertDto } from 'src/advert/dto/update-advert.dto';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { FeedBack } from 'src/users/entities/feedback.entity';
 import { UsersService } from 'src/users/users.service';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AdminService {
   constructor(
     private readonly advertService: AdvertService,
     private readonly usersService: UsersService,
+    @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
   ) {}
 
   async getUsers() {
@@ -17,6 +21,12 @@ export class AdminService {
 
   async getAdverts() {
     return await this.advertService.findAllAdverts();
+  }
+
+  async getFeedbacks() {
+    return await this.feedbackRepository.find({
+      relations: ['toUser', 'fromUsers'],
+    });
   }
 
   async deleteUser(id: number) {
