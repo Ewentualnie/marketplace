@@ -43,11 +43,15 @@ export class AdvertController {
 
   @Patch(':id')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) advertId: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
     @GetCurrentUserId() userId: number,
   ) {
-    return this.advertService.update(id, updateAdvertDto, userId);
+    return this.advertService.updateAdvertInfo(
+      advertId,
+      updateAdvertDto,
+      userId,
+    );
   }
 
   @Delete()
