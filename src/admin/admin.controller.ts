@@ -42,6 +42,11 @@ export class AdminController {
     return this.adminService.getLanguages();
   }
 
+  @Get('specializations')
+  async getSpecializations() {
+    return this.adminService.getSpecializations();
+  }
+
   @Delete('users/:id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return await this.adminService.deleteUser(id);
