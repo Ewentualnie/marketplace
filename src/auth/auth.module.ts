@@ -11,17 +11,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { FeedBack } from 'src/users/entities/feedback.entity';
 import { Hobby } from 'src/users/entities/hobby.entity';
-import { UtilsService } from 'src/utils/utils.service';
-import { Language } from 'src/advert/entities/language.entity';
 
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forFeature([User, FeedBack, Hobby, Language]),
+    TypeOrmModule.forFeature([User, FeedBack, Hobby]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: 'at-secret' }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, AtStrategy, RtStrategy, UtilsService],
+  providers: [AuthService, UsersService, AtStrategy, RtStrategy],
 })
 export class AuthModule {}
