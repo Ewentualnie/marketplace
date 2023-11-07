@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { User } from './entities/user.entity';
+import { User } from '../models/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Advert } from 'src/advert/entities/advert.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { CreateFeedback } from './dto/add-feedback.dto';
-import { FeedBack } from './entities/feedback.entity';
-import { Hobby } from './entities/hobby.entity';
+import { UpdateUserDto } from '../models/dto/update-user.dto';
+import { CreateFeedback } from '../models/dto/add-feedback.dto';
+import { FeedBack } from '../models/feedback.entity';
+import { Hobby } from '../models/hobby.entity';
+import { Advert } from 'src/models/advert.entity';
 
 @Injectable()
 export class UsersService {

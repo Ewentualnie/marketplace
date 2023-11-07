@@ -10,20 +10,19 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginUserDto } from 'src/users/dto/login-user.dto';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { GetCurrentUserId } from '../utils/decorators/get-user-id.decorator';
 import { GetCurrentUser } from '../utils/decorators/get-user.decorator';
 import { RtGuard } from '../utils/guards/rt-guard';
 import { Public } from '../utils/decorators/public.decorator';
 import { UserRes } from 'src/types/user-response';
 import {
-  ApiHeader,
   ApiOperation,
   ApiResponse,
   ApiTags,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/models/dto/create-user.dto';
+import { LoginUserDto } from 'src/models/dto/login-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')

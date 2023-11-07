@@ -9,8 +9,8 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AtGuard } from './utils/guards/at-guard';
 import { AdminModule } from './admin/admin.module';
 import { dataSourceOptionst } from './database/database-config';
-import { Language } from './advert/entities/language.entity';
 import { UtilsService } from './utils/utils.service';
+import { Language } from './models/language.entity';
 
 @Module({
   imports: [

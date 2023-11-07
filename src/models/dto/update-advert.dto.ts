@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { Advert } from '../entities/advert.entity';
-import { Language } from '../entities/language.entity';
+import { Advert } from '../advert.entity';
+import { Language } from '../language.entity';
 
 export class UpdateAdvertDto extends PartialType(Advert) {
   description?: string;

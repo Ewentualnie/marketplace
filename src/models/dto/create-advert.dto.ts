@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsPositive, Max } from 'class-validator';
-import { Language } from '../entities/language.entity';
+import { Language } from '../language.entity';
 
 export class CreateAdvertDto {
   @IsNotEmpty()

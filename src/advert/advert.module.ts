@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { AdvertService } from './advert.service';
 import { AdvertController } from './advert.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Advert } from './entities/advert.entity';
-import { Hobby } from '../users/entities/hobby.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Hobby } from '../models/hobby.entity';
+import { User } from 'src/models/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { JwtModule } from '@nestjs/jwt';
-import { Language } from './entities/language.entity';
-import { FeedBack } from 'src/users/entities/feedback.entity';
+import { FeedBack } from 'src/models/feedback.entity';
+import { Advert } from 'src/models/advert.entity';
+import { Language } from 'src/models/language.entity';
 
 @Module({
   imports: [
