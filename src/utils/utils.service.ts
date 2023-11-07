@@ -11,8 +11,7 @@ export class UtilsService {
   ) {}
 
   async createLanguages() {
-    const count = await this.languageRepository.count();
-    if (count === 0) {
+    if ((await this.languageRepository.count()) === 0) {
       ['English', 'Ukrainian', 'German', 'Polish', 'French', 'Italian'].forEach(
         async (language) => {
           await this.languageRepository.save(
