@@ -15,6 +15,7 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { Language } from './entities/language.entity';
+import { Role } from 'src/utils/role.enum';
 
 @Injectable()
 export class AdvertService {
@@ -74,14 +75,32 @@ export class AdvertService {
     )[0];
 
     if (!advert) {
-      throw new NotFoundException('Advert not found');
+      throw new NotFoundException(`Advert with id "${id}" not found`);
     }
     return advert;
   }
 
-  async update(id: number, updateAdvertDto: UpdateAdvertDto, userId: number) {
-    // return await this.advertRepository.update(id, updateAdvertDto);
-    return 'not implement yet';
+  async updateAdvertInfo(
+    id: number,
+    updateAdvertDto: UpdateAdvertDto,
+    userId: number,
+  ) {
+    const advert = await this.findOne(id);
+    const user = await this.userService.findOne(userId);
+
+    if (user.advert == advert || user.role == Role.Admin) {
+      advert.price = updateAdvertDto.price ?? advert.price;
+      advert.description = updateAdvertDto.description ?? advert.description;
+      advert.imagePath = updateAdvertDto.imagePath ?? advert.imagePath;
+      advert.spokenLanguages = updateAdvertDto.spokenLanguages
+        ? await this.getLanguages(updateAdvertDto.spokenLanguages)
+        : advert.spokenLanguages;
+      advert.teachingLanguages = updateAdvertDto.teachingLanguages
+        ? await this.getLanguages(updateAdvertDto.teachingLanguages)
+        : advert.teachingLanguages;
+
+      return this.advertRepository.save(advert);
+    }
   }
 
   async removeOwnAdvert(userId: number) {
