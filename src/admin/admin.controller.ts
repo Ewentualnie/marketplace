@@ -37,6 +37,11 @@ export class AdminController {
     return this.adminService.getFeedbacks();
   }
 
+  @Get('languages')
+  async getLanguages() {
+    return this.adminService.getLanguages();
+  }
+
   @Delete('users/:id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return await this.adminService.deleteUser(id);
