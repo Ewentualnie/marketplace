@@ -11,16 +11,14 @@ export class UtilsService {
   ) {}
 
   async createLanguages() {
-    const count = await this.languageRepository.count();
-
-    if (count === 0) {
-      const languages = ['English', 'Ukrainian', 'German', 'Polish', 'Italian'];
-
-      for (const languageName of languages) {
-        const language = new Language();
-        language.language = languageName;
-        await this.languageRepository.save(language);
-      }
+    if ((await this.languageRepository.count()) === 0) {
+      ['English', 'Ukrainian', 'German', 'Polish', 'French', 'Italian'].forEach(
+        async (language) => {
+          await this.languageRepository.save(
+            Object.assign(new Language(), { language }),
+          );
+        },
+      );
     }
   }
 }

@@ -13,6 +13,7 @@ import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { UpdateAdvertDto } from 'src/advert/dto/update-advert.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -29,6 +30,21 @@ export class AdminController {
   @Get('adverts')
   async getAdverts() {
     return await this.adminService.getAdverts();
+  }
+
+  @Get('feedbacks')
+  async getFeedbacks() {
+    return this.adminService.getFeedbacks();
+  }
+
+  @Get('languages')
+  async getLanguages() {
+    return this.adminService.getLanguages();
+  }
+
+  @Get('specializations')
+  async getSpecializations() {
+    return this.adminService.getSpecializations();
   }
 
   @Delete('users/:id')
@@ -53,7 +69,8 @@ export class AdminController {
   async editAdvertInfo(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
+    @GetCurrentUserId() userId: number,
   ) {
-    return await this.adminService.editAdvert(id, updateAdvertDto);
+    return await this.adminService.editAdvert(id, updateAdvertDto, userId);
   }
 }
