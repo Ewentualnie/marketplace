@@ -6,15 +6,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateAdvertDto } from './dto/create-advert.dto';
-import { UpdateAdvertDto } from './dto/update-advert.dto';
+import { CreateAdvertDto } from '../models/dto/create-advert.dto';
+import { UpdateAdvertDto } from '../models/dto/update-advert.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Advert } from './entities/advert.entity';
+import { Advert } from 'src/models/advert.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/users/entities/user.entity';
-import { Language } from './entities/language.entity';
+import { User } from 'src/models/user.entity';
+import { Language } from 'src/models/language.entity';
 import { Role } from 'src/utils/role.enum';
 
 @Injectable()

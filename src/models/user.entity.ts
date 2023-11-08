@@ -1,5 +1,4 @@
 import { Exclude } from 'class-transformer';
-import { Advert } from 'src/advert/entities/advert.entity';
 import { Role } from 'src/utils/role.enum';
 import {
   Column,
@@ -16,6 +15,7 @@ import {
 import { FeedBack } from './feedback.entity';
 import { Hobby } from './hobby.entity';
 import { IsDate, IsIn } from 'class-validator';
+import { Advert } from './advert.entity';
 
 @Entity({ name: 'user' })
 export class User {

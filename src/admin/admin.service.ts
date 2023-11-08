@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdvertService } from 'src/advert/advert.service';
-import { UpdateAdvertDto } from 'src/advert/dto/update-advert.dto';
-import { Language } from 'src/advert/entities/language.entity';
-import { UpdateUserDto } from 'src/users/dto/update-user.dto';
-import { FeedBack } from 'src/users/entities/feedback.entity';
+import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
+import { UpdateUserDto } from 'src/models/dto/update-user.dto';
+import { FeedBack } from 'src/models/feedback.entity';
+import { Language } from 'src/models/language.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 

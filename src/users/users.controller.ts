@@ -11,12 +11,12 @@ import {
   Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from '../models/dto/update-user.dto';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
-import { CreateFeedback } from './dto/add-feedback.dto';
+import { CreateFeedback } from '../models/dto/add-feedback.dto';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { FeedBack } from './entities/feedback.entity';
-import { User } from './entities/user.entity';
+import { FeedBack } from '../models/feedback.entity';
+import { User } from '../models/user.entity';
 import { UpdateResult } from 'typeorm';
 
 @ApiTags('User')

@@ -9,11 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { UpdateUserDto } from 'src/users/dto/update-user.dto';
-import { UpdateAdvertDto } from 'src/advert/dto/update-advert.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
+import { UpdateUserDto } from 'src/models/dto/update-user.dto';
+import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth()

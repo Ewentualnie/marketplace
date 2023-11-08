@@ -10,8 +10,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { AdvertService } from './advert.service';
-import { CreateAdvertDto } from './dto/create-advert.dto';
-import { UpdateAdvertDto } from './dto/update-advert.dto';
+import { CreateAdvertDto } from '../models/dto/create-advert.dto';
+import { UpdateAdvertDto } from '../models/dto/update-advert.dto';
 import { Public } from 'src/utils/decorators/public.decorator';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { ApiTags } from '@nestjs/swagger';

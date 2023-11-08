@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/models/user.entity';
 
 @Entity({ name: 'hobby' })
 export class Hobby {
