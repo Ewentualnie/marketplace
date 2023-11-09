@@ -45,4 +45,12 @@ export class UtilsService {
       });
     }
   }
+
+  async getAllLanguages() {
+    return await this.languageRepository.find();
+  }
+
+  async getAllSpecializations() {
+    return await this.specializationRepository.find();
+  }
 }
