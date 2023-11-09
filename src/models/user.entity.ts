@@ -16,6 +16,7 @@ import { FeedBack } from './feedback.entity';
 import { Hobby } from './hobby.entity';
 import { IsDate, IsIn } from 'class-validator';
 import { Advert } from './advert.entity';
+import { Specialization } from './specialization.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -79,4 +80,10 @@ export class User {
   })
   @JoinTable({ name: 'user_feedback' })
   writtenFeedbacks: FeedBack[];
+
+  @ManyToMany(() => Specialization, (specialization) => specialization.users, {
+    cascade: true,
+  })
+  @JoinTable({ name: 'user_specializations' })
+  specializations: Specialization[];
 }
