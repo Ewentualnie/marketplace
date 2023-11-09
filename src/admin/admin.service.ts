@@ -4,8 +4,8 @@ import { AdvertService } from 'src/advert/advert.service';
 import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
 import { UpdateUserDto } from 'src/models/dto/update-user.dto';
 import { FeedBack } from 'src/models/feedback.entity';
-import { Language } from 'src/models/language.entity';
 import { UsersService } from 'src/users/users.service';
+import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -13,8 +13,8 @@ export class AdminService {
   constructor(
     private readonly advertService: AdvertService,
     private readonly usersService: UsersService,
+    private readonly utilsService: UtilsService,
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
-    @InjectRepository(Language) public languageRepository: Repository<Language>,
   ) {}
 
   async getUsers() {
@@ -32,11 +32,11 @@ export class AdminService {
   }
 
   async getLanguages() {
-    return this.languageRepository.find();
+    return this.utilsService.getAllLanguages();
   }
 
   async getSpecializations() {
-    return 'not implemented yet';
+    return this.utilsService.getAllSpecializations();
   }
 
   async deleteUser(id: number) {
