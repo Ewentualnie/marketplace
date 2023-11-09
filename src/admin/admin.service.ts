@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdvertService } from 'src/advert/advert.service';
+import { LanguageDto } from 'src/models/dto/add-language.dto';
 import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
 import { UpdateUserDto } from 'src/models/dto/update-user.dto';
 import { FeedBack } from 'src/models/feedback.entity';
@@ -61,5 +62,9 @@ export class AdminService {
     userId: number,
   ) {
     return this.advertService.updateAdvertInfo(id, updateAdvertDto, userId);
+  }
+
+  async addLanguage(newLanguage: LanguageDto) {
+    return await this.utilsService.addLanguage(newLanguage);
   }
 }
