@@ -38,6 +38,7 @@ async function bootstrap() {
   await authService.createAdminUser();
 
   const ustilsService = app.get(UtilsService);
-  await ustilsService.createLanguages();
+  await ustilsService.initializeLanguages();
+  await ustilsService.initializeSpecializations();
 }
 bootstrap();
