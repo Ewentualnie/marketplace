@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
+import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 import { Hobby } from 'src/models/hobby.entity';
 import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
@@ -57,5 +58,9 @@ export class UtilsService {
 
   async addLanguage(newLanguage: LanguageDto) {
     return this.languageRepository.save(newLanguage);
+  }
+
+  async addSpecialization(newSpecialization: SpecializationDto) {
+    return this.specializationRepository.save(newSpecialization);
   }
 }

@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdvertService } from 'src/advert/advert.service';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
+import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
 import { UpdateUserDto } from 'src/models/dto/update-user.dto';
 import { FeedBack } from 'src/models/feedback.entity';
+import { Specialization } from 'src/models/specialization.entity';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
@@ -66,5 +68,9 @@ export class AdminService {
 
   async addLanguage(newLanguage: LanguageDto) {
     return await this.utilsService.addLanguage(newLanguage);
+  }
+
+  async addSpecialization(newSpecialization: SpecializationDto) {
+    return await this.utilsService.addSpecialization(newSpecialization);
   }
 }
