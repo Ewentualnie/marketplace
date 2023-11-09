@@ -11,15 +11,30 @@ import { FeedBack } from 'src/models/feedback.entity';
 import { JwtAdminStrategy } from './strategies/admin.jwt.strategy';
 import { Advert } from 'src/models/advert.entity';
 import { Language } from 'src/models/language.entity';
+import { UtilsService } from 'src/utils/utils.service';
+import { Specialization } from 'src/models/specialization.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Advert, Hobby, Language, FeedBack]),
+    TypeOrmModule.forFeature([
+      User,
+      Advert,
+      Hobby,
+      Language,
+      FeedBack,
+      Specialization,
+    ]),
     JwtModule.register({
       secret: 'at-secret',
     }),
   ],
   controllers: [AdminController],
-  providers: [AdvertService, UsersService, AdminService, JwtAdminStrategy],
+  providers: [
+    AdvertService,
+    UsersService,
+    AdminService,
+    JwtAdminStrategy,
+    UtilsService,
+  ],
 })
 export class AdminModule {}
