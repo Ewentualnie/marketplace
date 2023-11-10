@@ -14,9 +14,10 @@ import { CreateAdvertDto } from '../models/dto/create-advert.dto';
 import { UpdateAdvertDto } from '../models/dto/update-advert.dto';
 import { Public } from 'src/utils/decorators/public.decorator';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Adverts')
+@ApiBearerAuth()
 @Controller('adverts')
 export class AdvertController {
   constructor(private readonly advertService: AdvertService) {}

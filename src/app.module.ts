@@ -11,15 +11,19 @@ import { AdminModule } from './admin/admin.module';
 import { dataSourceOptionst } from './database/database-config';
 import { UtilsService } from './utils/utils.service';
 import { Language } from './models/language.entity';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: ['sql.env'] }),
     TypeOrmModule.forFeature([Language]),
     TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,
     AdvertModule,
     AuthModule,
     AdminModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [
