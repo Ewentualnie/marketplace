@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateAdvertDto } from '../models/dto/create-advert.dto';
@@ -16,6 +17,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/models/user.entity';
 import { Language } from 'src/models/language.entity';
 import { Role } from 'src/utils/role.enum';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class AdvertService {
@@ -25,16 +27,26 @@ export class AdvertService {
     private languageRepository: Repository<Language>,
     private userService: UsersService,
     public jwtService: JwtService,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
-  async create(createAdvertDto: CreateAdvertDto, userId: number) {
+  async create(
+    createAdvertDto: CreateAdvertDto,
+    userId: number,
+    file: Express.Multer.File,
+  ) {
+    const { secure_url } = await this.cloudinaryService.uploadFile(file);
+
     const user = await this.getCurrentUser(userId);
 
     if (user.advert != null) {
       throw new ConflictException(`User cannot have more then one advert.`);
     }
     try {
-      const newAdvert = this.advertRepository.create(createAdvertDto);
+      const newAdvert = this.advertRepository.create({
+        ...createAdvertDto,
+        imagePath: secure_url,
+      });
       newAdvert.user = user;
       newAdvert.spokenLanguages = await this.getLanguages(
         createAdvertDto.spokenLanguages,
@@ -47,7 +59,9 @@ export class AdvertService {
       this.userService.updateAdvert(user.id, newAdvert);
       return savedAdvert;
     } catch (err) {
-      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException(
+        err.message || 'Internal Server Error',
+      );
     }
   }
 

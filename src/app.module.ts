@@ -19,7 +19,7 @@ import { Specialization } from './models/specialization.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: ['sql.env'] }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: ['cloudinary.env'] }),
     TypeOrmModule.forFeature([Language, Hobby, Specialization]),
     TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,
