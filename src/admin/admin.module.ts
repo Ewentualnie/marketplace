@@ -13,6 +13,7 @@ import { Advert } from 'src/models/advert.entity';
 import { Language } from 'src/models/language.entity';
 import { UtilsService } from 'src/utils/utils.service';
 import { Specialization } from 'src/models/specialization.entity';
+import { CloudinaryService } from 'src/utils/cloudinary.service';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { Specialization } from 'src/models/specialization.entity';
     AdminService,
     JwtAdminStrategy,
     UtilsService,
+    CloudinaryService,
   ],
 })
 export class AdminModule {}
