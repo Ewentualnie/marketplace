@@ -12,10 +12,19 @@ import { JwtAdminStrategy } from './strategies/admin.jwt.strategy';
 import { Advert } from 'src/models/advert.entity';
 import { Language } from 'src/models/language.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { UtilsService } from 'src/utils/utils.service';
+import { Specialization } from 'src/models/specialization.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Advert, Hobby, Language, FeedBack]),
+    TypeOrmModule.forFeature([
+      User,
+      Advert,
+      Hobby,
+      Language,
+      FeedBack,
+      Specialization,
+    ]),
     JwtModule.register({
       secret: 'at-secret',
     }),
@@ -27,6 +36,7 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
     AdminService,
     JwtAdminStrategy,
     CloudinaryService,
+    UtilsService,
   ],
 })
 export class AdminModule {}

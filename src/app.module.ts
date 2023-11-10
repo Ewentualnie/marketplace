@@ -14,10 +14,13 @@ import { Language } from './models/language.entity';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ConfigModule } from '@nestjs/config';
 
+import { Hobby } from './models/hobby.entity';
+import { Specialization } from './models/specialization.entity';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['sql.env'] }),
-    TypeOrmModule.forFeature([Language]),
+    TypeOrmModule.forFeature([Language, Hobby, Specialization]),
     TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,
     AdvertModule,

@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
@@ -14,6 +15,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { UpdateUserDto } from 'src/models/dto/update-user.dto';
 import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
+import { LanguageDto } from 'src/models/dto/add-language.dto';
+import { Specialization } from 'src/models/specialization.entity';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -72,5 +75,15 @@ export class AdminController {
     @GetCurrentUserId() userId: number,
   ) {
     return await this.adminService.editAdvert(id, updateAdvertDto, userId);
+  }
+
+  @Post('languages')
+  async addLanguage(@Body() language: LanguageDto) {
+    return this.adminService.addLanguage(language);
+  }
+
+  @Post('specializations')
+  async addSpecialization(@Body() specialization: Specialization) {
+    return this.adminService.addSpecialization(specialization);
   }
 }
