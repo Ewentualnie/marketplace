@@ -16,6 +16,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/models/user.entity';
 import { Language } from 'src/models/language.entity';
 import { Role } from 'src/utils/role.enum';
+import { CloudinaryService } from 'src/utils/cloudinary.service';
 
 @Injectable()
 export class AdvertService {
@@ -25,16 +26,27 @@ export class AdvertService {
     private languageRepository: Repository<Language>,
     private userService: UsersService,
     public jwtService: JwtService,
+    public cloudinaryService: CloudinaryService,
   ) {}
 
-  async create(createAdvertDto: CreateAdvertDto, userId: number) {
+  async create(
+    createAdvertDto: CreateAdvertDto,
+    userId: number,
+    file: Express.Multer.File,
+  ) {
     const user = await this.getCurrentUser(userId);
 
     if (user.advert != null) {
       throw new ConflictException(`User cannot have more then one advert.`);
     }
+
     try {
-      const newAdvert = this.advertRepository.create(createAdvertDto);
+      const { url } = await this.cloudinaryService.uploadFile(file);
+
+      const newAdvert = this.advertRepository.create({
+        ...createAdvertDto,
+        imagePath: url,
+      });
       newAdvert.user = user;
       newAdvert.spokenLanguages = await this.getLanguages(
         createAdvertDto.spokenLanguages,
