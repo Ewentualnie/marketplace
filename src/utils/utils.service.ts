@@ -42,7 +42,7 @@ export class UtilsService {
         'Для IT',
       ].forEach(async (specialization) => {
         await this.specializationRepository.save(
-          Object.assign(new Language(), { specialization }),
+          Object.assign(new Specialization(), { specialization }),
         );
       });
     }
