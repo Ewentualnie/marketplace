@@ -7,6 +7,7 @@ import { CreateFeedback } from '../models/dto/add-feedback.dto';
 import { FeedBack } from '../models/feedback.entity';
 import { Hobby } from '../models/hobby.entity';
 import { Advert } from 'src/models/advert.entity';
+import { CloudinaryService } from 'src/utils/cloudinary.service';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,7 @@ export class UsersService {
     @InjectRepository(User) public usersRepository: Repository<User>,
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
     @InjectRepository(Hobby) private hobbyRepository: Repository<Hobby>,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   async findByEmail(email: string) {
@@ -51,7 +53,11 @@ export class UsersService {
     return await this.usersRepository.remove((await this.findOne(id))[0]);
   }
 
-  async updateUserInfo(id: number, updateUserDto: UpdateUserDto) {
+  async updateUserInfo(
+    id: number,
+    updateUserDto: UpdateUserDto,
+    photo?: Express.Multer.File,
+  ) {
     const user = await this.findOne(id);
 
     user.email = updateUserDto.email ?? user.email;
@@ -63,6 +69,13 @@ export class UsersService {
     user.hobbies = updateUserDto.hobbies
       ? await this.getHobbies(updateUserDto.hobbies)
       : user.hobbies;
+
+    if (photo) {
+      if (user.photoPath) {
+        this.cloudinaryService.deleteFile(user.photoPath);
+      }
+      user.photoPath = (await this.cloudinaryService.uploadFile(photo)).url;
+    }
 
     return this.usersRepository.save(user);
   }

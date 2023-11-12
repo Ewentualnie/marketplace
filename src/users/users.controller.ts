@@ -9,6 +9,8 @@ import {
   ValidationPipe,
   ParseIntPipe,
   Post,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
@@ -18,6 +20,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { FeedBack } from '../models/feedback.entity';
 import { User } from '../models/user.entity';
 import { UpdateResult } from 'typeorm';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -32,11 +35,13 @@ export class UsersController {
   }
 
   @Patch()
+  @UseInterceptors(FilesInterceptor('photo'))
   update(
+    @UploadedFiles() files: Express.Multer.File,
     @GetCurrentUserId() id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return this.usersService.updateUserInfo(id, updateUserDto);
+    return this.usersService.updateUserInfo(id, updateUserDto, files[0]);
   }
 
   @Delete()
