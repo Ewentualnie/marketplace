@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { FeedBack } from 'src/models/feedback.entity';
 import { Hobby } from 'src/models/hobby.entity';
+import { CloudinaryService } from 'src/utils/cloudinary.service';
 
 @Module({
   imports: [
@@ -20,6 +21,12 @@ import { Hobby } from 'src/models/hobby.entity';
     JwtModule.register({ secret: 'at-secret' }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, AtStrategy, RtStrategy],
+  providers: [
+    AuthService,
+    UsersService,
+    AtStrategy,
+    RtStrategy,
+    CloudinaryService,
+  ],
 })
 export class AuthModule {}

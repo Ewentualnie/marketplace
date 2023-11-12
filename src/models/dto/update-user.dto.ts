@@ -10,4 +10,5 @@ export class UpdateUserDto extends PartialType(User) {
   birthday?: Date;
   sex?: string;
   hobbies?: Hobby[];
+  photo?: File;
 }
