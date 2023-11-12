@@ -59,6 +59,9 @@ export class User {
   @Column({ nullable: true })
   country: string;
 
+  @Column({ name: 'photo', nullable: true })
+  photoPath: string;
+
   @Column({ nullable: true })
   @Exclude()
   refreshToken?: string;
