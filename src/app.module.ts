@@ -13,6 +13,7 @@ import { UtilsService } from './utils/utils.service';
 import { Language } from './models/language.entity';
 import { Hobby } from './models/hobby.entity';
 import { Specialization } from './models/specialization.entity';
+import { CloudinaryService } from './utils/cloudinary.service';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { Specialization } from './models/specialization.entity';
   controllers: [AppController],
   providers: [
     UtilsService,
+    CloudinaryService,
     AppService,
     {
       provide: APP_INTERCEPTOR,
