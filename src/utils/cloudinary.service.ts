@@ -9,7 +9,11 @@ import streamifier = require('streamifier');
 @Injectable()
 export class CloudinaryService {
   constructor() {
-    this.cloudinaryConfig();
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
   }
 
   async uploadFile(file: Express.Multer.File) {
@@ -29,17 +33,12 @@ export class CloudinaryService {
     );
   }
 
-  async deleteFile(filePath: string) {
-    return await cloudinary.uploader.destroy(
-      filePath.match(/\/([^\/?#]+)\.[^\/]*$/)[1],
-    );
-  }
-
-  async cloudinaryConfig() {
-    return cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-    });
+  deleteFile(filePath: string) {
+    const fileId = filePath.match(/\/([^\/?#]+)\.[^\/]*$/)[1];
+    cloudinary.uploader
+      .destroy(fileId)
+      .then((res) =>
+        console.log(`The result of deleting file ${fileId} is ${res?.result}`),
+      );
   }
 }
