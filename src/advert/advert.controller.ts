@@ -8,6 +8,8 @@ import {
   Delete,
   ParseIntPipe,
   Query,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { AdvertService } from './advert.service';
 import { CreateAdvertDto } from '../models/dto/create-advert.dto';
@@ -15,6 +17,7 @@ import { UpdateAdvertDto } from '../models/dto/update-advert.dto';
 import { Public } from 'src/utils/decorators/public.decorator';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Adverts')
 @Controller('adverts')
@@ -22,11 +25,13 @@ export class AdvertController {
   constructor(private readonly advertService: AdvertService) {}
 
   @Post('')
+  @UseInterceptors(FilesInterceptor('image'))
   create(
+    @UploadedFiles() files: Express.Multer.File,
     @Body() createAdvertDto: CreateAdvertDto,
     @GetCurrentUserId() userId: number,
   ) {
-    return this.advertService.create(createAdvertDto, userId);
+    return this.advertService.create(createAdvertDto, userId, files[0]);
   }
 
   @Public()
