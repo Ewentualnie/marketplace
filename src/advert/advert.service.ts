@@ -96,11 +96,12 @@ export class AdvertService {
     id: number,
     updateAdvertDto: UpdateAdvertDto,
     userId: number,
+    file?: Express.Multer.File,
   ) {
     const advert = await this.findOne(id);
     const user = await this.userService.findOne(userId);
 
-    if (user.advert == advert || user.role == Role.Admin) {
+    if (user.advert.id == advert.id || user.role == Role.Admin) {
       advert.price = updateAdvertDto.price ?? advert.price;
       advert.description = updateAdvertDto.description ?? advert.description;
       advert.imagePath = updateAdvertDto.imagePath ?? advert.imagePath;
@@ -110,6 +111,13 @@ export class AdvertService {
       advert.teachingLanguages = updateAdvertDto.teachingLanguages
         ? await this.getLanguages(updateAdvertDto.teachingLanguages)
         : advert.teachingLanguages;
+
+      if (file) {
+        if (advert.imagePath) {
+          this.cloudinaryService.deleteFile(advert.imagePath);
+        }
+        advert.imagePath = (await this.cloudinaryService.uploadFile(file)).url;
+      }
 
       return this.advertRepository.save(advert);
     }
