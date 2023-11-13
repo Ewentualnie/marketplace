@@ -47,7 +47,9 @@ export class AdvertController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FilesInterceptor('image'))
   update(
+    @UploadedFiles() files: Express.Multer.File,
     @Param('id', ParseIntPipe) advertId: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
     @GetCurrentUserId() userId: number,
@@ -56,6 +58,7 @@ export class AdvertController {
       advertId,
       updateAdvertDto,
       userId,
+      files[0],
     );
   }
 
