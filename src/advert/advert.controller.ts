@@ -10,6 +10,9 @@ import {
   Query,
   UseInterceptors,
   UploadedFiles,
+  ParseFilePipe,
+  FileTypeValidator,
+  MaxFileSizeValidator,
 } from '@nestjs/common';
 import { AdvertService } from './advert.service';
 import { CreateAdvertDto } from '../models/dto/create-advert.dto';
@@ -27,7 +30,15 @@ export class AdvertController {
   @Post('')
   @UseInterceptors(FilesInterceptor('image'))
   create(
-    @UploadedFiles() files: Express.Multer.File,
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 10 }),
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+        ],
+      }),
+    )
+    files: Express.Multer.File,
     @Body() createAdvertDto: CreateAdvertDto,
     @GetCurrentUserId() userId: number,
   ) {
@@ -49,7 +60,15 @@ export class AdvertController {
   @Patch(':id')
   @UseInterceptors(FilesInterceptor('image'))
   update(
-    @UploadedFiles() files: Express.Multer.File,
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 10 }),
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+        ],
+      }),
+    )
+    files: Express.Multer.File,
     @Param('id', ParseIntPipe) advertId: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
     @GetCurrentUserId() userId: number,
