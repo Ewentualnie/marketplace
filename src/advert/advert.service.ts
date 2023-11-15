@@ -104,7 +104,6 @@ export class AdvertService {
     if (user.advert.id == advert.id || user.role == Role.Admin) {
       advert.price = updateAdvertDto.price ?? advert.price;
       advert.description = updateAdvertDto.description ?? advert.description;
-      advert.imagePath = updateAdvertDto.imagePath ?? advert.imagePath;
       advert.spokenLanguages = updateAdvertDto.spokenLanguages
         ? await this.getLanguages(updateAdvertDto.spokenLanguages)
         : advert.spokenLanguages;
