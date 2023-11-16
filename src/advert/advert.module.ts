@@ -10,13 +10,24 @@ import { FeedBack } from 'src/models/feedback.entity';
 import { Advert } from 'src/models/advert.entity';
 import { Language } from 'src/models/language.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
+import { UtilsService } from 'src/utils/utils.service';
+import { Specialization } from 'src/models/specialization.entity';
+import { Country } from 'src/models/country.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Advert, Hobby, Language, FeedBack]),
+    TypeOrmModule.forFeature([
+      User,
+      Advert,
+      Hobby,
+      Language,
+      FeedBack,
+      Specialization,
+      Country,
+    ]),
     JwtModule,
   ],
   controllers: [AdvertController],
-  providers: [AdvertService, UsersService, CloudinaryService],
+  providers: [AdvertService, UsersService, CloudinaryService, UtilsService],
 })
 export class AdvertModule {}

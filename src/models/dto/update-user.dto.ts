@@ -6,7 +6,7 @@ export class UpdateUserDto extends PartialType(User) {
   email?: string;
   firstName?: string;
   lastName?: string;
-  country?: string;
+  countryName?: string;
   birthday?: Date;
   sex?: string;
   hobbies?: Hobby[];

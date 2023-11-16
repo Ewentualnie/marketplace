@@ -12,11 +12,22 @@ import { PassportModule } from '@nestjs/passport';
 import { FeedBack } from 'src/models/feedback.entity';
 import { Hobby } from 'src/models/hobby.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
+import { UtilsService } from 'src/utils/utils.service';
+import { Language } from 'src/models/language.entity';
+import { Specialization } from 'src/models/specialization.entity';
+import { Country } from 'src/models/country.entity';
 
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forFeature([User, FeedBack, Hobby]),
+    TypeOrmModule.forFeature([
+      User,
+      FeedBack,
+      Hobby,
+      Language,
+      Specialization,
+      Country,
+    ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: 'at-secret' }),
   ],
@@ -27,6 +38,7 @@ import { CloudinaryService } from 'src/utils/cloudinary.service';
     AtStrategy,
     RtStrategy,
     CloudinaryService,
+    UtilsService,
   ],
 })
 export class AuthModule {}

@@ -7,6 +7,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -17,6 +18,7 @@ import { Hobby } from './hobby.entity';
 import { IsDate, IsIn } from 'class-validator';
 import { Advert } from './advert.entity';
 import { Specialization } from './specialization.entity';
+import { Country } from './country.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -56,8 +58,9 @@ export class User {
   @IsIn(['male', 'female'])
   sex: string;
 
-  @Column({ nullable: true })
-  country: string;
+  @ManyToOne(() => Country, (country) => country.user)
+  @JoinColumn({ name: 'country' })
+  country: Country;
 
   @Column({ name: 'photo', nullable: true })
   photoPath: string;

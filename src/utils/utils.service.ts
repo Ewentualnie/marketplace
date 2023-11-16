@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Country } from 'src/models/country.entity';
+import { CountryDto } from 'src/models/dto/add-country.dto';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
 import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 import { Hobby } from 'src/models/hobby.entity';
@@ -16,6 +18,8 @@ export class UtilsService {
     private hobbyRepository: Repository<Hobby>,
     @InjectRepository(Specialization)
     private specializationRepository: Repository<Specialization>,
+    @InjectRepository(Country)
+    private countryRepository: Repository<Country>,
   ) {}
 
   async initializeLanguages() {
@@ -77,6 +81,25 @@ export class UtilsService {
     }
   }
 
+  async initializeCountries() {
+    if ((await this.countryRepository.count()) === 0) {
+      [
+        { countryEn: 'Ukraine', countryUa: 'Україна' },
+        { countryEn: 'Greet Britan', countryUa: 'Англія' },
+        { countryEn: 'France', countryUa: 'Франція' },
+        { countryEn: 'Poland', countryUa: 'Польща' },
+        { countryEn: 'Germany', countryUa: 'Німеччина' },
+      ].forEach(async (val) => {
+        await this.countryRepository.save(
+          Object.assign(new Country(), {
+            countryEn: val.countryEn,
+            countryUa: val.countryUa,
+          }),
+        );
+      });
+    }
+  }
+
   async getAllLanguages() {
     return await this.languageRepository.find();
   }
@@ -85,11 +108,25 @@ export class UtilsService {
     return await this.specializationRepository.find();
   }
 
+  async getAllCountries() {
+    return await this.countryRepository.find();
+  }
+
   async addLanguage(newLanguage: LanguageDto) {
     return this.languageRepository.save(newLanguage);
   }
 
   async addSpecialization(newSpecialization: SpecializationDto) {
     return this.specializationRepository.save(newSpecialization);
+  }
+
+  async addCountry(newCountry: CountryDto) {
+    return this.countryRepository.save(newCountry);
+  }
+
+  async findCountry(country: Country) {
+    return await this.countryRepository.findOne({
+      where: { countryEn: country.countryEn, countryUa: country.countryUa },
+    });
   }
 }
