@@ -20,13 +20,21 @@ export class UtilsService {
 
   async initializeLanguages() {
     if ((await this.languageRepository.count()) === 0) {
-      ['English', 'Ukrainian', 'German', 'Polish', 'French', 'Italian'].forEach(
-        async (language) => {
-          await this.languageRepository.save(
-            Object.assign(new Language(), { language }),
-          );
-        },
-      );
+      [
+        { languageEn: 'English', languageUa: 'Англійська' },
+        { languageEn: 'Ukrainian', languageUa: 'Українська' },
+        { languageEn: 'German', languageUa: 'Німецька' },
+        { languageEn: 'Polish', languageUa: 'Польська' },
+        { languageEn: 'French', languageUa: 'Французька' },
+        { languageEn: 'Italian', languageUa: 'Італійська' },
+      ].forEach(async (val) => {
+        await this.languageRepository.save(
+          Object.assign(new Language(), {
+            languageEn: val.languageEn,
+            languageUa: val.languageUa,
+          }),
+        );
+      });
     }
   }
 

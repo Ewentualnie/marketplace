@@ -153,15 +153,9 @@ export class AdvertService {
   async getLanguages(languages: Language[]): Promise<Language[]> {
     return Promise.all(
       languages.map(async (data) => {
-        const lang = await this.languageRepository.findOne({
-          where: { language: data.language },
+        return await this.languageRepository.findOne({
+          where: { languageEn: data.languageEn, languageUa: data.languageUa },
         });
-        return (
-          lang ||
-          this.languageRepository.save(
-            Object.assign(new Language(), { language: data.language }),
-          )
-        );
       }),
     );
   }
