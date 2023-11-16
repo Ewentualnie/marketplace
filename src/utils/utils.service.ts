@@ -41,16 +41,37 @@ export class UtilsService {
   async initializeSpecializations() {
     if ((await this.specializationRepository.count()) === 0) {
       [
-        'Розмовна мова',
-        'Вивчення азів',
-        'Для дітей',
-        'Для дорослих',
-        'Підготовка до іспитів',
-        'Граматика',
-        'Для IT',
-      ].forEach(async (specialization) => {
+        {
+          specializationEn: 'Speaking language',
+          specializationUa: 'Розмовна мова',
+        },
+        {
+          specializationEn: 'Learning the basics',
+          specializationUa: 'Вивчення азів',
+        },
+        {
+          specializationEn: 'For children',
+          specializationUa: 'Для дітей',
+        },
+        {
+          specializationEn: 'For adult',
+          specializationUa: 'Для дорослих',
+        },
+        {
+          specializationEn: 'Preparation for exams',
+          specializationUa: 'Підготовка до іспитів',
+        },
+        {
+          specializationEn: 'Studying grammar',
+          specializationUa: 'Вивчення граматики',
+        },
+        { specializationEn: 'For IT', specializationUa: 'Для IT' },
+      ].forEach(async (val) => {
         await this.specializationRepository.save(
-          Object.assign(new Specialization(), { specialization }),
+          Object.assign(new Specialization(), {
+            specializationEn: val.specializationEn,
+            specializationUa: val.specializationUa,
+          }),
         );
       });
     }
