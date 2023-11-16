@@ -1,9 +1,9 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class LanguageDto {
+export class CountryDto {
   @IsNotEmpty()
-  languageEn: string;
+  countryEn: string;
 
   @IsNotEmpty()
-  languageUa: string;
+  countryUa: string;
 }

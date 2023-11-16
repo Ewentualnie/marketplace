@@ -8,6 +8,7 @@ import { FeedBack } from '../models/feedback.entity';
 import { Hobby } from '../models/hobby.entity';
 import { Advert } from 'src/models/advert.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
+import { UtilsService } from 'src/utils/utils.service';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,7 @@ export class UsersService {
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
     @InjectRepository(Hobby) private hobbyRepository: Repository<Hobby>,
     private cloudinaryService: CloudinaryService,
+    private utilServise: UtilsService,
   ) {}
 
   async findByEmail(email: string) {
@@ -35,7 +37,13 @@ export class UsersService {
   async findOne(id: number) {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['advert', 'hobbies', 'feedbacks', 'writtenFeedbacks'],
+      relations: [
+        'advert',
+        'hobbies',
+        'feedbacks',
+        'writtenFeedbacks',
+        'country',
+      ],
     });
     if (user) return user;
     throw new BadRequestException(`User with id ${id} not found`);
@@ -59,11 +67,12 @@ export class UsersService {
     photo?: Express.Multer.File,
   ) {
     const user = await this.findOne(id);
-
+    const countryParse = JSON.parse(updateUserDto.countryName);
     user.email = updateUserDto.email ?? user.email;
     user.firstName = updateUserDto.firstName ?? user.firstName;
     user.lastName = updateUserDto.lastName ?? user.lastName;
-    user.country = updateUserDto.country ?? user.country;
+    user.country =
+      (await this.utilServise.findCountry(countryParse)) ?? user.country;
     user.birthday = updateUserDto.birthday ?? user.birthday;
     user.sex = updateUserDto.sex ?? user.sex;
     user.hobbies = updateUserDto.hobbies

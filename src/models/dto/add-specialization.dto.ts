@@ -2,5 +2,8 @@ import { IsNotEmpty } from 'class-validator';
 
 export class SpecializationDto {
   @IsNotEmpty()
-  specialization: string;
+  specializationEn: string;
+
+  @IsNotEmpty()
+  specializationUa: string;
 }

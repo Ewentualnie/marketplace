@@ -1,15 +1,16 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Advert } from './advert.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Language {
   @PrimaryGeneratedColumn()
-  @Exclude()
   id: number;
 
-  @Column()
-  language: string;
+  @Column({ nullable: true })
+  languageEn: string;
+
+  @Column({ nullable: true })
+  languageUa: string;
 
   @ManyToMany(() => Advert, (advert) => advert.spokenLanguages)
   spokenLanguages: Advert[];

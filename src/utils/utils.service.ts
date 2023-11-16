@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Country } from 'src/models/country.entity';
+import { CountryDto } from 'src/models/dto/add-country.dto';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
 import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 import { Hobby } from 'src/models/hobby.entity';
@@ -16,33 +18,83 @@ export class UtilsService {
     private hobbyRepository: Repository<Hobby>,
     @InjectRepository(Specialization)
     private specializationRepository: Repository<Specialization>,
+    @InjectRepository(Country)
+    private countryRepository: Repository<Country>,
   ) {}
 
   async initializeLanguages() {
     if ((await this.languageRepository.count()) === 0) {
-      ['English', 'Ukrainian', 'German', 'Polish', 'French', 'Italian'].forEach(
-        async (language) => {
-          await this.languageRepository.save(
-            Object.assign(new Language(), { language }),
-          );
-        },
-      );
+      [
+        { languageEn: 'English', languageUa: 'Англійська' },
+        { languageEn: 'Ukrainian', languageUa: 'Українська' },
+        { languageEn: 'German', languageUa: 'Німецька' },
+        { languageEn: 'Polish', languageUa: 'Польська' },
+        { languageEn: 'French', languageUa: 'Французька' },
+        { languageEn: 'Italian', languageUa: 'Італійська' },
+      ].forEach(async (val) => {
+        await this.languageRepository.save(
+          Object.assign(new Language(), {
+            languageEn: val.languageEn,
+            languageUa: val.languageUa,
+          }),
+        );
+      });
     }
   }
 
   async initializeSpecializations() {
     if ((await this.specializationRepository.count()) === 0) {
       [
-        'Розмовна мова',
-        'Вивчення азів',
-        'Для дітей',
-        'Для дорослих',
-        'Підготовка до іспитів',
-        'Граматика',
-        'Для IT',
-      ].forEach(async (specialization) => {
+        {
+          specializationEn: 'Speaking language',
+          specializationUa: 'Розмовна мова',
+        },
+        {
+          specializationEn: 'Learning the basics',
+          specializationUa: 'Вивчення азів',
+        },
+        {
+          specializationEn: 'For children',
+          specializationUa: 'Для дітей',
+        },
+        {
+          specializationEn: 'For adult',
+          specializationUa: 'Для дорослих',
+        },
+        {
+          specializationEn: 'Preparation for exams',
+          specializationUa: 'Підготовка до іспитів',
+        },
+        {
+          specializationEn: 'Studying grammar',
+          specializationUa: 'Вивчення граматики',
+        },
+        { specializationEn: 'For IT', specializationUa: 'Для IT' },
+      ].forEach(async (val) => {
         await this.specializationRepository.save(
-          Object.assign(new Specialization(), { specialization }),
+          Object.assign(new Specialization(), {
+            specializationEn: val.specializationEn,
+            specializationUa: val.specializationUa,
+          }),
+        );
+      });
+    }
+  }
+
+  async initializeCountries() {
+    if ((await this.countryRepository.count()) === 0) {
+      [
+        { countryEn: 'Ukraine', countryUa: 'Україна' },
+        { countryEn: 'Greet Britan', countryUa: 'Англія' },
+        { countryEn: 'France', countryUa: 'Франція' },
+        { countryEn: 'Poland', countryUa: 'Польща' },
+        { countryEn: 'Germany', countryUa: 'Німеччина' },
+      ].forEach(async (val) => {
+        await this.countryRepository.save(
+          Object.assign(new Country(), {
+            countryEn: val.countryEn,
+            countryUa: val.countryUa,
+          }),
         );
       });
     }
@@ -56,11 +108,25 @@ export class UtilsService {
     return await this.specializationRepository.find();
   }
 
+  async getAllCountries() {
+    return await this.countryRepository.find();
+  }
+
   async addLanguage(newLanguage: LanguageDto) {
     return this.languageRepository.save(newLanguage);
   }
 
   async addSpecialization(newSpecialization: SpecializationDto) {
     return this.specializationRepository.save(newSpecialization);
+  }
+
+  async addCountry(newCountry: CountryDto) {
+    return this.countryRepository.save(newCountry);
+  }
+
+  async findCountry(country: Country) {
+    return await this.countryRepository.findOne({
+      where: { countryEn: country.countryEn, countryUa: country.countryUa },
+    });
   }
 }

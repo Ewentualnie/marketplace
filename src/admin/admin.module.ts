@@ -14,6 +14,7 @@ import { Language } from 'src/models/language.entity';
 import { UtilsService } from 'src/utils/utils.service';
 import { Specialization } from 'src/models/specialization.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
+import { Country } from 'src/models/country.entity';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CloudinaryService } from 'src/utils/cloudinary.service';
       Language,
       FeedBack,
       Specialization,
+      Country,
     ]),
     JwtModule.register({
       secret: 'at-secret',

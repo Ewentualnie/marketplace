@@ -6,10 +6,23 @@ import { User } from '../models/user.entity';
 import { FeedBack } from '../models/feedback.entity';
 import { Hobby } from '../models/hobby.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
+import { Country } from 'src/models/country.entity';
+import { UtilsService } from 'src/utils/utils.service';
+import { Language } from 'src/models/language.entity';
+import { Specialization } from 'src/models/specialization.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, FeedBack, Hobby])],
+  imports: [
+    TypeOrmModule.forFeature([
+      User,
+      FeedBack,
+      Hobby,
+      Country,
+      Language,
+      Specialization,
+    ]),
+  ],
   controllers: [UsersController],
-  providers: [UsersService, CloudinaryService],
+  providers: [UsersService, CloudinaryService, UtilsService],
 })
 export class UsersModule {}

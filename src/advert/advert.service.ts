@@ -104,7 +104,6 @@ export class AdvertService {
     if (user.advert.id == advert.id || user.role == Role.Admin) {
       advert.price = updateAdvertDto.price ?? advert.price;
       advert.description = updateAdvertDto.description ?? advert.description;
-      advert.imagePath = updateAdvertDto.imagePath ?? advert.imagePath;
       advert.spokenLanguages = updateAdvertDto.spokenLanguages
         ? await this.getLanguages(updateAdvertDto.spokenLanguages)
         : advert.spokenLanguages;
@@ -154,15 +153,9 @@ export class AdvertService {
   async getLanguages(languages: Language[]): Promise<Language[]> {
     return Promise.all(
       languages.map(async (data) => {
-        const lang = await this.languageRepository.findOne({
-          where: { language: data.language },
+        return await this.languageRepository.findOne({
+          where: { languageEn: data.languageEn, languageUa: data.languageUa },
         });
-        return (
-          lang ||
-          this.languageRepository.save(
-            Object.assign(new Language(), { language: data.language }),
-          )
-        );
       }),
     );
   }

@@ -6,7 +6,6 @@ import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
 import { UpdateUserDto } from 'src/models/dto/update-user.dto';
 import { FeedBack } from 'src/models/feedback.entity';
-import { Specialization } from 'src/models/specialization.entity';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
