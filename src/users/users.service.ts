@@ -83,7 +83,11 @@ export class UsersService {
       if (user.photoPath) {
         this.cloudinaryService.deleteFile(user.photoPath);
       }
-      user.photoPath = (await this.cloudinaryService.uploadFile(photo)).url;
+      const res = await this.cloudinaryService.uploadFile(photo);
+      console.log(res);
+
+      user.photoPath = res.url;
+      console.log(user);
     }
 
     return this.usersRepository.save(user);
