@@ -67,17 +67,21 @@ export class UsersService {
     photo?: Express.Multer.File,
   ) {
     const user = await this.findOne(id);
-    const countryParse = JSON.parse(updateUserDto.countryName);
+
     user.email = updateUserDto.email ?? user.email;
     user.firstName = updateUserDto.firstName ?? user.firstName;
     user.lastName = updateUserDto.lastName ?? user.lastName;
-    user.country =
-      (await this.utilServise.findCountry(countryParse)) ?? user.country;
     user.birthday = updateUserDto.birthday ?? user.birthday;
     user.sex = updateUserDto.sex ?? user.sex;
     user.hobbies = updateUserDto.hobbies
       ? await this.getHobbies(updateUserDto.hobbies)
       : user.hobbies;
+
+    if (updateUserDto.countryName) {
+      const countryParse = JSON.parse(updateUserDto.countryName);
+      user.country =
+        (await this.utilServise.findCountry(countryParse)) ?? user.country;
+    }
 
     if (photo) {
       if (user.photoPath) {
