@@ -132,4 +132,16 @@ export class UtilsService {
       where: { countryEn: country.countryEn, countryUa: country.countryUa },
     });
   }
+
+  async removeLanguage(id: number) {
+    return await this.languageRepository.delete(id);
+  }
+
+  async removeSpecialization(id: number) {
+    return await this.specializationRepository.delete(id);
+  }
+
+  async removeCountry(id: number) {
+    return await this.countryRepository.delete(id);
+  }
 }

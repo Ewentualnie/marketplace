@@ -50,6 +50,11 @@ export class AdminController {
     return this.adminService.getSpecializations();
   }
 
+  @Get('countries')
+  async getCounties() {
+    return this.adminService.getCountries();
+  }
+
   @Delete('users/:id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return await this.adminService.deleteUser(id);
@@ -85,5 +90,20 @@ export class AdminController {
   @Post('specializations')
   async addSpecialization(@Body() specialization: Specialization) {
     return this.adminService.addSpecialization(specialization);
+  }
+
+  @Delete('languages/:id')
+  async deleteLanguage(@Param('id', ParseIntPipe) id: number) {
+    return this.adminService.deleteLanguage(id);
+  }
+
+  @Delete('specializations/:id')
+  async deleteSpecialization(@Param('id', ParseIntPipe) id: number) {
+    return this.adminService.deleteSpecialization(id);
+  }
+
+  @Delete('countries/:id')
+  async deleteCountry(@Param('id', ParseIntPipe) id: number) {
+    return this.adminService.deleteCountry(id);
   }
 }
