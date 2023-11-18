@@ -82,8 +82,11 @@ export class UsersService {
       user.country =
         (await this.utilServise.findCountry(countryParse)) ?? user.country;
     }
+    console.log(photo);
 
     if (photo) {
+      console.log('in if');
+
       if (user.photoPath) {
         this.cloudinaryService.deleteFile(user.photoPath);
       }
