@@ -24,27 +24,28 @@ export class UtilsService {
 
   async initializeLanguages() {
     if ((await this.languageRepository.count()) === 0) {
-      [
+      const languageData = [
         { languageEn: 'English', languageUa: 'Англійська' },
         { languageEn: 'Ukrainian', languageUa: 'Українська' },
         { languageEn: 'German', languageUa: 'Німецька' },
         { languageEn: 'Polish', languageUa: 'Польська' },
         { languageEn: 'French', languageUa: 'Французька' },
         { languageEn: 'Italian', languageUa: 'Італійська' },
-      ].forEach(async (val) => {
+      ];
+      for (const val of languageData) {
         await this.languageRepository.save(
           Object.assign(new Language(), {
             languageEn: val.languageEn,
             languageUa: val.languageUa,
           }),
         );
-      });
+      }
     }
   }
 
   async initializeSpecializations() {
     if ((await this.specializationRepository.count()) === 0) {
-      [
+      const specializationsData = [
         {
           specializationEn: 'Speaking language',
           specializationUa: 'Розмовна мова',
@@ -70,33 +71,35 @@ export class UtilsService {
           specializationUa: 'Вивчення граматики',
         },
         { specializationEn: 'For IT', specializationUa: 'Для IT' },
-      ].forEach(async (val) => {
+      ];
+      for (const val of specializationsData) {
         await this.specializationRepository.save(
           Object.assign(new Specialization(), {
             specializationEn: val.specializationEn,
             specializationUa: val.specializationUa,
           }),
         );
-      });
+      }
     }
   }
 
   async initializeCountries() {
     if ((await this.countryRepository.count()) === 0) {
-      [
+      const countryData = [
         { countryEn: 'Ukraine', countryUa: 'Україна' },
         { countryEn: 'Greet Britan', countryUa: 'Англія' },
         { countryEn: 'France', countryUa: 'Франція' },
         { countryEn: 'Poland', countryUa: 'Польща' },
         { countryEn: 'Germany', countryUa: 'Німеччина' },
-      ].forEach(async (val) => {
+      ];
+      for (const val of countryData) {
         await this.countryRepository.save(
           Object.assign(new Country(), {
             countryEn: val.countryEn,
             countryUa: val.countryUa,
           }),
         );
-      });
+      }
     }
   }
 
