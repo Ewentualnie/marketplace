@@ -41,6 +41,8 @@ export class UsersController {
     @GetCurrentUserId() id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
+    console.log(`log in controller, file in files: ${files}, is ${files[0]}`);
+
     return this.usersService.updateUserInfo(id, updateUserDto, files[0]);
   }
 
