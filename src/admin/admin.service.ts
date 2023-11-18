@@ -82,6 +82,18 @@ export class AdminService {
     return this.advertService.updateAdvertInfo(id, updateAdvertDto, userId);
   }
 
+  async editLanguage(id: number) {
+    return `not implemented yet ${id}`;
+  }
+
+  async editSpecialization(id: number) {
+    return `not implemented yet ${id}`;
+  }
+
+  async editCountry(id: number) {
+    return `not implemented yet ${id}`;
+  }
+
   async addLanguage(newLanguage: LanguageDto) {
     return await this.utilsService.addLanguage(newLanguage);
   }
