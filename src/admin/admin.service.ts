@@ -82,16 +82,16 @@ export class AdminService {
     return this.advertService.updateAdvertInfo(id, updateAdvertDto, userId);
   }
 
-  async editLanguage(id: number) {
-    return `not implemented yet ${id}`;
+  async editLanguage(id: number, dto: LanguageDto) {
+    return this.utilsService.editLanguage(id, dto);
   }
 
-  async editSpecialization(id: number) {
-    return `not implemented yet ${id}`;
+  async editSpecialization(id: number, dto: SpecializationDto) {
+    return this.utilsService.editSpecialization(id, dto);
   }
 
-  async editCountry(id: number) {
-    return `not implemented yet ${id}`;
+  async editCountry(id: number, dto: CountryDto) {
+    return this.utilsService.editCountry(id, dto);
   }
 
   async addLanguage(newLanguage: LanguageDto) {
