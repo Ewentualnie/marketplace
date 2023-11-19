@@ -10,7 +10,7 @@ import {
   ParseIntPipe,
   Post,
   UseInterceptors,
-  UploadedFiles,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
@@ -37,13 +37,13 @@ export class UsersController {
   @Patch()
   @UseInterceptors(FilesInterceptor('photo'))
   update(
-    @UploadedFiles() files: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
     @GetCurrentUserId() id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    console.log(`log in controller, file in files: ${files}, is ${files[0]}`);
+    // console.log(`log in controller, file is ${file}`);
 
-    return this.usersService.updateUserInfo(id, updateUserDto, files[0]);
+    return this.usersService.updateUserInfo(id, updateUserDto, file);
   }
 
   @Delete()

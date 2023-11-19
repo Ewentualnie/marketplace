@@ -19,25 +19,25 @@ export class CloudinaryService {
   async uploadFile(file: Express.Multer.File) {
     return new Promise<UploadApiResponse | UploadApiErrorResponse>(
       (resolve, reject) => {
-        console.log('in uploadFile method');
+        // console.log('in uploadFile method');
 
         const uploadStream = cloudinary.uploader.upload_stream(
           (error, result) => {
-            console.log('in upload_stream method');
+            // console.log('in upload_stream method');
 
             if (error) {
               console.error('Error uploading file to Cloudinary:', error);
               return reject(error);
             }
-            console.log('in resolve');
+            // console.log('in resolve');
 
             resolve(result);
           },
         );
-        console.log('streamifier start');
+        // console.log('streamifier start');
 
         streamifier.createReadStream(file.buffer).pipe(uploadStream);
-        console.log('streamifier end');
+        // console.log('streamifier end');
       },
     );
   }

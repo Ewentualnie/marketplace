@@ -82,19 +82,21 @@ export class UsersService {
       user.country =
         (await this.utilServise.findCountry(countryParse)) ?? user.country;
     }
-    console.log('get in method photo is:' + photo);
+    // console.log('get in method photo is:' + photo);
 
     if (photo) {
-      console.log('in if');
+      // console.log('in if');
 
       if (user.photoPath) {
         this.cloudinaryService.deleteFile(user.photoPath);
       }
       const res = await this.cloudinaryService.uploadFile(photo);
-      console.log(res);
+      // console.log(res);
 
       user.photoPath = res.url;
-      console.log(user);
+      console.log(
+        `User with id ${user.id}, upload photo with id ${res.public_id}`,
+      );
     }
 
     return this.usersRepository.save(user);
