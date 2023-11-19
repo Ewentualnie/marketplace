@@ -94,9 +94,9 @@ export class AdminController {
   @Patch('specializations/id')
   async editSpecialization(
     @Param('id', ParseIntPipe) id: number,
-    @Body() spevialization: SpecializationDto,
+    @Body() speсialization: SpecializationDto,
   ) {
-    return this.adminService.editSpecialization(id, spevialization);
+    return this.adminService.editSpecialization(id, speсialization);
   }
 
   @Patch('specializations/id')
