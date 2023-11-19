@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Country } from 'src/models/country.entity';
 import { CountryDto } from 'src/models/dto/add-country.dto';
@@ -40,6 +40,9 @@ export class UtilsService {
           }),
         );
       }
+      console.log(
+        `Language table initialized, ${await this.languageRepository.count()} languages added`,
+      );
     }
   }
 
@@ -80,6 +83,9 @@ export class UtilsService {
           }),
         );
       }
+      console.log(
+        `Specialization table initialized, ${await this.specializationRepository.count()} specializations added`,
+      );
     }
   }
 
@@ -100,6 +106,9 @@ export class UtilsService {
           }),
         );
       }
+      console.log(
+        `Country table initialized, ${await this.countryRepository.count()} countries added`,
+      );
     }
   }
 
@@ -131,6 +140,40 @@ export class UtilsService {
     return await this.countryRepository.findOne({
       where: { countryEn: country.countryEn, countryUa: country.countryUa },
     });
+  }
+
+  async editLanguage(id: number, dto: LanguageDto) {
+    const language = await this.languageRepository.findOne({ where: { id } });
+    if (!language) {
+      throw new NotFoundException(`Language with id: ${id} is not found`);
+    }
+    language.languageEn = dto.languageEn ?? language.languageEn;
+    language.languageUa = dto.languageUa ?? language.languageUa;
+    return await this.languageRepository.save(language);
+  }
+
+  async editSpecialization(id: number, dto: SpecializationDto) {
+    const specialization = await this.specializationRepository.findOne({
+      where: { id },
+    });
+    if (!specialization) {
+      throw new NotFoundException(`Specialization with id: ${id} is not found`);
+    }
+    specialization.specializationEn =
+      dto.specializationEn ?? specialization.specializationEn;
+    specialization.specializationUa =
+      dto.specializationUa ?? specialization.specializationUa;
+    return await this.specializationRepository.save(specialization);
+  }
+
+  async editCountry(id: number, dto: CountryDto) {
+    const country = await this.countryRepository.findOne({ where: { id } });
+    if (!country) {
+      throw new NotFoundException(`Country with id: ${id} is not found`);
+    }
+    country.countryEn = dto.countryEn ?? country.countryEn;
+    country.countryUa = dto.countryUa ?? country.countryUa;
+    return await this.countryRepository.save(country);
   }
 
   async removeLanguage(id: number) {
