@@ -68,7 +68,6 @@ export class UsersService {
   ) {
     const user = await this.findOne(id);
 
-    user.email = updateUserDto.email ?? user.email;
     user.firstName = updateUserDto.firstName ?? user.firstName;
     user.lastName = updateUserDto.lastName ?? user.lastName;
     user.birthday = updateUserDto.birthday ?? user.birthday;
@@ -82,20 +81,15 @@ export class UsersService {
       user.country =
         (await this.utilServise.findCountry(countryParse)) ?? user.country;
     }
-    console.log('get in method photo is:' + photo);
 
     if (photo) {
-      // console.log('in if');
-
       if (user.photoPath) {
         this.cloudinaryService.deleteFile(user.photoPath);
       }
       const res = await this.cloudinaryService.uploadFile(photo);
-      // console.log(res);
-
       user.photoPath = res.url;
       console.log(
-        `User with id ${user.id}, upload photo with id ${res.public_id}`,
+        `User with id ${user.id}, upload photo with public_id: ${res.public_id}`,
       );
     }
 
