@@ -34,33 +34,40 @@ export class AdvertService {
     userId: number,
     file: Express.Multer.File,
   ) {
+    console.log(createAdvertDto);
+    console.log(userId);
+
     const user = await this.getCurrentUser(userId);
 
     if (user.advert != null) {
       throw new ConflictException(`User cannot have more then one advert.`);
     }
-
-    try {
-      const { url } = await this.cloudinaryService.uploadFile(file);
-
-      const newAdvert = this.advertRepository.create({
-        ...createAdvertDto,
-        imagePath: url,
-      });
-      newAdvert.user = user;
-      newAdvert.spokenLanguages = await this.getLanguages(
-        createAdvertDto.spokenLanguages,
-      );
-      newAdvert.teachingLanguages = await this.getLanguages(
-        createAdvertDto.teachingLanguages,
-      );
-
-      const savedAdvert = await this.advertRepository.save(newAdvert);
-      this.userService.updateAdvert(user.id, newAdvert);
-      return savedAdvert;
-    } catch (err) {
-      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    if (!file) {
+      throw new BadRequestException('You must add an image to your advert');
     }
+
+    const { url } = await this.cloudinaryService.uploadFile(file);
+
+    const newAdvert = this.advertRepository.create({
+      ...createAdvertDto,
+      imagePath: url,
+    });
+
+    console.log(newAdvert);
+
+    newAdvert.user = user;
+    newAdvert.spokenLanguages = await this.getLanguages(
+      createAdvertDto.spokenLanguages,
+    );
+    newAdvert.teachingLanguages = await this.getLanguages(
+      createAdvertDto.teachingLanguages,
+    );
+
+    const savedAdvert = await this.advertRepository.save(newAdvert);
+    this.userService.updateAdvert(user.id, newAdvert);
+    console.log(savedAdvert);
+
+    return savedAdvert;
   }
 
   async findAllowedAdverts(query: any) {
