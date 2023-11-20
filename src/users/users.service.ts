@@ -43,6 +43,8 @@ export class UsersService {
         'feedbacks',
         'writtenFeedbacks',
         'country',
+        'specializations',
+        'feedbacks',
       ],
     });
     if (user) return user;
