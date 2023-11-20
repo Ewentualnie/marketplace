@@ -50,6 +50,9 @@ export class User {
   @CreateDateColumn()
   registeredAt: Date;
 
+  @Column({ default: 5 })
+  rating: number;
+
   @Column({ nullable: true })
   @IsDate()
   birthday: Date;
