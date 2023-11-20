@@ -2,7 +2,6 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { LoginUserDto } from 'src/models/dto/login-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -15,6 +14,7 @@ import { Repository } from 'typeorm';
 import { genSalt } from 'bcrypt';
 import { UserRes } from 'src/types/user-response';
 import { Role } from 'src/utils/role.enum';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +22,7 @@ export class AuthService {
     @InjectRepository(User)
     public usersRepository: Repository<User>,
     public jwtService: JwtService,
+    private userService: UsersService,
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<UserRes> {
@@ -43,13 +44,7 @@ export class AuthService {
   }
 
   async signIn(loginUserDto: LoginUserDto): Promise<UserRes> {
-    const user = await this.usersRepository.findOne({
-      where: { email: loginUserDto.email },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    const user = await this.userService.findByEmail(loginUserDto.email);
 
     const resultCompare = await this.compareHash(
       loginUserDto.password,
@@ -70,11 +65,7 @@ export class AuthService {
   }
 
   async refresh(userId: number, rt: string): Promise<UserRes> {
-    const user = await this.usersRepository.findOneBy({ id: userId });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    const user = await this.userService.findOne(userId);
 
     if (!this.compareHash(rt, user.refreshToken) || !user.refreshToken) {
       throw new ForbiddenException('Access denied');
@@ -86,9 +77,7 @@ export class AuthService {
   }
 
   async createAdminUser() {
-    const admin = await this.usersRepository.findOneBy({
-      email: process.env.ADMIN_USER,
-    });
+    const admin = this.userService.findByEmail(process.env.ADMIN_USER);
     if (!admin) {
       const adminUser = new User();
       adminUser.email = process.env.ADMIN_USER || 'admin@email.com';
