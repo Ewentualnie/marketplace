@@ -20,7 +20,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { FeedBack } from '../models/feedback.entity';
 import { User } from '../models/user.entity';
 import { UpdateResult } from 'typeorm';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -35,7 +35,7 @@ export class UsersController {
   }
 
   @Patch()
-  @UseInterceptors(FilesInterceptor('photo'))
+  @UseInterceptors(FileInterceptor('photo'))
   update(
     @UploadedFile() photo: Express.Multer.File,
     @GetCurrentUserId() id: number,

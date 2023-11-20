@@ -20,7 +20,7 @@ import { UpdateAdvertDto } from '../models/dto/update-advert.dto';
 import { Public } from 'src/utils/decorators/public.decorator';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { ApiTags } from '@nestjs/swagger';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Adverts')
 @Controller('adverts')
@@ -28,7 +28,7 @@ export class AdvertController {
   constructor(private readonly advertService: AdvertService) {}
 
   @Post('')
-  @UseInterceptors(FilesInterceptor('image'))
+  @UseInterceptors(FileInterceptor('image'))
   create(
     @UploadedFile(
       new ParseFilePipe({
@@ -58,7 +58,7 @@ export class AdvertController {
   }
 
   @Patch(':id')
-  @UseInterceptors(FilesInterceptor('image'))
+  @UseInterceptors(FileInterceptor('image'))
   update(
     @UploadedFile(
       new ParseFilePipe({
