@@ -9,10 +9,10 @@ import {
   ParseIntPipe,
   Query,
   UseInterceptors,
-  UploadedFiles,
   ParseFilePipe,
   FileTypeValidator,
   MaxFileSizeValidator,
+  UploadedFile,
 } from '@nestjs/common';
 import { AdvertService } from './advert.service';
 import { CreateAdvertDto } from '../models/dto/create-advert.dto';
@@ -20,7 +20,7 @@ import { UpdateAdvertDto } from '../models/dto/update-advert.dto';
 import { Public } from 'src/utils/decorators/public.decorator';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { ApiTags } from '@nestjs/swagger';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Adverts')
 @Controller('adverts')
@@ -28,9 +28,9 @@ export class AdvertController {
   constructor(private readonly advertService: AdvertService) {}
 
   @Post('')
-  @UseInterceptors(FilesInterceptor('image'))
+  @UseInterceptors(FileInterceptor('image'))
   create(
-    @UploadedFiles(
+    @UploadedFile(
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 10 }),
@@ -38,11 +38,11 @@ export class AdvertController {
         ],
       }),
     )
-    files: Express.Multer.File,
+    file: Express.Multer.File,
     @Body() createAdvertDto: CreateAdvertDto,
     @GetCurrentUserId() userId: number,
   ) {
-    return this.advertService.create(createAdvertDto, userId, files[0]);
+    return this.advertService.create(createAdvertDto, userId, file);
   }
 
   @Public()
@@ -58,9 +58,9 @@ export class AdvertController {
   }
 
   @Patch(':id')
-  @UseInterceptors(FilesInterceptor('image'))
+  @UseInterceptors(FileInterceptor('image'))
   update(
-    @UploadedFiles(
+    @UploadedFile(
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 10 }),
@@ -68,7 +68,7 @@ export class AdvertController {
         ],
       }),
     )
-    files: Express.Multer.File,
+    file: Express.Multer.File,
     @Param('id', ParseIntPipe) advertId: number,
     @Body() updateAdvertDto: UpdateAdvertDto,
     @GetCurrentUserId() userId: number,
@@ -77,7 +77,7 @@ export class AdvertController {
       advertId,
       updateAdvertDto,
       userId,
-      files[0],
+      file,
     );
   }
 

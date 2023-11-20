@@ -67,23 +67,30 @@ export class UsersService {
     photo?: Express.Multer.File,
   ) {
     const user = await this.findOne(id);
-    const countryParse = JSON.parse(updateUserDto.countryName);
-    user.email = updateUserDto.email ?? user.email;
+
     user.firstName = updateUserDto.firstName ?? user.firstName;
     user.lastName = updateUserDto.lastName ?? user.lastName;
-    user.country =
-      (await this.utilServise.findCountry(countryParse)) ?? user.country;
     user.birthday = updateUserDto.birthday ?? user.birthday;
     user.sex = updateUserDto.sex ?? user.sex;
     user.hobbies = updateUserDto.hobbies
       ? await this.getHobbies(updateUserDto.hobbies)
       : user.hobbies;
 
+    if (updateUserDto.countryName) {
+      const countryParse = JSON.parse(updateUserDto.countryName);
+      user.country =
+        (await this.utilServise.findCountry(countryParse)) ?? user.country;
+    }
+
     if (photo) {
       if (user.photoPath) {
         this.cloudinaryService.deleteFile(user.photoPath);
       }
-      user.photoPath = (await this.cloudinaryService.uploadFile(photo)).url;
+      const res = await this.cloudinaryService.uploadFile(photo);
+      user.photoPath = res.url;
+      console.log(
+        `User with id ${user.id}, upload photo with public_id: ${res.public_id}`,
+      );
     }
 
     return this.usersRepository.save(user);

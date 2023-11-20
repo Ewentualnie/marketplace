@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdvertService } from 'src/advert/advert.service';
+import { CountryDto } from 'src/models/dto/add-country.dto';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
 import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
@@ -41,6 +42,10 @@ export class AdminService {
     return this.utilsService.getAllSpecializations();
   }
 
+  async getCountries() {
+    return this.utilsService.getAllCountries();
+  }
+
   async deleteUser(id: number) {
     const user = await this.usersService.findOne(id);
     if (user.advert != null) {
@@ -51,6 +56,18 @@ export class AdminService {
 
   async deleteAdvert(id: number) {
     return await this.advertService.softDeleteAdvert(id);
+  }
+
+  async deleteLanguage(id: number) {
+    return this.utilsService.removeLanguage(id);
+  }
+
+  async deleteSpecialization(id: number) {
+    return this.utilsService.removeSpecialization(id);
+  }
+
+  async deleteCountry(id: number) {
+    return this.utilsService.removeCountry(id);
   }
 
   async editUser(userId: number, updateUserDto: UpdateUserDto) {
@@ -65,11 +82,27 @@ export class AdminService {
     return this.advertService.updateAdvertInfo(id, updateAdvertDto, userId);
   }
 
+  async editLanguage(id: number, dto: LanguageDto) {
+    return this.utilsService.editLanguage(id, dto);
+  }
+
+  async editSpecialization(id: number, dto: SpecializationDto) {
+    return this.utilsService.editSpecialization(id, dto);
+  }
+
+  async editCountry(id: number, dto: CountryDto) {
+    return this.utilsService.editCountry(id, dto);
+  }
+
   async addLanguage(newLanguage: LanguageDto) {
     return await this.utilsService.addLanguage(newLanguage);
   }
 
   async addSpecialization(newSpecialization: SpecializationDto) {
     return await this.utilsService.addSpecialization(newSpecialization);
+  }
+
+  async addCountry(newCountry: CountryDto) {
+    return await this.utilsService.addCountry(newCountry);
   }
 }

@@ -16,7 +16,8 @@ import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { UpdateUserDto } from 'src/models/dto/update-user.dto';
 import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
-import { Specialization } from 'src/models/specialization.entity';
+import { CountryDto } from 'src/models/dto/add-country.dto';
+import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -50,6 +51,11 @@ export class AdminController {
     return this.adminService.getSpecializations();
   }
 
+  @Get('countries')
+  async getCounties() {
+    return this.adminService.getCountries();
+  }
+
   @Delete('users/:id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return await this.adminService.deleteUser(id);
@@ -77,13 +83,57 @@ export class AdminController {
     return await this.adminService.editAdvert(id, updateAdvertDto, userId);
   }
 
+  @Patch('languages/id')
+  async editLanguage(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() language: LanguageDto,
+  ) {
+    return this.adminService.editLanguage(id, language);
+  }
+
+  @Patch('specializations/id')
+  async editSpecialization(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() speсialization: SpecializationDto,
+  ) {
+    return this.adminService.editSpecialization(id, speсialization);
+  }
+
+  @Patch('specializations/id')
+  async editCountry(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() counry: CountryDto,
+  ) {
+    return this.adminService.editCountry(id, counry);
+  }
+
   @Post('languages')
   async addLanguage(@Body() language: LanguageDto) {
     return this.adminService.addLanguage(language);
   }
 
   @Post('specializations')
-  async addSpecialization(@Body() specialization: Specialization) {
+  async addSpecialization(@Body() specialization: SpecializationDto) {
     return this.adminService.addSpecialization(specialization);
+  }
+
+  @Post('countries')
+  async addCountry(@Body() country: CountryDto) {
+    return this.adminService.addCountry(country);
+  }
+
+  @Delete('languages/:id')
+  async deleteLanguage(@Param('id', ParseIntPipe) id: number) {
+    return this.adminService.deleteLanguage(id);
+  }
+
+  @Delete('specializations/:id')
+  async deleteSpecialization(@Param('id', ParseIntPipe) id: number) {
+    return this.adminService.deleteSpecialization(id);
+  }
+
+  @Delete('countries/:id')
+  async deleteCountry(@Param('id', ParseIntPipe) id: number) {
+    return this.adminService.deleteCountry(id);
   }
 }
