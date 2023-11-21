@@ -69,6 +69,8 @@ export class UsersService {
     photo?: Express.Multer.File,
   ) {
     const user = await this.findOne(id);
+    console.log('in update method');
+    console.log(updateUserDto);
 
     user.firstName = updateUserDto.firstName ?? user.firstName;
     user.lastName = updateUserDto.lastName ?? user.lastName;

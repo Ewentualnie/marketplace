@@ -35,8 +35,12 @@ export class AdvertService {
     file: Express.Multer.File,
   ) {
     const userParse = JSON.parse(advertDTO.updateUser);
-    console.log(userParse);
-    this.userService.updateUserInfo(userId, userParse);
+    // console.log(userParse);
+    const res = await this.userService.updateUserInfo(userId, userParse);
+    console.log('result');
+
+    console.log(res);
+
     const user = await this.getCurrentUser(userId);
 
     if (
