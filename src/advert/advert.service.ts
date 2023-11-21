@@ -34,8 +34,23 @@ export class AdvertService {
     userId: number,
     file: Express.Multer.File,
   ) {
+    const userParse = JSON.parse(advertDTO.updateUser);
+    console.log(userParse);
+    this.userService.updateUserInfo(userId, userParse);
     const user = await this.getCurrentUser(userId);
 
+    if (
+      user.firstName == null ||
+      user.lastName == null ||
+      user.sex == null ||
+      user.specializations == null ||
+      user.country == null
+      // || user.birthday == null
+    ) {
+      throw new BadRequestException(
+        'The user must fill in the following fields: firstName, lastName, sex, specializations, country, birthday',
+      );
+    }
     if (user.advert != null) {
       throw new ConflictException(`User cannot have more then one advert.`);
     }

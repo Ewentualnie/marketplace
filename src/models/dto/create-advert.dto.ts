@@ -19,4 +19,6 @@ export class CreateAdvertDto {
 
   @IsNotEmpty()
   teachingLanguages: string;
+
+  updateUser: string;
 }

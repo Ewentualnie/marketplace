@@ -1,13 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { User } from '../user.entity';
 import { Hobby } from '../hobby.entity';
 
-export class UpdateUserDto extends PartialType(User) {
+export class UpdateUserDto {
   email?: string;
   firstName?: string;
   lastName?: string;
   countryName?: string;
-  birthday?: Date;
+  birthday?: string;
   sex?: string;
   hobbies?: Hobby[];
   photo?: File;
