@@ -30,7 +30,7 @@ export class AdvertService {
   ) {}
 
   async create(
-    createAdvertDto: CreateAdvertDto,
+    advertDTO: CreateAdvertDto,
     userId: number,
     file: Express.Multer.File,
   ) {
@@ -46,14 +46,10 @@ export class AdvertService {
     const { url } = await this.cloudinaryService.uploadFile(file);
 
     const advert = new Advert();
-    advert.description = createAdvertDto.description;
-    advert.price = createAdvertDto.price;
-    advert.spokenLanguages = await this.getLangs(
-      createAdvertDto.spokenLanguages,
-    );
-    advert.teachingLanguages = await this.getLangs(
-      createAdvertDto.teachingLanguages,
-    );
+    advert.description = advertDTO.description;
+    advert.price = advertDTO.price;
+    advert.spokenLanguages = await this.getLangs(advertDTO.spokenLanguages);
+    advert.teachingLanguages = await this.getLangs(advertDTO.teachingLanguages);
     advert.user = user;
     advert.imagePath = url;
 
