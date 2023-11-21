@@ -157,11 +157,17 @@ export class AdvertService {
   }
 
   async getLangs(languages: string): Promise<Language[]> {
-    return Promise.all(
-      JSON.parse(languages).map(
-        async (id: number) => await this.utilServise.findLanguage(id),
-      ),
-    );
+    const res = (
+      await Promise.all(
+        JSON.parse(languages).map(
+          async (id: number) => await this.utilServise.findLanguage(id),
+        ),
+      )
+    ).filter((val) => val != null);
+    if (res.length == 0) {
+      throw new BadRequestException('You must add correct languages!');
+    }
+    return res;
   }
 
   async getCurrentUser(id: number): Promise<User> {
