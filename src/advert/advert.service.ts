@@ -1,8 +1,6 @@
 import {
   BadRequestException,
   ConflictException,
-  HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,6 +15,7 @@ import { User } from 'src/models/user.entity';
 import { Language } from 'src/models/language.entity';
 import { Role } from 'src/utils/role.enum';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
+import { UtilsService } from 'src/utils/utils.service';
 
 @Injectable()
 export class AdvertService {
@@ -27,6 +26,7 @@ export class AdvertService {
     private userService: UsersService,
     public jwtService: JwtService,
     public cloudinaryService: CloudinaryService,
+    public utilServise: UtilsService,
   ) {}
 
   async create(
@@ -34,9 +34,6 @@ export class AdvertService {
     userId: number,
     file: Express.Multer.File,
   ) {
-    console.log(createAdvertDto);
-    console.log(userId);
-
     const user = await this.getCurrentUser(userId);
 
     if (user.advert != null) {
@@ -48,24 +45,20 @@ export class AdvertService {
 
     const { url } = await this.cloudinaryService.uploadFile(file);
 
-    const newAdvert = this.advertRepository.create({
-      ...createAdvertDto,
-      imagePath: url,
-    });
-
-    console.log(newAdvert);
-
-    newAdvert.user = user;
-    newAdvert.spokenLanguages = await this.getLanguages(
+    const advert = new Advert();
+    advert.description = createAdvertDto.description;
+    advert.price = createAdvertDto.price;
+    advert.spokenLanguages = await this.getLangs(
       createAdvertDto.spokenLanguages,
     );
-    newAdvert.teachingLanguages = await this.getLanguages(
+    advert.teachingLanguages = await this.getLangs(
       createAdvertDto.teachingLanguages,
     );
+    advert.user = user;
+    advert.imagePath = url;
 
-    const savedAdvert = await this.advertRepository.save(newAdvert);
-    this.userService.updateAdvert(user.id, newAdvert);
-    console.log(savedAdvert);
+    const savedAdvert = await this.advertRepository.save(advert);
+    this.userService.updateAdvert(user.id, advert);
 
     return savedAdvert;
   }
@@ -164,6 +157,14 @@ export class AdvertService {
           where: { languageEn: data.languageEn, languageUa: data.languageUa },
         });
       }),
+    );
+  }
+
+  async getLangs(languages: string): Promise<Language[]> {
+    return Promise.all(
+      JSON.parse(languages).map(
+        async (id: number) => await this.utilServise.findLanguage(id),
+      ),
     );
   }
 

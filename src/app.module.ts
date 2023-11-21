@@ -15,10 +15,17 @@ import { Hobby } from './models/hobby.entity';
 import { Specialization } from './models/specialization.entity';
 import { CloudinaryService } from './utils/cloudinary.service';
 import { Country } from './models/country.entity';
+import { FeedBack } from './models/feedback.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Language, Hobby, Specialization, Country]),
+    TypeOrmModule.forFeature([
+      Language,
+      Hobby,
+      Specialization,
+      Country,
+      FeedBack,
+    ]),
     TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,
     AdvertModule,

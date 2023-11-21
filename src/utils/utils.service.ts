@@ -4,6 +4,7 @@ import { Country } from 'src/models/country.entity';
 import { CountryDto } from 'src/models/dto/add-country.dto';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
 import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
+import { FeedBack } from 'src/models/feedback.entity';
 import { Hobby } from 'src/models/hobby.entity';
 import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
@@ -20,6 +21,8 @@ export class UtilsService {
     private specializationRepository: Repository<Specialization>,
     @InjectRepository(Country)
     private countryRepository: Repository<Country>,
+    @InjectRepository(FeedBack)
+    private feedbackRepository: Repository<FeedBack>,
   ) {}
 
   async initializeLanguages() {
@@ -134,6 +137,14 @@ export class UtilsService {
 
   async addCountry(newCountry: CountryDto) {
     return this.countryRepository.save(newCountry);
+  }
+
+  async findLanguage(id: number) {
+    return await this.languageRepository.findOne({ where: { id } });
+  }
+
+  async findSpecialization(id: number) {
+    return await this.specializationRepository.findOne({ where: { id } });
   }
 
   async findCountry(country: Country) {
