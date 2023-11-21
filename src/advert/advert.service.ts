@@ -47,7 +47,7 @@ export class AdvertService {
       user.firstName == null ||
       user.lastName == null ||
       user.sex == null ||
-      user.specializations == null ||
+      // user.specializations == null ||
       user.country == null
       // || user.birthday == null
     ) {
