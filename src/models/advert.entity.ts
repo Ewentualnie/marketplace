@@ -22,7 +22,7 @@ export class Advert {
   @Column()
   description: string;
 
-  @Column()
+  @Column({ nullable: true })
   imagePath: string;
 
   @CreateDateColumn()

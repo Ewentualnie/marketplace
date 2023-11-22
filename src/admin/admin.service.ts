@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { AdvertService } from 'src/advert/advert.service';
 import { CountryDto } from 'src/models/dto/add-country.dto';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
 import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
 import { UpdateUserDto } from 'src/models/dto/update-user.dto';
-import { FeedBack } from 'src/models/feedback.entity';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class AdminService {
@@ -17,7 +14,6 @@ export class AdminService {
     private readonly advertService: AdvertService,
     private readonly usersService: UsersService,
     private readonly utilsService: UtilsService,
-    @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
   ) {}
 
   async getUsers() {
@@ -29,9 +25,7 @@ export class AdminService {
   }
 
   async getFeedbacks() {
-    return await this.feedbackRepository.find({
-      relations: ['toUser', 'fromUsers'],
-    });
+    return this.utilsService.getAllFeedbacks();
   }
 
   async getLanguages() {
@@ -74,12 +68,8 @@ export class AdminService {
     return this.usersService.updateUserInfo(userId, updateUserDto);
   }
 
-  async editAdvert(
-    id: number,
-    updateAdvertDto: UpdateAdvertDto,
-    userId: number,
-  ) {
-    return this.advertService.updateAdvertInfo(id, updateAdvertDto, userId);
+  async editAdvert(id: number, dto: UpdateAdvertDto, userId: number) {
+    return this.advertService.updateAdvertInfo(id, dto, userId);
   }
 
   async editLanguage(id: number, dto: LanguageDto) {

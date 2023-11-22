@@ -4,6 +4,7 @@ import { Country } from 'src/models/country.entity';
 import { CountryDto } from 'src/models/dto/add-country.dto';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
 import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
+import { FeedBack } from 'src/models/feedback.entity';
 import { Hobby } from 'src/models/hobby.entity';
 import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
@@ -20,6 +21,8 @@ export class UtilsService {
     private specializationRepository: Repository<Specialization>,
     @InjectRepository(Country)
     private countryRepository: Repository<Country>,
+    @InjectRepository(FeedBack)
+    private feedbackRepository: Repository<FeedBack>,
   ) {}
 
   async initializeLanguages() {
@@ -124,6 +127,12 @@ export class UtilsService {
     return await this.countryRepository.find();
   }
 
+  async getAllFeedbacks() {
+    return await this.feedbackRepository.find({
+      relations: ['toUser', 'fromUsers'],
+    });
+  }
+
   async addLanguage(newLanguage: LanguageDto) {
     return this.languageRepository.save(newLanguage);
   }
@@ -136,10 +145,16 @@ export class UtilsService {
     return this.countryRepository.save(newCountry);
   }
 
-  async findCountry(country: Country) {
-    return await this.countryRepository.findOne({
-      where: { countryEn: country.countryEn, countryUa: country.countryUa },
-    });
+  async findLanguage(id: number) {
+    return await this.languageRepository.findOne({ where: { id } });
+  }
+
+  async findSpecialization(id: number) {
+    return await this.specializationRepository.findOne({ where: { id } });
+  }
+
+  async findCountry(id: number) {
+    return await this.countryRepository.findOne({ where: { id } });
   }
 
   async editLanguage(id: number, dto: LanguageDto) {

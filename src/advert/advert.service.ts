@@ -1,8 +1,6 @@
 import {
   BadRequestException,
   ConflictException,
-  HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,6 +15,7 @@ import { User } from 'src/models/user.entity';
 import { Language } from 'src/models/language.entity';
 import { Role } from 'src/utils/role.enum';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
+import { UtilsService } from 'src/utils/utils.service';
 
 @Injectable()
 export class AdvertService {
@@ -27,45 +26,63 @@ export class AdvertService {
     private userService: UsersService,
     public jwtService: JwtService,
     public cloudinaryService: CloudinaryService,
+    public utilServise: UtilsService,
   ) {}
 
   async create(
-    createAdvertDto: CreateAdvertDto,
+    advertDTO: CreateAdvertDto,
     userId: number,
     file: Express.Multer.File,
   ) {
-    const user = await this.getCurrentUser(userId);
+    const userParse = JSON.parse(advertDTO.updateUser);
+    const user = await this.userService.updateUserInfo(userId, userParse);
+    // const user = await this.getCurrentUser(userId);
 
+    if (
+      user.firstName == null ||
+      user.lastName == null ||
+      user.sex == null ||
+      user.specializations == null ||
+      user.country == null
+      // || user.birthday == null
+    ) {
+      throw new BadRequestException(
+        'The user must fill in the following fields: firstName, lastName, sex, specializations, country, birthday',
+      );
+    }
     if (user.advert != null) {
       throw new ConflictException(`User cannot have more then one advert.`);
     }
-
-    try {
-      const { url } = await this.cloudinaryService.uploadFile(file);
-
-      const newAdvert = this.advertRepository.create({
-        ...createAdvertDto,
-        imagePath: url,
-      });
-      newAdvert.user = user;
-      newAdvert.spokenLanguages = await this.getLanguages(
-        createAdvertDto.spokenLanguages,
-      );
-      newAdvert.teachingLanguages = await this.getLanguages(
-        createAdvertDto.teachingLanguages,
-      );
-
-      const savedAdvert = await this.advertRepository.save(newAdvert);
-      this.userService.updateAdvert(user.id, newAdvert);
-      return savedAdvert;
-    } catch (err) {
-      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    if (!file) {
+      throw new BadRequestException('You must add an image to your advert');
     }
+
+    const { url } = await this.cloudinaryService.uploadFile(file);
+
+    const advert = new Advert();
+    advert.description = advertDTO.description;
+    advert.price = advertDTO.price;
+    advert.spokenLanguages = await this.getLangs(advertDTO.spokenLanguages);
+    advert.teachingLanguages = await this.getLangs(advertDTO.teachingLanguages);
+    advert.user = user;
+    advert.imagePath = url;
+
+    const savedAdvert = await this.advertRepository.save(advert);
+    this.userService.updateAdvert(user.id, advert);
+
+    return savedAdvert;
   }
 
   async findAllowedAdverts(query: any) {
     return await this.advertRepository.find({
-      relations: ['user', 'spokenLanguages', 'teachingLanguages'],
+      relations: [
+        'user',
+        'spokenLanguages',
+        'teachingLanguages',
+        'user.specializations',
+        'user.country',
+        'user.feedbacks',
+      ],
       where: { isDeleted: false },
       // order,
     });
@@ -73,7 +90,14 @@ export class AdvertService {
 
   async findAllAdverts() {
     return await this.advertRepository.find({
-      relations: ['user', 'spokenLanguages', 'teachingLanguages'],
+      relations: [
+        'user',
+        'spokenLanguages',
+        'teachingLanguages',
+        'user.specializations',
+        'user.country',
+        'user.feedbacks',
+      ],
     });
   }
 
@@ -81,7 +105,14 @@ export class AdvertService {
     const advert = (
       await this.advertRepository.find({
         where: { id },
-        relations: ['user', 'spokenLanguages', 'teachingLanguages'],
+        relations: [
+          'user',
+          'spokenLanguages',
+          'teachingLanguages',
+          'user.specializations',
+          'user.country',
+          'user.feedbacks',
+        ],
         take: 1,
       })
     )[0];
@@ -158,6 +189,20 @@ export class AdvertService {
         });
       }),
     );
+  }
+
+  async getLangs(languages: string): Promise<Language[]> {
+    const res = (
+      await Promise.all(
+        JSON.parse(languages).map(
+          async (id: number) => await this.utilServise.findLanguage(id),
+        ),
+      )
+    ).filter((val) => val != null);
+    if (res.length == 0) {
+      throw new BadRequestException('You must add correct languages!');
+    }
+    return res;
   }
 
   async getCurrentUser(id: number): Promise<User> {

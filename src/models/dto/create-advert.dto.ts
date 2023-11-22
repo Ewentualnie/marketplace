@@ -1,5 +1,4 @@
 import { IsNotEmpty, IsNumber, IsPositive, Max } from 'class-validator';
-import { Language } from '../language.entity';
 import { Transform } from 'class-transformer';
 
 export class CreateAdvertDto {
@@ -16,8 +15,10 @@ export class CreateAdvertDto {
   image: any;
 
   @IsNotEmpty()
-  spokenLanguages: Language[];
+  spokenLanguages: string;
 
   @IsNotEmpty()
-  teachingLanguages: Language[];
+  teachingLanguages: string;
+
+  updateUser: string;
 }

@@ -9,6 +9,7 @@ import { Hobby } from '../models/hobby.entity';
 import { Advert } from 'src/models/advert.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
+import { Specialization } from 'src/models/specialization.entity';
 
 @Injectable()
 export class UsersService {
@@ -45,6 +46,7 @@ export class UsersService {
         'country',
         'specializations',
         'feedbacks',
+        'feedbacks.fromUsers',
       ],
     });
     if (user) return user;
@@ -67,8 +69,10 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
     photo?: Express.Multer.File,
-  ) {
+  ): Promise<User> {
     const user = await this.findOne(id);
+    console.log('in update method');
+    console.log(updateUserDto);
 
     user.firstName = updateUserDto.firstName ?? user.firstName;
     user.lastName = updateUserDto.lastName ?? user.lastName;
@@ -78,10 +82,16 @@ export class UsersService {
       ? await this.getHobbies(updateUserDto.hobbies)
       : user.hobbies;
 
-    if (updateUserDto.countryName) {
-      const countryParse = JSON.parse(updateUserDto.countryName);
+    if (updateUserDto.country) {
       user.country =
-        (await this.utilServise.findCountry(countryParse)) ?? user.country;
+        (await this.utilServise.findCountry(updateUserDto.country)) ??
+        user.country;
+    }
+
+    if (updateUserDto.specializations) {
+      user.specializations =
+        (await this.getSpecializations(updateUserDto.specializations)) ??
+        user.specializations;
     }
 
     if (photo) {
@@ -95,7 +105,7 @@ export class UsersService {
       );
     }
 
-    return this.usersRepository.save(user);
+    return await this.usersRepository.save(user);
   }
 
   async addFeedback(
@@ -123,19 +133,33 @@ export class UsersService {
     return await this.feedbackRepository.save(newFeedback);
   }
 
-  async getHobbies(hobbies: Hobby[]): Promise<Hobby[]> {
+  async getHobbies(hobbies: string[]): Promise<Hobby[]> {
     return Promise.all(
-      hobbies.map(async (data) => {
+      hobbies.map(async (val) => {
         const hobby = await this.hobbyRepository.findOne({
-          where: { hobby: data.hobby },
+          where: { hobby: val },
         });
         return (
           hobby ||
-          this.hobbyRepository.save(
-            Object.assign(new Hobby(), { hobby: data.hobby }),
-          )
+          this.hobbyRepository.save(Object.assign(new Hobby(), { hobby: val }))
         );
       }),
     );
+  }
+
+  async getSpecializations(
+    specializations: number[],
+  ): Promise<Specialization[]> {
+    const res = (
+      await Promise.all(
+        specializations.map(
+          async (id: number) => await this.utilServise.findSpecialization(id),
+        ),
+      )
+    ).filter((val) => val != null);
+    if (res.length == 0) {
+      throw new BadRequestException('You must add correct specializations!');
+    }
+    return res;
   }
 }
