@@ -75,7 +75,14 @@ export class AdvertService {
 
   async findAllowedAdverts(query: any) {
     return await this.advertRepository.find({
-      relations: ['user', 'spokenLanguages', 'teachingLanguages'],
+      relations: [
+        'user',
+        'spokenLanguages',
+        'teachingLanguages',
+        'user.specializations',
+        'user.country',
+        'user.feedbacks',
+      ],
       where: { isDeleted: false },
       // order,
     });
@@ -83,7 +90,14 @@ export class AdvertService {
 
   async findAllAdverts() {
     return await this.advertRepository.find({
-      relations: ['user', 'spokenLanguages', 'teachingLanguages'],
+      relations: [
+        'user',
+        'spokenLanguages',
+        'teachingLanguages',
+        'user.specializations',
+        'user.country',
+        'user.feedbacks',
+      ],
     });
   }
 
@@ -91,7 +105,14 @@ export class AdvertService {
     const advert = (
       await this.advertRepository.find({
         where: { id },
-        relations: ['user', 'spokenLanguages', 'teachingLanguages'],
+        relations: [
+          'user',
+          'spokenLanguages',
+          'teachingLanguages',
+          'user.specializations',
+          'user.country',
+          'user.feedbacks',
+        ],
         take: 1,
       })
     )[0];
