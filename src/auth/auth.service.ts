@@ -55,6 +55,9 @@ export class AuthService {
       throw new ForbiddenException('Access denied');
     }
 
+    user.lastVisit = new Date();
+    await this.usersRepository.save(user);
+
     const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRtHash(user.id, tokens.refreshToken);
     return { user, tokens };
@@ -77,7 +80,10 @@ export class AuthService {
   }
 
   async createAdminUser() {
-    const admin = this.userService.findByEmail(process.env.ADMIN_USER);
+    const admin = await this.usersRepository.findOne({
+      where: { email: process.env.ADMIN_USER || 'admin@email.com' },
+    });
+
     if (!admin) {
       const adminUser = new User();
       adminUser.email = process.env.ADMIN_USER || 'admin@email.com';
