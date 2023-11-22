@@ -77,7 +77,10 @@ export class AuthService {
   }
 
   async createAdminUser() {
-    const admin = this.userService.findByEmail(process.env.ADMIN_USER);
+    const admin = await this.usersRepository.findOne({
+      where: { email: process.env.ADMIN_USER || 'admin@email.com' },
+    });
+
     if (!admin) {
       const adminUser = new User();
       adminUser.email = process.env.ADMIN_USER || 'admin@email.com';
