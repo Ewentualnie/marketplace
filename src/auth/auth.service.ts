@@ -55,6 +55,9 @@ export class AuthService {
       throw new ForbiddenException('Access denied');
     }
 
+    user.lastVisit = new Date();
+    await this.usersRepository.save(user);
+
     const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRtHash(user.id, tokens.refreshToken);
     return { user, tokens };

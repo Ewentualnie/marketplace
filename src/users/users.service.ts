@@ -126,6 +126,7 @@ export class UsersService {
 
     user.feedbacks.push(newFeedback);
     currentUser.writtenFeedbacks.push(newFeedback);
+    currentUser.lastVisit = new Date();
 
     await this.usersRepository.save(user);
     await this.usersRepository.save(currentUser);
