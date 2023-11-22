@@ -1,5 +1,3 @@
-import { Hobby } from '../hobby.entity';
-
 export class UpdateUserDto {
   email?: string;
   firstName?: string;
@@ -7,7 +5,7 @@ export class UpdateUserDto {
   country?: number;
   birthday?: Date;
   sex?: string;
-  hobbies?: Hobby[];
+  hobbies?: string[];
   photo?: File;
   specializations: number[];
 }

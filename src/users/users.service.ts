@@ -46,6 +46,7 @@ export class UsersService {
         'country',
         'specializations',
         'feedbacks',
+        'feedbacks.fromUsers',
       ],
     });
     if (user) return user;
@@ -132,17 +133,15 @@ export class UsersService {
     return await this.feedbackRepository.save(newFeedback);
   }
 
-  async getHobbies(hobbies: Hobby[]): Promise<Hobby[]> {
+  async getHobbies(hobbies: string[]): Promise<Hobby[]> {
     return Promise.all(
-      hobbies.map(async (data) => {
+      hobbies.map(async (val) => {
         const hobby = await this.hobbyRepository.findOne({
-          where: { hobby: data.hobby },
+          where: { hobby: val },
         });
         return (
           hobby ||
-          this.hobbyRepository.save(
-            Object.assign(new Hobby(), { hobby: data.hobby }),
-          )
+          this.hobbyRepository.save(Object.assign(new Hobby(), { hobby: val }))
         );
       }),
     );
