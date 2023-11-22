@@ -4,9 +4,10 @@ export class UpdateUserDto {
   email?: string;
   firstName?: string;
   lastName?: string;
-  countryName?: string;
+  country?: number;
   birthday?: string;
   sex?: string;
   hobbies?: Hobby[];
   photo?: File;
+  specializations: number[];
 }
