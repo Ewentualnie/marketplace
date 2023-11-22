@@ -127,6 +127,12 @@ export class UtilsService {
     return await this.countryRepository.find();
   }
 
+  async getAllFeedbacks() {
+    return await this.feedbackRepository.find({
+      relations: ['toUser', 'fromUsers'],
+    });
+  }
+
   async addLanguage(newLanguage: LanguageDto) {
     return this.languageRepository.save(newLanguage);
   }
@@ -147,10 +153,8 @@ export class UtilsService {
     return await this.specializationRepository.findOne({ where: { id } });
   }
 
-  async findCountry(country: Country) {
-    return await this.countryRepository.findOne({
-      where: { countryEn: country.countryEn, countryUa: country.countryUa },
-    });
+  async findCountry(id: number) {
+    return await this.countryRepository.findOne({ where: { id } });
   }
 
   async editLanguage(id: number, dto: LanguageDto) {
