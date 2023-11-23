@@ -36,15 +36,14 @@ export class AdvertService {
   ) {
     const userParse = JSON.parse(advertDTO.updateUser);
     const user = await this.userService.updateUserInfo(userId, userParse);
-    // const user = await this.getCurrentUser(userId);
 
     if (
       user.firstName == null ||
       user.lastName == null ||
       user.sex == null ||
       user.specializations == null ||
-      user.country == null
-      // || user.birthday == null
+      user.country == null ||
+      user.birthday == null
     ) {
       throw new BadRequestException(
         'The user must fill in the following fields: firstName, lastName, sex, specializations, country, birthday',
@@ -153,31 +152,17 @@ export class AdvertService {
     }
   }
 
-  async removeOwnAdvert(userId: number) {
+  async deleteRestoreOwnAdvert(userId: number) {
     const user = await this.getCurrentUser(userId);
     if (user.advert == null) {
       throw new BadRequestException(`User with ID ${user.id} has no advert`);
     }
-    return await this.softDeleteAdvert(user.advert.id);
+    return await this.deleteRestoreAdvert(user.advert.id);
   }
 
-  async restoreOwnAdvert(userId: number) {
-    const user = await this.getCurrentUser(userId);
-    if (user.advert == null) {
-      throw new BadRequestException(`User with ID ${user.id} has no advert`);
-    }
-    return await this.restoreAdvert(user.advert.id);
-  }
-
-  async softDeleteAdvert(id: number) {
+  async deleteRestoreAdvert(id: number) {
     return await this.advertRepository.update(id, {
-      isDeleted: true,
-    });
-  }
-
-  async restoreAdvert(id: number) {
-    return await this.advertRepository.update(id, {
-      isDeleted: false,
+      isDeleted: !(await this.findOne(id)).isDeleted,
     });
   }
 
