@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   ParseIntPipe,
   Query,
   UseInterceptors,
@@ -13,6 +12,7 @@ import {
   FileTypeValidator,
   MaxFileSizeValidator,
   UploadedFile,
+  Put,
 } from '@nestjs/common';
 import { AdvertService } from './advert.service';
 import { CreateAdvertDto } from '../models/dto/create-advert.dto';
@@ -81,8 +81,8 @@ export class AdvertController {
     );
   }
 
-  @Delete()
+  @Put()
   remove(@GetCurrentUserId() userId: number) {
-    return this.advertService.removeOwnAdvert(userId);
+    return this.advertService.deleteRestoreAdvert(userId);
   }
 }

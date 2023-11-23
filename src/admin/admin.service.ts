@@ -42,14 +42,10 @@ export class AdminService {
 
   async deleteUser(id: number) {
     const user = await this.usersService.findOne(id);
-    if (user.advert != null) {
-      await this.advertService.softDeleteAdvert(user.advert.id);
+    if (user.advert != null && !user.advert.isDeleted) {
+      await this.advertService.deleteRestoreAdvert(user.advert.id);
     }
     return await this.usersService.softUserDelete(id);
-  }
-
-  async deleteAdvert(id: number) {
-    return await this.advertService.softDeleteAdvert(id);
   }
 
   async deleteLanguage(id: number) {
@@ -62,6 +58,14 @@ export class AdminService {
 
   async deleteCountry(id: number) {
     return this.utilsService.removeCountry(id);
+  }
+
+  async deleteRestoreUser(userId) {
+    return 'not implemented yet';
+  }
+
+  async deleteRestoreAdvert(advertId) {
+    return this.advertService.deleteRestoreAdvert(advertId);
   }
 
   async editUser(userId: number, updateUserDto: UpdateUserDto) {

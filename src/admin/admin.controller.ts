@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
@@ -61,9 +62,9 @@ export class AdminController {
     return await this.adminService.deleteUser(id);
   }
 
-  @Delete('adverts/:id')
-  async deleteAdvert(@Param('id', ParseIntPipe) id: number) {
-    return await this.adminService.deleteAdvert(id);
+  @Put('adverts/:id')
+  async deleteRestoreAdvert(@Param('id', ParseIntPipe) id: number) {
+    return await this.adminService.deleteRestoreAdvert(id);
   }
 
   @Patch('users/:id')
