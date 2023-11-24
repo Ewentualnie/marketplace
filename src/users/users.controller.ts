@@ -4,13 +4,13 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UsePipes,
   ValidationPipe,
   ParseIntPipe,
   Post,
   UseInterceptors,
   UploadedFile,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
@@ -44,9 +44,9 @@ export class UsersController {
     return this.usersService.updateUserInfo(id, updateUserDto, photo);
   }
 
-  @Delete()
-  remove(@GetCurrentUserId() id: number): Promise<UpdateResult> {
-    return this.usersService.softUserDelete(id);
+  @Put()
+  deleteRestoreUser(@GetCurrentUserId() id: number): Promise<User> {
+    return this.usersService.deleteRestoreUser(id);
   }
 
   @ApiOperation({ summary: 'Create a feedback' })

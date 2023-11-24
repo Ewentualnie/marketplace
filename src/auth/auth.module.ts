@@ -16,6 +16,7 @@ import { UtilsService } from 'src/utils/utils.service';
 import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
 import { Country } from 'src/models/country.entity';
+import { Advert } from 'src/models/advert.entity';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { Country } from 'src/models/country.entity';
       Language,
       Specialization,
       Country,
+      Advert,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: 'at-secret' }),
