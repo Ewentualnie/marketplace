@@ -36,7 +36,6 @@ export class AdvertService {
   ) {
     const userParse = JSON.parse(advertDTO.updateUser);
     const user = await this.userService.updateUserInfo(userId, userParse);
-    console.log(userParse);
 
     if (
       user.firstName == null ||
@@ -100,7 +99,7 @@ export class AdvertService {
         'teachingLanguages',
         'user.specializations',
         'user.country',
-        'user.feedbacks',
+        'user.feedbacksToMe',
       ],
       where: { isDeleted: false },
       // order,
@@ -115,7 +114,7 @@ export class AdvertService {
         'teachingLanguages',
         'user.specializations',
         'user.country',
-        'user.feedbacks',
+        'user.feedbacksToMe',
       ],
     });
   }
