@@ -101,6 +101,10 @@ export class AdvertService {
         'user.country',
         'user.feedbacksToMe',
         'user.feedbacksFromMe',
+        'user.feedbacksToMe.toUser',
+        'user.feedbacksToMe.fromUser',
+        'user.feedbacksFromMe.toUser',
+        'user.feedbacksFromMe.fromUser',
       ],
       where: { isDeleted: false },
       // order,
@@ -117,6 +121,10 @@ export class AdvertService {
         'user.country',
         'user.feedbacksToMe',
         'user.feedbacksFromMe',
+        'user.feedbacksToMe.toUser',
+        'user.feedbacksToMe.fromUser',
+        'user.feedbacksFromMe.toUser',
+        'user.feedbacksFromMe.fromUser',
       ],
     });
   }
@@ -133,6 +141,10 @@ export class AdvertService {
           'user.country',
           'user.feedbacksToMe',
           'user.feedbacksFromMe',
+          'user.feedbacksToMe.toUser',
+          'user.feedbacksToMe.fromUser',
+          'user.feedbacksFromMe.toUser',
+          'user.feedbacksFromMe.fromUser',
         ],
         take: 1,
       })
