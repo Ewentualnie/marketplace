@@ -36,6 +36,7 @@ export class AdvertService {
   ) {
     const userParse = JSON.parse(advertDTO.updateUser);
     const user = await this.userService.updateUserInfo(userId, userParse);
+    console.log(userParse);
 
     if (
       user.firstName == null ||
