@@ -84,7 +84,7 @@ export class AdminController {
     return await this.adminService.editAdvert(id, updateAdvertDto, userId);
   }
 
-  @Patch('languages/id')
+  @Patch('languages/:id')
   async editLanguage(
     @Param('id', ParseIntPipe) id: number,
     @Body() language: LanguageDto,
@@ -92,7 +92,7 @@ export class AdminController {
     return this.adminService.editLanguage(id, language);
   }
 
-  @Patch('specializations/id')
+  @Patch('specializations/:id')
   async editSpecialization(
     @Param('id', ParseIntPipe) id: number,
     @Body() speсialization: SpecializationDto,
@@ -100,7 +100,7 @@ export class AdminController {
     return this.adminService.editSpecialization(id, speсialization);
   }
 
-  @Patch('specializations/id')
+  @Patch('specializations/:id')
   async editCountry(
     @Param('id', ParseIntPipe) id: number,
     @Body() counry: CountryDto,

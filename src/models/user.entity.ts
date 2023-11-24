@@ -81,14 +81,14 @@ export class User {
   hobbies: Hobby[];
 
   @OneToMany(() => FeedBack, (feedback) => feedback.toUser, { cascade: true })
-  @JoinColumn({ name: 'toUserId' })
-  feedbacks: FeedBack[];
+  @JoinColumn({ name: 'to_user' })
+  feedbacksToMe: FeedBack[];
 
-  @ManyToMany(() => FeedBack, (feedbacks) => feedbacks.fromUsers, {
+  @OneToMany(() => FeedBack, (feedbacks) => feedbacks.fromUser, {
     cascade: true,
   })
-  @JoinTable({ name: 'user_feedback' })
-  writtenFeedbacks: FeedBack[];
+  @JoinColumn({ name: 'user_feedbacks' })
+  feedbacksFromMe: FeedBack[];
 
   @ManyToMany(() => Specialization, (specialization) => specialization.users, {
     cascade: true,
