@@ -4,8 +4,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -26,11 +24,11 @@ export class FeedBack {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.feedbacks)
-  @JoinColumn({ name: 'toUserId' })
+  @ManyToOne(() => User, (user) => user.feedbacksToMe)
+  @JoinColumn({ name: 'to_user' })
   toUser: User;
 
-  @ManyToMany(() => User, (user) => user.writtenFeedbacks)
-  @JoinTable({ name: 'user_feedback' })
-  fromUsers: User[];
+  @ManyToOne(() => User, (user) => user.feedbacksFromMe)
+  @JoinColumn({ name: 'from_user' })
+  fromUser: User;
 }

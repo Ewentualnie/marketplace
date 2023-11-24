@@ -32,7 +32,7 @@ export class UsersService {
 
   async findAll() {
     return await this.usersRepository.find({
-      relations: ['advert', 'feedbacks'],
+      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe'],
     });
   }
 
@@ -42,12 +42,11 @@ export class UsersService {
       relations: [
         'advert',
         'hobbies',
-        'feedbacks',
-        'writtenFeedbacks',
+        'feedbacksToMe',
+        'feedbacksFromMe',
         'country',
         'specializations',
-        'feedbacks',
-        'feedbacks.fromUsers',
+        'feedbacksToMe.fromUser',
       ],
     });
     if (user) return user;
@@ -124,7 +123,7 @@ export class UsersService {
     const user = await this.findOne(userId);
     const currentUser = await this.findOne(currentUserId);
 
-    if (user == currentUser) {
+    if (user.id == currentUser.id) {
       throw new BadRequestException(
         'The user cannot write feedback to himself',
       );
@@ -132,8 +131,8 @@ export class UsersService {
 
     const newFeedback = this.feedbackRepository.create(feedback);
 
-    user.feedbacks.push(newFeedback);
-    currentUser.writtenFeedbacks.push(newFeedback);
+    user.feedbacksToMe.push(newFeedback);
+    currentUser.feedbacksFromMe.push(newFeedback);
     currentUser.lastVisit = new Date();
 
     await this.usersRepository.save(user);

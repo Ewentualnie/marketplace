@@ -133,7 +133,7 @@ export class UtilsService {
 
   async getAllFeedbacks() {
     return await this.feedbackRepository.find({
-      relations: ['toUser', 'fromUsers'],
+      relations: ['toUser', 'fromUser'],
     });
   }
 
