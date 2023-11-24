@@ -19,7 +19,6 @@ import { CreateFeedback } from '../models/dto/add-feedback.dto';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { FeedBack } from '../models/feedback.entity';
 import { User } from '../models/user.entity';
-import { UpdateResult } from 'typeorm';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')

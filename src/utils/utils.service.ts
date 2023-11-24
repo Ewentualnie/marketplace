@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Country } from 'src/models/country.entity';
 import { CountryDto } from 'src/models/dto/add-country.dto';
@@ -134,14 +138,48 @@ export class UtilsService {
   }
 
   async addLanguage(newLanguage: LanguageDto) {
-    return this.languageRepository.save(newLanguage);
+    const language = await this.languageRepository.findOne({
+      where: {
+        languageEn: newLanguage.languageEn,
+        languageUa: newLanguage.languageUa,
+      },
+    });
+    if (!language) {
+      return this.languageRepository.save(newLanguage);
+    }
+    throw new BadRequestException(
+      `Language ${newLanguage} already exists in the database`,
+    );
   }
 
   async addSpecialization(newSpecialization: SpecializationDto) {
-    return this.specializationRepository.save(newSpecialization);
+    const specialization = await this.specializationRepository.findOne({
+      where: {
+        specializationEn: newSpecialization.specializationEn,
+        specializationUa: newSpecialization.specializationUa,
+      },
+    });
+    if (!specialization) {
+      return this.specializationRepository.save(newSpecialization);
+    }
+    throw new BadRequestException(
+      `Specialization ${newSpecialization} already exists in the database`,
+    );
   }
 
   async addCountry(newCountry: CountryDto) {
+    const specialization = await this.countryRepository.findOne({
+      where: {
+        countryEn: newCountry.countryEn,
+        countryUa: newCountry.countryUa,
+      },
+    });
+    if (!specialization) {
+      return this.countryRepository.save(newCountry);
+    }
+    throw new BadRequestException(
+      `Country ${newCountry} already exists in the database`,
+    );
     return this.countryRepository.save(newCountry);
   }
 
