@@ -17,6 +17,7 @@ export class UsersService {
     @InjectRepository(User) public usersRepository: Repository<User>,
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
     @InjectRepository(Hobby) private hobbyRepository: Repository<Hobby>,
+    @InjectRepository(Advert) private advertRepository: Repository<Advert>,
     private cloudinaryService: CloudinaryService,
     private utilServise: UtilsService,
   ) {}
@@ -57,12 +58,21 @@ export class UsersService {
     return await this.usersRepository.update(id, { advert: advert });
   }
 
-  async softUserDelete(id: number) {
-    return await this.usersRepository.update(id, { isDeleted: true });
+  async hardUserDelete(id: number) {
+    return await this.usersRepository.remove(await this.findOne(id));
   }
 
-  async hardUserDelete(id: number) {
-    return await this.usersRepository.remove((await this.findOne(id))[0]);
+  async deleteRestoreUser(id: number) {
+    const user = await this.findOne(id);
+    if (user.advert && !user.advert.isDeleted) {
+      const advert = await this.advertRepository.findOne({
+        where: { id: user.advert.id },
+      });
+      advert.isDeleted = !advert.isDeleted;
+      await this.advertRepository.save(advert);
+    }
+    user.isDeleted = !user.isDeleted;
+    return this.usersRepository.save(user);
   }
 
   async updateUserInfo(

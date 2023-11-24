@@ -45,8 +45,27 @@ export class AdvertService {
       user.country == null ||
       user.birthday == null
     ) {
+      let array: string[];
+      if (!user.firstName) {
+        array.push('firstName');
+      }
+      if (!user.lastName) {
+        array.push('lastName');
+      }
+      if (!user.sex) {
+        array.push('sex');
+      }
+      if (!user.specializations) {
+        array.push('specializations');
+      }
+      if (!user.country) {
+        array.push('country');
+      }
+      if (!user.birthday) {
+        array.push('birthday');
+      }
       throw new BadRequestException(
-        'The user must fill in the following fields: firstName, lastName, sex, specializations, country, birthday',
+        `You need to fill in the following fields: ${array.join()}`,
       );
     }
     if (user.advert != null) {
@@ -161,9 +180,9 @@ export class AdvertService {
   }
 
   async deleteRestoreAdvert(id: number) {
-    return await this.advertRepository.update(id, {
-      isDeleted: !(await this.findOne(id)).isDeleted,
-    });
+    const advert = await this.findOne(id);
+    advert.isDeleted = !advert.isDeleted;
+    return this.advertRepository.save(advert);
   }
 
   async getLanguages(languages: Language[]): Promise<Language[]> {

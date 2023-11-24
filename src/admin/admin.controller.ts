@@ -57,9 +57,9 @@ export class AdminController {
     return this.adminService.getCountries();
   }
 
-  @Delete('users/:id')
+  @Put('users/:id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
-    return await this.adminService.deleteUser(id);
+    return await this.adminService.deleteRestoreUser(id);
   }
 
   @Put('adverts/:id')
