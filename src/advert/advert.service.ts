@@ -100,6 +100,7 @@ export class AdvertService {
         'user.specializations',
         'user.country',
         'user.feedbacksToMe',
+        'user.feedbacksFromMe',
       ],
       where: { isDeleted: false },
       // order,
@@ -115,6 +116,7 @@ export class AdvertService {
         'user.specializations',
         'user.country',
         'user.feedbacksToMe',
+        'user.feedbacksFromMe',
       ],
     });
   }
@@ -129,7 +131,8 @@ export class AdvertService {
           'teachingLanguages',
           'user.specializations',
           'user.country',
-          'user.feedbacks',
+          'user.feedbacksToMe',
+          'user.feedbacksFromMe',
         ],
         take: 1,
       })
