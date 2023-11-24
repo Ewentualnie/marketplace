@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Country } from 'src/models/country.entity';
 import { CountryDto } from 'src/models/dto/add-country.dto';
@@ -134,46 +138,99 @@ export class UtilsService {
   }
 
   async addLanguage(newLanguage: LanguageDto) {
-    return this.languageRepository.save(newLanguage);
+    const language = await this.languageRepository.findOne({
+      where: {
+        languageEn: newLanguage.languageEn,
+        languageUa: newLanguage.languageUa,
+      },
+    });
+    if (!language) {
+      return this.languageRepository.save(newLanguage);
+    }
+    throw new BadRequestException(
+      `Language ${newLanguage} already exists in the database`,
+    );
   }
 
   async addSpecialization(newSpecialization: SpecializationDto) {
-    return this.specializationRepository.save(newSpecialization);
+    const specialization = await this.specializationRepository.findOne({
+      where: {
+        specializationEn: newSpecialization.specializationEn,
+        specializationUa: newSpecialization.specializationUa,
+      },
+    });
+    if (!specialization) {
+      return this.specializationRepository.save(newSpecialization);
+    }
+    throw new BadRequestException(
+      `Specialization ${newSpecialization} already exists in the database`,
+    );
   }
 
   async addCountry(newCountry: CountryDto) {
+    const specialization = await this.countryRepository.findOne({
+      where: {
+        countryEn: newCountry.countryEn,
+        countryUa: newCountry.countryUa,
+      },
+    });
+    if (!specialization) {
+      return this.countryRepository.save(newCountry);
+    }
+    throw new BadRequestException(
+      `Country ${newCountry} already exists in the database`,
+    );
     return this.countryRepository.save(newCountry);
   }
 
   async findLanguage(id: number) {
-    return await this.languageRepository.findOne({ where: { id } });
-  }
+    const language = await this.languageRepository.findOne({
+      where: { id },
+      relations: ['spokenLanguages', 'teachingLanguages'],
+    });
 
-  async findSpecialization(id: number) {
-    return await this.specializationRepository.findOne({ where: { id } });
-  }
-
-  async findCountry(id: number) {
-    return await this.countryRepository.findOne({ where: { id } });
-  }
-
-  async editLanguage(id: number, dto: LanguageDto) {
-    const language = await this.languageRepository.findOne({ where: { id } });
     if (!language) {
       throw new NotFoundException(`Language with id: ${id} is not found`);
     }
+
+    return language;
+  }
+
+  async findSpecialization(id: number) {
+    const specialization = await this.specializationRepository.findOne({
+      where: { id },
+      relations: ['users'],
+    });
+
+    if (!specialization) {
+      throw new NotFoundException(`Specialization with id: ${id} is not found`);
+    }
+
+    return specialization;
+  }
+
+  async findCountry(id: number) {
+    const country = await this.countryRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!country) {
+      throw new NotFoundException(`Country with id: ${id} is not found`);
+    }
+
+    return country;
+  }
+
+  async editLanguage(id: number, dto: LanguageDto) {
+    const language = await this.findLanguage(id);
     language.languageEn = dto.languageEn ?? language.languageEn;
     language.languageUa = dto.languageUa ?? language.languageUa;
     return await this.languageRepository.save(language);
   }
 
   async editSpecialization(id: number, dto: SpecializationDto) {
-    const specialization = await this.specializationRepository.findOne({
-      where: { id },
-    });
-    if (!specialization) {
-      throw new NotFoundException(`Specialization with id: ${id} is not found`);
-    }
+    const specialization = await this.findSpecialization(id);
     specialization.specializationEn =
       dto.specializationEn ?? specialization.specializationEn;
     specialization.specializationUa =
@@ -182,24 +239,47 @@ export class UtilsService {
   }
 
   async editCountry(id: number, dto: CountryDto) {
-    const country = await this.countryRepository.findOne({ where: { id } });
-    if (!country) {
-      throw new NotFoundException(`Country with id: ${id} is not found`);
-    }
+    const country = await this.findCountry(id);
     country.countryEn = dto.countryEn ?? country.countryEn;
     country.countryUa = dto.countryUa ?? country.countryUa;
     return await this.countryRepository.save(country);
   }
 
   async removeLanguage(id: number) {
-    return await this.languageRepository.delete(id);
+    const toRemove = await this.findLanguage(id);
+
+    if (
+      toRemove.spokenLanguages.length > 0 ||
+      toRemove.teachingLanguages.length > 0
+    ) {
+      throw new BadRequestException(
+        `Language cannot be removed because it is used in adverts`,
+      );
+    }
+
+    return await this.languageRepository.remove(toRemove);
   }
 
   async removeSpecialization(id: number) {
-    return await this.specializationRepository.delete(id);
+    const toRemove = await this.findSpecialization(id);
+
+    if (toRemove.users.length > 0) {
+      throw new BadRequestException(
+        `Specialization cannot be removed because it is used by users`,
+      );
+    }
+
+    return await this.specializationRepository.remove(toRemove);
   }
 
   async removeCountry(id: number) {
-    return await this.countryRepository.delete(id);
+    const toRemove = await this.findCountry(id);
+
+    if (toRemove.user.length > 0) {
+      throw new BadRequestException(
+        `Country cannot be removed because it is used by users`,
+      );
+    }
+    return await this.countryRepository.remove(toRemove);
   }
 }
