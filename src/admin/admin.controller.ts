@@ -95,12 +95,12 @@ export class AdminController {
   @Patch('specializations/:id')
   async editSpecialization(
     @Param('id', ParseIntPipe) id: number,
-    @Body() speсialization: SpecializationDto,
+    @Body() specialization: SpecializationDto,
   ) {
-    return this.adminService.editSpecialization(id, speсialization);
+    return this.adminService.editSpecialization(id, specialization);
   }
 
-  @Patch('specializations/:id')
+  @Patch('countries/:id')
   async editCountry(
     @Param('id', ParseIntPipe) id: number,
     @Body() counry: CountryDto,
