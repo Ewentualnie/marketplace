@@ -204,7 +204,11 @@ export class AdvertService {
     return Promise.all(
       languages.map(async (data) => {
         return await this.languageRepository.findOne({
-          where: { languageEn: data.languageEn, languageUa: data.languageUa },
+          where: {
+            alpha2: data.alpha2,
+            languageEn: data.languageEn,
+            languageUa: data.languageUa,
+          },
         });
       }),
     );

@@ -6,10 +6,13 @@ export class Language {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column({ unique: true })
+  alpha2: string;
+
+  @Column({ nullable: false })
   languageEn: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   languageUa: string;
 
   @ManyToMany(() => Advert, (advert) => advert.spokenLanguages)
