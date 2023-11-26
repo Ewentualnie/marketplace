@@ -32,16 +32,17 @@ export class UtilsService {
   async initializeLanguages() {
     if ((await this.languageRepository.count()) === 0) {
       const languageData = [
-        { languageEn: 'English', languageUa: 'Англійська' },
-        { languageEn: 'Ukrainian', languageUa: 'Українська' },
-        { languageEn: 'German', languageUa: 'Німецька' },
-        { languageEn: 'Polish', languageUa: 'Польська' },
-        { languageEn: 'French', languageUa: 'Французька' },
-        { languageEn: 'Italian', languageUa: 'Італійська' },
+        { alpha2: 'en', languageEn: 'English', languageUa: 'Англійська' },
+        { alpha2: 'uk', languageEn: 'Ukrainian', languageUa: 'Українська' },
+        { alpha2: 'de', languageEn: 'German', languageUa: 'Німецька' },
+        { alpha2: 'pl', languageEn: 'Polish', languageUa: 'Польська' },
+        { alpha2: 'fr', languageEn: 'French', languageUa: 'Французька' },
+        { alpha2: 'it', languageEn: 'Italian', languageUa: 'Італійська' },
       ];
       for (const val of languageData) {
         await this.languageRepository.save(
           Object.assign(new Language(), {
+            alpha2: val.alpha2,
             languageEn: val.languageEn,
             languageUa: val.languageUa,
           }),
@@ -99,17 +100,16 @@ export class UtilsService {
   async initializeCountries() {
     if ((await this.countryRepository.count()) === 0) {
       const countryData = [
-        { countryEn: 'Ukraine', countryUa: 'Україна' },
-        { countryEn: 'Greet Britan', countryUa: 'Англія' },
-        { countryEn: 'France', countryUa: 'Франція' },
-        { countryEn: 'Poland', countryUa: 'Польща' },
-        { countryEn: 'Germany', countryUa: 'Німеччина' },
+        { alpha2: 'UA' },
+        { alpha2: 'GB' },
+        { alpha2: 'FR' },
+        { alpha2: 'PL' },
+        { alpha2: 'DE' },
       ];
       for (const val of countryData) {
         await this.countryRepository.save(
           Object.assign(new Country(), {
-            countryEn: val.countryEn,
-            countryUa: val.countryUa,
+            alpha2: val.alpha2,
           }),
         );
       }
@@ -139,10 +139,7 @@ export class UtilsService {
 
   async addLanguage(newLanguage: LanguageDto) {
     const language = await this.languageRepository.findOne({
-      where: {
-        languageEn: newLanguage.languageEn,
-        languageUa: newLanguage.languageUa,
-      },
+      where: { alpha2: newLanguage.alpha2 },
     });
     if (!language) {
       return this.languageRepository.save(newLanguage);
@@ -169,10 +166,7 @@ export class UtilsService {
 
   async addCountry(newCountry: CountryDto) {
     const specialization = await this.countryRepository.findOne({
-      where: {
-        countryEn: newCountry.countryEn,
-        countryUa: newCountry.countryUa,
-      },
+      where: { alpha2: newCountry.alpha2 },
     });
     if (!specialization) {
       return this.countryRepository.save(newCountry);
@@ -180,7 +174,6 @@ export class UtilsService {
     throw new BadRequestException(
       `Country ${newCountry} already exists in the database`,
     );
-    return this.countryRepository.save(newCountry);
   }
 
   async findLanguage(id: number) {
@@ -224,6 +217,7 @@ export class UtilsService {
 
   async editLanguage(id: number, dto: LanguageDto) {
     const language = await this.findLanguage(id);
+    language.alpha2 = dto.alpha2 ?? language.alpha2;
     language.languageEn = dto.languageEn ?? language.languageEn;
     language.languageUa = dto.languageUa ?? language.languageUa;
     return await this.languageRepository.save(language);
@@ -240,8 +234,7 @@ export class UtilsService {
 
   async editCountry(id: number, dto: CountryDto) {
     const country = await this.findCountry(id);
-    country.countryEn = dto.countryEn ?? country.countryEn;
-    country.countryUa = dto.countryUa ?? country.countryUa;
+    country.alpha2 = dto.alpha2 ?? country.alpha2;
     return await this.countryRepository.save(country);
   }
 

@@ -6,11 +6,8 @@ export class Country {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
-  countryEn: string;
-
-  @Column({ nullable: true })
-  countryUa: string;
+  @Column({ unique: true })
+  alpha2: string;
 
   @OneToMany(() => User, (user) => user.country)
   user: User[];
