@@ -42,4 +42,8 @@ export class Advert {
   @ManyToMany(() => Language, (language) => language.teachingLanguages)
   @JoinTable()
   teachingLanguages: Language[];
+
+  @ManyToMany(() => User, (user) => user.favoriteAdverts)
+  @JoinTable({ name: 'advert_likes' })
+  likes: User[];
 }

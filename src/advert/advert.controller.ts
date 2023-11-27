@@ -85,4 +85,12 @@ export class AdvertController {
   remove(@GetCurrentUserId() userId: number) {
     return this.advertService.deleteRestoreAdvert(userId);
   }
+
+  @Put(':id/favorite')
+  addtoFavorite(
+    @GetCurrentUserId() userId: number,
+    @Param('id', ParseIntPipe) advertId: number,
+  ) {
+    return this.advertService.toFavorite(userId, advertId);
+  }
 }

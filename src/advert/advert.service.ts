@@ -200,6 +200,25 @@ export class AdvertService {
     return this.advertRepository.save(advert);
   }
 
+  async toFavorite(userId: number, advertId: number) {
+    const user = await this.getCurrentUser(userId);
+
+    const isFavorite = user.favoriteAdverts.some(
+      (advert) => advert.id === advertId,
+    );
+
+    if (isFavorite) {
+      user.favoriteAdverts = user.favoriteAdverts.filter(
+        (advert) => advert.id !== advertId,
+      );
+    } else {
+      const advert = await this.findOne(advertId);
+      user.favoriteAdverts.push(advert);
+    }
+
+    return await this.userService.saveUser(user);
+  }
+
   async getLanguages(languages: Language[]): Promise<Language[]> {
     return Promise.all(
       languages.map(async (data) => {

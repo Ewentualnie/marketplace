@@ -32,7 +32,15 @@ export class UsersService {
 
   async findAll() {
     return await this.usersRepository.find({
-      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe'],
+      relations: [
+        'advert',
+        'hobbies',
+        'feedbacksToMe',
+        'feedbacksFromMe',
+        'country',
+        'specializations',
+        'favoriteAdverts',
+      ],
     });
   }
 
@@ -46,7 +54,7 @@ export class UsersService {
         'feedbacksFromMe',
         'country',
         'specializations',
-        'feedbacksToMe.fromUser',
+        'favoriteAdverts',
       ],
     });
     if (user) return user;
@@ -169,5 +177,9 @@ export class UsersService {
       throw new BadRequestException('You must add correct specializations!');
     }
     return res;
+  }
+
+  async saveUser(user: User) {
+    return await this.usersRepository.save(user);
   }
 }
