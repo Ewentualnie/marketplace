@@ -95,4 +95,10 @@ export class User {
   })
   @JoinTable({ name: 'user_specializations' })
   specializations: Specialization[];
+
+  @OneToMany(() => Advert, (advert) => advert.user, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'user_favorite_adverts' })
+  favoriteAdverts: Advert[];
 }
