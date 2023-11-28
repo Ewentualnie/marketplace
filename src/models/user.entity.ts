@@ -50,7 +50,7 @@ export class User {
   @CreateDateColumn()
   registeredAt: Date;
 
-  @Column({ default: 5 })
+  @Column({ type: 'double precision', default: 5, scale: 2 })
   rating: number;
 
   @Column({ nullable: true })

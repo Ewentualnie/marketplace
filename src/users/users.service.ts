@@ -143,8 +143,13 @@ export class UsersService {
     currentUser.feedbacksFromMe.push(newFeedback);
     currentUser.lastVisit = new Date();
 
-    await this.usersRepository.save(user);
-    await this.usersRepository.save(currentUser);
+    if (user.feedbacksToMe.length > 0) {
+      user.rating =
+        user.feedbacksToMe.reduce((sum, feedback) => sum + feedback.mark, 0) /
+        user.feedbacksToMe.length;
+    }
+
+    await this.usersRepository.save([user, currentUser]);
 
     return await this.feedbackRepository.save(newFeedback);
   }
