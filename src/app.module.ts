@@ -16,6 +16,7 @@ import { Specialization } from './models/specialization.entity';
 import { CloudinaryService } from './utils/cloudinary.service';
 import { Country } from './models/country.entity';
 import { FeedBack } from './models/feedback.entity';
+import { Mail } from './models/mail.entity';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { FeedBack } from './models/feedback.entity';
       Specialization,
       Country,
       FeedBack,
+      Mail,
     ]),
     TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,

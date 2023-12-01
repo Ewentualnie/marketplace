@@ -20,6 +20,8 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { FeedBack } from '../models/feedback.entity';
 import { User } from '../models/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Mail } from 'src/models/mail.entity';
+import { MailDto } from 'src/models/dto/create-mail.dto';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -56,5 +58,14 @@ export class UsersController {
     @Body() feedback: CreateFeedback,
   ): Promise<FeedBack> {
     return this.usersService.addFeedback(userId, currentUserId, feedback);
+  }
+
+  @Post(':id/mail')
+  sendMail(
+    @Param('id', ParseIntPipe) userId: number,
+    @GetCurrentUserId() currentUserId: number,
+    @Body() dto: MailDto,
+  ): Promise<Mail> {
+    return this.usersService.sendMail(dto, currentUserId, userId);
   }
 }

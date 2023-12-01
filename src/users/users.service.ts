@@ -10,6 +10,8 @@ import { Advert } from 'src/models/advert.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Specialization } from 'src/models/specialization.entity';
+import { Mail } from 'src/models/mail.entity';
+import { MailDto } from 'src/models/dto/create-mail.dto';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +20,7 @@ export class UsersService {
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
     @InjectRepository(Hobby) private hobbyRepository: Repository<Hobby>,
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
+    @InjectRepository(Mail) private mailRepository: Repository<Mail>,
     private cloudinaryService: CloudinaryService,
     private utilServise: UtilsService,
   ) {}
@@ -55,6 +58,8 @@ export class UsersService {
         'country',
         'specializations',
         'favoriteAdverts',
+        'receivedMails',
+        'sentMails',
       ],
     });
     if (user) return user;
@@ -186,5 +191,26 @@ export class UsersService {
 
   async saveUser(user: User) {
     return await this.usersRepository.save(user);
+  }
+
+  async sendMail(dto: MailDto, fromUserId: number, toUserId: number) {
+    const toUser = await this.findOne(toUserId);
+    const fromUser = await this.findOne(fromUserId);
+
+    if (toUser.id == fromUser.id) {
+      throw new BadRequestException(
+        'The user cannot write feedback to himself',
+      );
+    }
+
+    const mail = this.mailRepository.create({ ...dto, isReaded: false });
+
+    toUser.receivedMails.push(mail);
+    fromUser.sentMails.push(mail);
+    fromUser.lastVisit = new Date();
+
+    await this.usersRepository.save([toUser, fromUser]);
+
+    return await this.mailRepository.save(mail);
   }
 }

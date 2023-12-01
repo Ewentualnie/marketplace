@@ -19,6 +19,7 @@ import { IsDate, IsIn } from 'class-validator';
 import { Advert } from './advert.entity';
 import { Specialization } from './specialization.entity';
 import { Country } from './country.entity';
+import { Mail } from './mail.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -101,4 +102,12 @@ export class User {
   })
   @JoinColumn({ name: 'user_favorite_adverts' })
   favoriteAdverts: Advert[];
+
+  @OneToMany(() => Mail, (mail) => mail.toUser, { cascade: true })
+  @JoinColumn({ name: 'received_mails' })
+  receivedMails: Mail[];
+
+  @OneToMany(() => Mail, (mail) => mail.fromUser, { cascade: true })
+  @JoinColumn({ name: 'sended_mails' })
+  sentMails: Mail[];
 }
