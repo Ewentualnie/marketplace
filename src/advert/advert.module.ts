@@ -13,6 +13,7 @@ import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Specialization } from 'src/models/specialization.entity';
 import { Country } from 'src/models/country.entity';
+import { Mail } from 'src/models/mail.entity';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Country } from 'src/models/country.entity';
       FeedBack,
       Specialization,
       Country,
+      Mail,
     ]),
     JwtModule,
   ],

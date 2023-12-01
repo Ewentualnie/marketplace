@@ -11,6 +11,7 @@ import { UtilsService } from 'src/utils/utils.service';
 import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
 import { Advert } from 'src/models/advert.entity';
+import { Mail } from 'src/models/mail.entity';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { Advert } from 'src/models/advert.entity';
       Language,
       Specialization,
       Advert,
+      Mail,
     ]),
   ],
   controllers: [UsersController],
