@@ -155,20 +155,8 @@ export class UsersService {
     return await this.feedbackRepository.save(newFeedback);
   }
 
-  async getSpecializations(
-    specializations: number[],
-  ): Promise<Specialization[]> {
-    const res = (
-      await Promise.all(
-        specializations.map(
-          async (id: number) => await this.utilServise.findSpecialization(id),
-        ),
-      )
-    ).filter((val) => val != null);
-    if (res.length == 0) {
-      throw new BadRequestException('You must add correct specializations!');
-    }
-    return res;
+  async getMails(id: number): Promise<Mail[]> {
+    return (await this.findOne(id)).receivedMails;
   }
 
   async saveUser(user: User) {
