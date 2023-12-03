@@ -135,7 +135,7 @@ export class AdvertService {
           'user',
           'spokenLanguages',
           'teachingLanguages',
-          'user.specializations',
+          'specializations',
           'user.country',
           'user.feedbacksToMe',
           'user.feedbacksFromMe',
