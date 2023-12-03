@@ -8,7 +8,6 @@ import { FeedBack } from '../models/feedback.entity';
 import { Advert } from 'src/models/advert.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { Specialization } from 'src/models/specialization.entity';
 import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
 
@@ -28,7 +27,6 @@ export class UsersService {
       where: { email: email },
       relations: [
         'advert',
-        'hobbies',
         'feedbacksToMe',
         'feedbacksFromMe',
         'country',
@@ -43,7 +41,6 @@ export class UsersService {
     return await this.usersRepository.find({
       relations: [
         'advert',
-        'hobbies',
         'feedbacksToMe',
         'feedbacksFromMe',
         'country',
@@ -57,7 +54,6 @@ export class UsersService {
       where: { id },
       relations: [
         'advert',
-        'hobbies',
         'feedbacksToMe',
         'feedbacksFromMe',
         'country',
