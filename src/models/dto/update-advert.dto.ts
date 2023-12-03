@@ -4,6 +4,7 @@ export class UpdateAdvertDto {
   price?: number;
   description?: string;
   imagePath?: string;
+  specializations: number[];
   spokenLanguages?: Language[];
   teachingLanguages?: Language[];
 }
