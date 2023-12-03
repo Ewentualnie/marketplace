@@ -32,7 +32,7 @@ export class UsersController {
 
   @Get('/mail')
   getMails(@GetCurrentUserId() currentUserId: number) {
-    return this.getMails(currentUserId);
+    return this.usersService.getMails(currentUserId);
   }
 
   @Get(':id')
