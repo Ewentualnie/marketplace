@@ -11,7 +11,6 @@ import { AdminModule } from './admin/admin.module';
 import { dataSourceOptionst } from './database/database-config';
 import { UtilsService } from './utils/utils.service';
 import { Language } from './models/language.entity';
-import { Hobby } from './models/hobby.entity';
 import { Specialization } from './models/specialization.entity';
 import { CloudinaryService } from './utils/cloudinary.service';
 import { Country } from './models/country.entity';
@@ -22,7 +21,6 @@ import { Mail } from './models/mail.entity';
   imports: [
     TypeOrmModule.forFeature([
       Language,
-      Hobby,
       Specialization,
       Country,
       FeedBack,

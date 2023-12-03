@@ -4,7 +4,6 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../models/user.entity';
 import { FeedBack } from '../models/feedback.entity';
-import { Hobby } from '../models/hobby.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { Country } from 'src/models/country.entity';
 import { UtilsService } from 'src/utils/utils.service';
@@ -18,7 +17,6 @@ import { Mail } from 'src/models/mail.entity';
     TypeOrmModule.forFeature([
       User,
       FeedBack,
-      Hobby,
       Country,
       Language,
       Specialization,

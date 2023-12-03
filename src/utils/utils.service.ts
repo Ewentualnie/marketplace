@@ -9,7 +9,6 @@ import { CountryDto } from 'src/models/dto/add-country.dto';
 import { LanguageDto } from 'src/models/dto/add-language.dto';
 import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 import { FeedBack } from 'src/models/feedback.entity';
-import { Hobby } from 'src/models/hobby.entity';
 import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
 import { Repository } from 'typeorm';
@@ -19,8 +18,6 @@ export class UtilsService {
   constructor(
     @InjectRepository(Language)
     private languageRepository: Repository<Language>,
-    @InjectRepository(Hobby)
-    private hobbyRepository: Repository<Hobby>,
     @InjectRepository(Specialization)
     private specializationRepository: Repository<Specialization>,
     @InjectRepository(Country)
@@ -256,9 +253,9 @@ export class UtilsService {
   async removeSpecialization(id: number) {
     const toRemove = await this.findSpecialization(id);
 
-    if (toRemove.users.length > 0) {
+    if (toRemove.adverts.length > 0) {
       throw new BadRequestException(
-        `Specialization cannot be removed because it is used by users`,
+        `Specialization cannot be removed because it is used in adverts`,
       );
     }
 

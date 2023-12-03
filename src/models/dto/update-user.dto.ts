@@ -5,7 +5,6 @@ export class UpdateUserDto {
   country?: number;
   birthday?: Date;
   sex?: string;
-  hobbies?: string[];
+  aboutMe?: string;
   photo?: File;
-  specializations: number[];
 }

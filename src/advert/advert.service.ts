@@ -16,6 +16,7 @@ import { Language } from 'src/models/language.entity';
 import { Role } from 'src/utils/role.enum';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
+import { Specialization } from 'src/models/specialization.entity';
 
 @Injectable()
 export class AdvertService {
@@ -41,7 +42,6 @@ export class AdvertService {
       user.firstName == null ||
       user.lastName == null ||
       user.sex == null ||
-      user.specializations == null ||
       user.country == null ||
       user.birthday == null
     ) {
@@ -54,9 +54,6 @@ export class AdvertService {
       }
       if (!user.sex) {
         array.push('sex');
-      }
-      if (!user.specializations) {
-        array.push('specializations');
       }
       if (!user.country) {
         array.push('country');
@@ -82,6 +79,7 @@ export class AdvertService {
     advert.price = advertDTO.price;
     advert.spokenLanguages = await this.getLangs(advertDTO.spokenLanguages);
     advert.teachingLanguages = await this.getLangs(advertDTO.teachingLanguages);
+    advert.specializations = await this.getSpecs(advertDTO.specializations);
     advert.user = user;
     advert.imagePath = url;
 
@@ -97,7 +95,7 @@ export class AdvertService {
         'user',
         'spokenLanguages',
         'teachingLanguages',
-        'user.specializations',
+        'specializations',
         'user.country',
         'user.feedbacksToMe',
         'user.feedbacksFromMe',
@@ -117,7 +115,7 @@ export class AdvertService {
         'user',
         'spokenLanguages',
         'teachingLanguages',
-        'user.specializations',
+        'specializations',
         'user.country',
         'user.feedbacksToMe',
         'user.feedbacksFromMe',
@@ -243,6 +241,20 @@ export class AdvertService {
     ).filter((val) => val != null);
     if (res.length == 0) {
       throw new BadRequestException('You must add correct languages!');
+    }
+    return res;
+  }
+
+  async getSpecs(specializations: number[]): Promise<Specialization[]> {
+    const res = (
+      await Promise.all(
+        specializations.map(
+          async (id: number) => await this.utilServise.findSpecialization(id),
+        ),
+      )
+    ).filter((val) => val != null);
+    if (res.length == 0) {
+      throw new BadRequestException('You must add correct specializations!');
     }
     return res;
   }

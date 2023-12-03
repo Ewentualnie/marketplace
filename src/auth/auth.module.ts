@@ -10,7 +10,6 @@ import { RtStrategy } from './strategies/rt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { FeedBack } from 'src/models/feedback.entity';
-import { Hobby } from 'src/models/hobby.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Language } from 'src/models/language.entity';
@@ -25,7 +24,6 @@ import { Mail } from 'src/models/mail.entity';
     TypeOrmModule.forFeature([
       User,
       FeedBack,
-      Hobby,
       Language,
       Specialization,
       Country,

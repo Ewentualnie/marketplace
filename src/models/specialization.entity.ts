@@ -5,7 +5,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './user.entity';
+import { Advert } from './advert.entity';
 
 @Entity()
 export class Specialization {
@@ -18,7 +18,7 @@ export class Specialization {
   @Column({ nullable: true })
   specializationUa: string;
 
-  @ManyToMany(() => User, (user) => user.specializations)
-  @JoinTable({ name: 'users_specializations' })
-  users: User[];
+  @ManyToMany(() => Advert, (advert) => advert.specializations)
+  @JoinTable({ name: 'adverts_specializations' })
+  adverts: Advert[];
 }

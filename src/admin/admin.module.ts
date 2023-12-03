@@ -4,7 +4,6 @@ import { AdvertService } from 'src/advert/advert.service';
 import { UsersService } from 'src/users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
-import { Hobby } from 'src/models/hobby.entity';
 import { User } from 'src/models/user.entity';
 import { AdminService } from './admin.service';
 import { FeedBack } from 'src/models/feedback.entity';
@@ -22,7 +21,6 @@ import { Mail } from 'src/models/mail.entity';
     TypeOrmModule.forFeature([
       User,
       Advert,
-      Hobby,
       Language,
       FeedBack,
       Specialization,

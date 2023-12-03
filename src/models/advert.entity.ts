@@ -1,4 +1,3 @@
-import { User } from 'src/models/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +9,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Language } from './language.entity';
+import { User } from 'src/models/user.entity';
+import { Specialization } from './specialization.entity';
 
 @Entity({ name: 'advert' })
 export class Advert {
@@ -46,4 +47,10 @@ export class Advert {
   @ManyToMany(() => User, (user) => user.favoriteAdverts)
   @JoinTable({ name: 'advert_likes' })
   likes: User[];
+
+  @ManyToMany(() => Specialization, (val) => val.adverts, {
+    cascade: true,
+  })
+  @JoinTable({ name: 'advert_specializations' })
+  specializations: Specialization[];
 }
