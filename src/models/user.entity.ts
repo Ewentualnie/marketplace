@@ -5,8 +5,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -14,10 +12,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { FeedBack } from './feedback.entity';
-import { Hobby } from './hobby.entity';
 import { IsDate, IsIn } from 'class-validator';
 import { Advert } from './advert.entity';
-import { Specialization } from './specialization.entity';
 import { Country } from './country.entity';
 import { Mail } from './mail.entity';
 
@@ -59,7 +55,7 @@ export class User {
   birthday: Date;
 
   @Column({ nullable: true })
-  @IsIn(['male', 'female'])
+  @IsIn(['male', 'female', 'other'])
   sex: string;
 
   @ManyToOne(() => Country, (country) => country.user)
@@ -77,9 +73,8 @@ export class User {
   @JoinColumn()
   advert: Advert;
 
-  @ManyToMany(() => Hobby, (hobby) => hobby.user, { cascade: true })
-  @JoinTable({ name: 'user_hobbies' })
-  hobbies: Hobby[];
+  @Column({ nullable: true })
+  aboutMe: string;
 
   @OneToMany(() => FeedBack, (feedback) => feedback.toUser, { cascade: true })
   @JoinColumn({ name: 'to_user' })
@@ -90,12 +85,6 @@ export class User {
   })
   @JoinColumn({ name: 'user_feedbacks' })
   feedbacksFromMe: FeedBack[];
-
-  @ManyToMany(() => Specialization, (specialization) => specialization.users, {
-    cascade: true,
-  })
-  @JoinTable({ name: 'user_specializations' })
-  specializations: Specialization[];
 
   @OneToMany(() => Advert, (advert) => advert.user, {
     cascade: true,

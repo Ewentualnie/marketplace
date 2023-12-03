@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
 import { CreateFeedback } from '../models/dto/add-feedback.dto';
 import { FeedBack } from '../models/feedback.entity';
-import { Hobby } from '../models/hobby.entity';
 import { Advert } from 'src/models/advert.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
@@ -18,7 +17,6 @@ export class UsersService {
   constructor(
     @InjectRepository(User) public usersRepository: Repository<User>,
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
-    @InjectRepository(Hobby) private hobbyRepository: Repository<Hobby>,
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
     @InjectRepository(Mail) private mailRepository: Repository<Mail>,
     private cloudinaryService: CloudinaryService,
@@ -28,6 +26,14 @@ export class UsersService {
   async findByEmail(email: string) {
     const user = await this.usersRepository.findOne({
       where: { email: email },
+      relations: [
+        'advert',
+        'hobbies',
+        'feedbacksToMe',
+        'feedbacksFromMe',
+        'country',
+        'favoriteAdverts',
+      ],
     });
     if (user) return user;
     throw new BadRequestException(`User with email ${email} not found`);
@@ -41,7 +47,6 @@ export class UsersService {
         'feedbacksToMe',
         'feedbacksFromMe',
         'country',
-        'specializations',
         'favoriteAdverts',
       ],
     });
@@ -56,7 +61,6 @@ export class UsersService {
         'feedbacksToMe',
         'feedbacksFromMe',
         'country',
-        'specializations',
         'favoriteAdverts',
         'receivedMails',
         'sentMails',
@@ -98,20 +102,12 @@ export class UsersService {
     user.lastName = updateUserDto.lastName ?? user.lastName;
     user.birthday = updateUserDto.birthday ?? user.birthday;
     user.sex = updateUserDto.sex ?? user.sex;
-    user.hobbies = updateUserDto.hobbies
-      ? await this.getHobbies(updateUserDto.hobbies)
-      : user.hobbies;
+    user.aboutMe = updateUserDto.aboutMe ?? user.aboutMe;
 
     if (updateUserDto.country) {
       user.country =
         (await this.utilServise.findCountry(updateUserDto.country)) ??
         user.country;
-    }
-
-    if (updateUserDto.specializations) {
-      user.specializations =
-        (await this.getSpecializations(updateUserDto.specializations)) ??
-        user.specializations;
     }
 
     if (photo) {
@@ -159,20 +155,6 @@ export class UsersService {
     return await this.feedbackRepository.save(newFeedback);
   }
 
-  async getHobbies(hobbies: string[]): Promise<Hobby[]> {
-    return Promise.all(
-      hobbies.map(async (val) => {
-        const hobby = await this.hobbyRepository.findOne({
-          where: { hobby: val },
-        });
-        return (
-          hobby ||
-          this.hobbyRepository.save(Object.assign(new Hobby(), { hobby: val }))
-        );
-      }),
-    );
-  }
-
   async getSpecializations(
     specializations: number[],
   ): Promise<Specialization[]> {
@@ -198,9 +180,7 @@ export class UsersService {
     const fromUser = await this.findOne(fromUserId);
 
     if (toUser.id == fromUser.id) {
-      throw new BadRequestException(
-        'The user cannot write feedback to himself',
-      );
+      throw new BadRequestException('User cannot send mails to himself');
     }
 
     const mail = this.mailRepository.create({ ...dto, isReaded: false });

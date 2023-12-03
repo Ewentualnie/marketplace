@@ -21,4 +21,7 @@ export class CreateAdvertDto {
   teachingLanguages: string;
 
   updateUser: string;
+
+  @IsNotEmpty()
+  specializations: number[];
 }
