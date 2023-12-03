@@ -60,6 +60,11 @@ export class UsersController {
     return this.usersService.addFeedback(userId, currentUserId, feedback);
   }
 
+  @Get('/mail')
+  getMails(@GetCurrentUserId() currentUserId: number) {
+    return this.getMails(currentUserId);
+  }
+
   @Post(':id/mail')
   sendMail(
     @Param('id', ParseIntPipe) userId: number,
