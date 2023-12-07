@@ -23,5 +23,5 @@ export class CreateAdvertDto {
   updateUser: string;
 
   @IsNotEmpty()
-  specializations: number[];
+  specializations: string;
 }

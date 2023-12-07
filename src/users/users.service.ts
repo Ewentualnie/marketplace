@@ -58,8 +58,6 @@ export class UsersService {
         'feedbacksFromMe',
         'country',
         'favoriteAdverts',
-        'receivedMails',
-        'sentMails',
       ],
     });
     if (user) return user;
@@ -152,7 +150,12 @@ export class UsersService {
   }
 
   async getMails(id: number): Promise<Mail[]> {
-    return (await this.findOne(id)).receivedMails;
+    return (
+      await this.usersRepository.findOne({
+        where: { id },
+        relations: ['receivedMails'],
+      })
+    ).receivedMails;
   }
 
   async saveUser(user: User) {
