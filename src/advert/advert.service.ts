@@ -245,10 +245,10 @@ export class AdvertService {
     return res;
   }
 
-  async getSpecs(specializations: number[]): Promise<Specialization[]> {
+  async getSpecs(specializations: string): Promise<Specialization[]> {
     const res = (
       await Promise.all(
-        specializations.map(
+        JSON.parse(specializations).map(
           async (id: number) => await this.utilServise.findSpecialization(id),
         ),
       )
