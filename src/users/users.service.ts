@@ -118,6 +118,19 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
+  async getConversation(userId: number, currentUserId: number) {
+    const chatMails = await this.mailRepository
+      .createQueryBuilder('mail')
+      .where(
+        '(mail.fromUser = :userId AND mail.toUser = :currentUserId) OR (mail.fromUser = :currentUserId AND mail.toUser = :userId)',
+        { userId, currentUserId },
+      )
+      .orderBy('mail.writtedAt', 'DESC')
+      .getMany();
+
+    return chatMails;
+  }
+
   async addFeedback(
     userId: number,
     currentUserId: number,
