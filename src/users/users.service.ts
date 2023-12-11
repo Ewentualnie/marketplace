@@ -176,8 +176,14 @@ export class UsersService {
   }
 
   async sendMail(dto: MailDto, fromUserId: number, toUserId: number) {
-    const toUser = await this.findOne(toUserId);
-    const fromUser = await this.findOne(fromUserId);
+    const toUser = await this.usersRepository.findOne({
+      where: { id: toUserId },
+      relations: ['receivedMails'],
+    });
+    const fromUser = await this.usersRepository.findOne({
+      where: { id: fromUserId },
+      relations: ['sentMails'],
+    });
 
     if (toUser.id == fromUser.id) {
       throw new BadRequestException('User cannot send mails to himself');
