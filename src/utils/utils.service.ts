@@ -174,10 +174,7 @@ export class UtilsService {
   }
 
   async findLanguage(id: number) {
-    const language = await this.languageRepository.findOne({
-      where: { id },
-      relations: ['spokenLanguages', 'teachingLanguages'],
-    });
+    const language = await this.languageRepository.findOne({ where: { id } });
 
     if (!language) {
       throw new NotFoundException(`Language with id: ${id} is not found`);
@@ -189,7 +186,6 @@ export class UtilsService {
   async findSpecialization(id: number) {
     const specialization = await this.specializationRepository.findOne({
       where: { id },
-      relations: ['users'],
     });
 
     if (!specialization) {
@@ -200,10 +196,7 @@ export class UtilsService {
   }
 
   async findCountry(id: number) {
-    const country = await this.countryRepository.findOne({
-      where: { id },
-      relations: ['user'],
-    });
+    const country = await this.countryRepository.findOne({ where: { id } });
 
     if (!country) {
       throw new NotFoundException(`Country with id: ${id} is not found`);
@@ -236,7 +229,10 @@ export class UtilsService {
   }
 
   async removeLanguage(id: number) {
-    const toRemove = await this.findLanguage(id);
+    const toRemove = await this.languageRepository.findOne({
+      where: { id },
+      relations: ['spokenLanguages', 'teachingLanguages'],
+    });
 
     if (
       toRemove.spokenLanguages.length > 0 ||
@@ -251,7 +247,10 @@ export class UtilsService {
   }
 
   async removeSpecialization(id: number) {
-    const toRemove = await this.findSpecialization(id);
+    const toRemove = await this.specializationRepository.findOne({
+      where: { id },
+      relations: ['adverts'],
+    });
 
     if (toRemove.adverts.length > 0) {
       throw new BadRequestException(
@@ -263,7 +262,10 @@ export class UtilsService {
   }
 
   async removeCountry(id: number) {
-    const toRemove = await this.findCountry(id);
+    const toRemove = await this.countryRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
 
     if (toRemove.user.length > 0) {
       throw new BadRequestException(

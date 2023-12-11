@@ -30,7 +30,7 @@ import { MailDto } from 'src/models/dto/create-mail.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('/mail')
+  @Get('/conversations')
   getMails(@GetCurrentUserId() currentUserId: number) {
     return this.usersService.getMails(currentUserId);
   }
@@ -65,12 +65,20 @@ export class UsersController {
     return this.usersService.addFeedback(userId, currentUserId, feedback);
   }
 
-  @Post(':id/mail')
+  @Post(':id/conversation')
   sendMail(
     @Param('id', ParseIntPipe) userId: number,
     @GetCurrentUserId() currentUserId: number,
     @Body() dto: MailDto,
   ): Promise<Mail> {
     return this.usersService.sendMail(dto, currentUserId, userId);
+  }
+
+  @Get(':id/conversation')
+  getConversation(
+    @Param('id', ParseIntPipe) userId: number,
+    @GetCurrentUserId() currentUserId: number,
+  ): Promise<Mail[]> {
+    return this.usersService.getConversation(currentUserId, userId);
   }
 }
