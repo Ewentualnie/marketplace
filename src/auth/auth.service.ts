@@ -70,7 +70,7 @@ export class AuthService {
   async refresh(userId: number, rt: string): Promise<UserRes> {
     const user = await this.userService.findOne(userId);
 
-    if (!this.compareHash(rt, user.refreshToken) || !user.refreshToken) {
+    if (!user.refreshToken || !this.compareHash(rt, user.refreshToken)) {
       throw new ForbiddenException('Access denied');
     }
 
