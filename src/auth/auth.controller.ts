@@ -134,6 +134,7 @@ export class AuthController {
     @GetCurrentUserId(ParseIntPipe) userId: number,
     @GetCurrentUser('refreshToken') refreshToken: string,
   ): Promise<UserRes> {
+    console.log(`User with id: "${userId}" try to refresh`);
     return this.authService.refresh(userId, refreshToken);
   }
 }
