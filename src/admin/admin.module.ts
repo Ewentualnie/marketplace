@@ -15,6 +15,7 @@ import { Specialization } from 'src/models/specialization.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { Country } from 'src/models/country.entity';
 import { Mail } from 'src/models/mail.entity';
+import { AdvertLike } from 'src/models/advertLike.entity';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { Mail } from 'src/models/mail.entity';
       Specialization,
       Country,
       Mail,
+      AdvertLike,
     ]),
     JwtModule.register({
       secret: 'at-secret',
