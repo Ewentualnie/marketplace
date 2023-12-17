@@ -5,12 +5,14 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Language } from './language.entity';
 import { User } from 'src/models/user.entity';
 import { Specialization } from './specialization.entity';
+import { AdvertLike } from './advertLike.entity';
 
 @Entity({ name: 'advert' })
 export class Advert {
@@ -44,9 +46,8 @@ export class Advert {
   @JoinTable()
   teachingLanguages: Language[];
 
-  @ManyToMany(() => User, (user) => user.favoriteAdverts)
-  @JoinTable({ name: 'advert_likes' })
-  likes: User[];
+  @OneToMany(() => AdvertLike, (like) => like.advert)
+  likes: AdvertLike[];
 
   @ManyToMany(() => Specialization, (val) => val.adverts, {
     cascade: true,
