@@ -17,11 +17,15 @@ import { Role } from 'src/utils/role.enum';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Specialization } from 'src/models/specialization.entity';
+import { AdvertLike } from 'src/models/advertLike.entity';
 
 @Injectable()
 export class AdvertService {
   constructor(
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(AdvertLike)
+    private readonly advertLikeRepository: Repository<AdvertLike>,
     @InjectRepository(Language)
     private languageRepository: Repository<Language>,
     private userService: UsersService,
@@ -89,24 +93,75 @@ export class AdvertService {
     return savedAdvert;
   }
 
-  async findAllowedAdverts(query: any) {
-    return await this.advertRepository.find({
-      relations: [
-        'user',
-        'spokenLanguages',
-        'teachingLanguages',
-        'specializations',
-        'user.country',
-        'user.feedbacksToMe',
-        'user.feedbacksFromMe',
-        'user.feedbacksToMe.toUser',
-        'user.feedbacksToMe.fromUser',
-        'user.feedbacksFromMe.toUser',
-        'user.feedbacksFromMe.fromUser',
-      ],
-      where: { isDeleted: false },
-      // order,
-    });
+  async findAllowedAdverts(query: Record<string, string>) {
+    const queryParams = this.convertQueryParams(query);
+    const queryBuilder = this.advertRepository.createQueryBuilder('advert');
+
+    if (queryParams.country) {
+      queryBuilder.andWhere('user.country = :id', {
+        id: queryParams.country,
+      });
+    }
+    if (queryParams.language) {
+      queryBuilder.andWhere('teachingLanguage.id = :id', {
+        id: queryParams.language,
+      });
+    }
+    if (queryParams.specialization) {
+      queryBuilder.andWhere('specialization.id = :id', {
+        id: queryParams.specialization,
+      });
+    }
+
+    const adverts = await queryBuilder
+      .distinctOn(['advert.id'])
+      .groupBy(
+        'advert.id, advert.price, advert.description,' +
+          ' advert.imagePath, advert.createdAt, advert.isDeleted,' +
+          ' user.country, user.email, user.firstName, user.lastName,' +
+          ' teachingLanguage.id, specialization.id, user.id, likes.id',
+      )
+      .addSelect('COUNT(likes.id)', 'likesCount')
+      .addSelect(['advert.id as advert_id'])
+      .leftJoinAndSelect('advert.teachingLanguages', 'teachingLanguage')
+      .leftJoinAndSelect('advert.specializations', 'specialization')
+      .leftJoinAndSelect('advert.likes', 'likes')
+      .leftJoinAndSelect('advert.user', 'user')
+      .getRawMany();
+
+    const filteredAdverts = await Promise.all(
+      adverts
+        .map((val) => val.advert_id)
+        .map((id) =>
+          this.advertRepository.findOne({
+            where: { id },
+            relations: [
+              'user',
+              'teachingLanguages',
+              'specializations',
+              'user.country',
+            ],
+          }),
+        ),
+    );
+
+    const totalCount = adverts.length;
+    const page = queryParams.page || 1;
+    const limit = queryParams.limit || 9;
+    console.log(page);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const prev = page > 1;
+    const next = page < totalPages;
+
+    return {
+      adverts: filteredAdverts,
+      prev,
+      next,
+      totalPages,
+      currentPage: page,
+    };
   }
 
   async findAllAdverts() {
@@ -128,25 +183,22 @@ export class AdvertService {
   }
 
   async findOne(id: number) {
-    const advert = (
-      await this.advertRepository.find({
-        where: { id },
-        relations: [
-          'user',
-          'spokenLanguages',
-          'teachingLanguages',
-          'specializations',
-          'user.country',
-          'user.feedbacksToMe',
-          'user.feedbacksFromMe',
-          'user.feedbacksToMe.toUser',
-          'user.feedbacksToMe.fromUser',
-          'user.feedbacksFromMe.toUser',
-          'user.feedbacksFromMe.fromUser',
-        ],
-        take: 1,
-      })
-    )[0];
+    const advert = await this.advertRepository.findOne({
+      where: { id },
+      relations: [
+        'user',
+        'spokenLanguages',
+        'teachingLanguages',
+        'specializations',
+        'user.country',
+        'user.feedbacksToMe',
+        'user.feedbacksFromMe',
+        'user.feedbacksToMe.toUser',
+        'user.feedbacksToMe.fromUser',
+        'user.feedbacksFromMe.toUser',
+        'user.feedbacksFromMe.fromUser',
+      ],
+    });
 
     if (!advert) {
       throw new NotFoundException(`Advert with id "${id}" not found`);
@@ -199,22 +251,20 @@ export class AdvertService {
   }
 
   async toFavorite(userId: number, advertId: number) {
-    const user = await this.getCurrentUser(userId);
+    const user = await this.userService.getUserWithLikes(userId);
+    const advert = await this.findOne(advertId);
 
-    const isFavorite = user.favoriteAdverts.some(
-      (advert) => advert.id === advertId,
-    );
+    const likeRecord = await this.advertLikeRepository.findOne({
+      where: { user: { id: user.id }, advert: { id: advert.id } },
+    });
 
-    if (isFavorite) {
-      user.favoriteAdverts = user.favoriteAdverts.filter(
-        (advert) => advert.id !== advertId,
-      );
+    if (likeRecord) {
+      return await this.advertLikeRepository.remove(likeRecord);
     } else {
-      const advert = await this.findOne(advertId);
-      user.favoriteAdverts.push(advert);
+      const newLike = this.advertLikeRepository.create({ user, advert });
+      user.likes.push(newLike);
+      return await this.advertLikeRepository.save(newLike);
     }
-
-    return await this.userService.saveUser(user);
   }
 
   async getLanguages(languages: Language[]): Promise<Language[]> {
@@ -261,5 +311,29 @@ export class AdvertService {
 
   async getCurrentUser(id: number): Promise<User> {
     return await this.userService.findOne(id);
+  }
+
+  convertQueryParams(query: Record<string, string>) {
+    const allowedKeys = [
+      'language',
+      'country',
+      'specialization',
+      'price',
+      'page',
+    ];
+
+    const params: Record<string, number> = {};
+
+    for (const key of allowedKeys) {
+      const stringValue = query[key];
+      if (stringValue !== undefined) {
+        const numericValue = parseInt(stringValue, 10);
+        if (!isNaN(numericValue) && numericValue > 0) {
+          params[key] = numericValue;
+        }
+      }
+    }
+
+    return params;
   }
 }

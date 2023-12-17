@@ -25,13 +25,7 @@ export class UsersService {
   async findByEmail(email: string) {
     const user = await this.usersRepository.findOne({
       where: { email: email },
-      relations: [
-        'advert',
-        'feedbacksToMe',
-        'feedbacksFromMe',
-        'country',
-        'favoriteAdverts',
-      ],
+      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe', 'country'],
     });
     if (user) return user;
     throw new BadRequestException(`User with email ${email} not found`);
@@ -39,26 +33,23 @@ export class UsersService {
 
   async findAll() {
     return await this.usersRepository.find({
-      relations: [
-        'advert',
-        'feedbacksToMe',
-        'feedbacksFromMe',
-        'country',
-        'favoriteAdverts',
-      ],
+      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe', 'country'],
     });
   }
 
   async findOne(id: number) {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: [
-        'advert',
-        'feedbacksToMe',
-        'feedbacksFromMe',
-        'country',
-        'favoriteAdverts',
-      ],
+      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe', 'country'],
+    });
+    if (user) return user;
+    throw new BadRequestException(`User with id ${id} not found`);
+  }
+
+  async getUserWithLikes(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['likes'],
     });
     if (user) return user;
     throw new BadRequestException(`User with id ${id} not found`);

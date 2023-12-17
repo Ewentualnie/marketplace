@@ -47,7 +47,7 @@ export class AdvertController {
 
   @Public()
   @Get()
-  findAll(@Query() query: any) {
+  findAll(@Query() query: Record<string, string>) {
     return this.advertService.findAllowedAdverts(query);
   }
 
