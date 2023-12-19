@@ -129,36 +129,21 @@ export class AdvertService {
       .leftJoinAndSelect('advert.user', 'user')
       .getRawMany();
 
-    const filteredAdverts = await Promise.all(
-      adverts
-        .map((val) => val.advert_id)
-        .map((id) =>
-          this.advertRepository.findOne({
-            where: { id },
-            relations: [
-              'user',
-              'teachingLanguages',
-              'specializations',
-              'user.country',
-            ],
-          }),
-        ),
+    const totalCount = adverts.length;
+    const limit =
+      queryParams.limit && queryParams.limit > 0 ? queryParams.limit : 9;
+    const totalPages = Math.ceil(totalCount / limit);
+    const page = Math.min(
+      queryParams.page && queryParams.page > 0 ? queryParams.page : 1,
+      totalPages,
     );
 
-    const totalCount = adverts.length;
-    const page = queryParams.page || 1;
-    const limit = queryParams.limit || 9;
-    console.log(page);
-
-    const totalPages = Math.ceil(totalCount / limit);
-
-    const prev = page > 1;
-    const next = page < totalPages;
+    const paginatedAdverts = await this.paginateAdverts(adverts, page, limit);
 
     return {
-      adverts: filteredAdverts,
-      prev,
-      next,
+      adverts: paginatedAdverts,
+      prev: page > 1,
+      next: page < totalPages,
       totalPages,
       currentPage: page,
     };
@@ -320,6 +305,7 @@ export class AdvertService {
       'specialization',
       'price',
       'page',
+      'limit',
     ];
 
     const params: Record<string, number> = {};
@@ -335,5 +321,29 @@ export class AdvertService {
     }
 
     return params;
+  }
+
+  async paginateAdverts(adverts: any[], page: number, limit: number) {
+    const filteredAdverts = await Promise.all(
+      adverts
+        .map((val) => val.advert_id)
+        .map((id) =>
+          this.advertRepository.findOne({
+            where: { id },
+            relations: [
+              'user',
+              'teachingLanguages',
+              'specializations',
+              'user.country',
+              'likes',
+            ],
+          }),
+        ),
+    );
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedArray = filteredAdverts.slice(startIndex, endIndex);
+
+    return paginatedArray;
   }
 }
