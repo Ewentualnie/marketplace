@@ -129,23 +129,6 @@ export class AdvertService {
       .leftJoinAndSelect('advert.user', 'user')
       .getRawMany();
 
-    const filteredAdverts = await Promise.all(
-      adverts
-        .map((val) => val.advert_id)
-        .map((id) =>
-          this.advertRepository.findOne({
-            where: { id },
-            relations: [
-              'user',
-              'teachingLanguages',
-              'specializations',
-              'user.country',
-              'likes',
-            ],
-          }),
-        ),
-    );
-
     const totalCount = adverts.length;
     const page =
       queryParams.page && queryParams.page > 0 && queryParams.page < totalCount
@@ -153,11 +136,11 @@ export class AdvertService {
         : 1;
     const limit =
       queryParams.limit && queryParams.limit > 0 ? queryParams.limit : 9;
-
     const totalPages = Math.ceil(totalCount / limit);
+    const paginatedAdverts = this.paginateAdverts(adverts, page, limit);
 
     return {
-      adverts: filteredAdverts,
+      adverts: paginatedAdverts,
       prev: page > 1,
       next: page < totalPages,
       totalPages,
@@ -337,5 +320,30 @@ export class AdvertService {
     }
 
     return params;
+  }
+
+  async paginateAdverts(adverts: any[], page: number, limit: number) {
+    const array = await Promise.all(
+      adverts
+        .map((val) => val.advert_id)
+        .map((id) =>
+          this.advertRepository.findOne({
+            where: { id },
+            relations: [
+              'user',
+              'teachingLanguages',
+              'specializations',
+              'user.country',
+              'likes',
+            ],
+          }),
+        ),
+    );
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedArray = array.slice(startIndex, endIndex);
+
+    return paginatedArray;
   }
 }
