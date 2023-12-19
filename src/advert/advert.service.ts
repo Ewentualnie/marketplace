@@ -130,10 +130,6 @@ export class AdvertService {
       .getRawMany();
 
     const totalCount = adverts.length;
-    const page =
-      queryParams.page && queryParams.page > 0 && queryParams.page < totalCount
-        ? queryParams.page
-        : 1;
     const limit =
       queryParams.limit && queryParams.limit > 0 ? queryParams.limit : 9;
     const totalPages = Math.ceil(totalCount / limit);
