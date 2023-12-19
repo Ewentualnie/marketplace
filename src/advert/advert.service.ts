@@ -140,25 +140,26 @@ export class AdvertService {
               'teachingLanguages',
               'specializations',
               'user.country',
+              'likes',
             ],
           }),
         ),
     );
 
     const totalCount = adverts.length;
-    const page = queryParams.page || 1;
-    const limit = queryParams.limit || 9;
-    console.log(page);
+    const page =
+      queryParams.page && queryParams.page > 0 && queryParams.page < totalCount
+        ? queryParams.page
+        : 1;
+    const limit =
+      queryParams.limit && queryParams.limit > 0 ? queryParams.limit : 9;
 
     const totalPages = Math.ceil(totalCount / limit);
 
-    const prev = page > 1;
-    const next = page < totalPages;
-
     return {
       adverts: filteredAdverts,
-      prev,
-      next,
+      prev: page > 1,
+      next: page < totalPages,
       totalPages,
       currentPage: page,
     };
@@ -320,6 +321,7 @@ export class AdvertService {
       'specialization',
       'price',
       'page',
+      'limit',
     ];
 
     const params: Record<string, number> = {};
