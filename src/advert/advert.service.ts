@@ -130,14 +130,15 @@ export class AdvertService {
       .getRawMany();
 
     const totalCount = adverts.length;
-    const page =
-      queryParams.page && queryParams.page > 0 && queryParams.page < totalCount
-        ? queryParams.page
-        : 1;
     const limit =
       queryParams.limit && queryParams.limit > 0 ? queryParams.limit : 9;
     const totalPages = Math.ceil(totalCount / limit);
-    const paginatedAdverts = this.paginateAdverts(adverts, page, limit);
+    const page = Math.min(
+      queryParams.page && queryParams.page > 0 ? queryParams.page : 1,
+      totalPages,
+    );
+
+    const paginatedAdverts = await this.paginateAdverts(adverts, page, limit);
 
     return {
       adverts: paginatedAdverts,
@@ -323,7 +324,7 @@ export class AdvertService {
   }
 
   async paginateAdverts(adverts: any[], page: number, limit: number) {
-    const array = await Promise.all(
+    const filteredAdverts = await Promise.all(
       adverts
         .map((val) => val.advert_id)
         .map((id) =>
@@ -341,8 +342,7 @@ export class AdvertService {
     );
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-
-    const paginatedArray = array.slice(startIndex, endIndex);
+    const paginatedArray = filteredAdverts.slice(startIndex, endIndex);
 
     return paginatedArray;
   }
