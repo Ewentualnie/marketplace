@@ -30,6 +30,11 @@ import { MailDto } from 'src/models/dto/create-mail.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Get()
+  getCurrentUser(@GetCurrentUserId() currentUserId: number) {
+    return this, this.usersService.findOne(currentUserId);
+  }
+
   @Get('/conversations')
   getMails(@GetCurrentUserId() currentUserId: number) {
     return this.usersService.getMails(currentUserId);
