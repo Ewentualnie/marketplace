@@ -49,7 +49,7 @@ export class AdvertService {
       user.country == null ||
       user.birthday == null
     ) {
-      let array: string[];
+      const array: string[] = [];
       if (!user.firstName) {
         array.push('firstName');
       }
