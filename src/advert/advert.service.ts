@@ -175,13 +175,10 @@ export class AdvertService {
         'spokenLanguages',
         'teachingLanguages',
         'specializations',
+        'likes',
         'user.country',
         'user.feedbacksToMe',
-        'user.feedbacksFromMe',
-        'user.feedbacksToMe.toUser',
         'user.feedbacksToMe.fromUser',
-        'user.feedbacksFromMe.toUser',
-        'user.feedbacksFromMe.fromUser',
       ],
     });
 
