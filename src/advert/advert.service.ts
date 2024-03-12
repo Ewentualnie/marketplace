@@ -201,10 +201,10 @@ export class AdvertService {
       advert.price = updateAdvertDto.price ?? advert.price;
       advert.description = updateAdvertDto.description ?? advert.description;
       advert.spokenLanguages = updateAdvertDto.spokenLanguages
-        ? await this.getLanguages(updateAdvertDto.spokenLanguages)
+        ? await this.getLangs(updateAdvertDto.spokenLanguages)
         : advert.spokenLanguages;
       advert.teachingLanguages = updateAdvertDto.teachingLanguages
-        ? await this.getLanguages(updateAdvertDto.teachingLanguages)
+        ? await this.getLangs(updateAdvertDto.teachingLanguages)
         : advert.teachingLanguages;
 
       if (file) {

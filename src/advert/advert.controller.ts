@@ -60,6 +60,9 @@ export class AdvertController {
   @Patch(':id')
   @UseInterceptors(FileInterceptor('image'))
   update(
+    @Param('id', ParseIntPipe) advertId: number,
+    @Body() updateAdvertDto: UpdateAdvertDto,
+    @GetCurrentUserId() userId: number,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -68,10 +71,7 @@ export class AdvertController {
         ],
       }),
     )
-    file: Express.Multer.File,
-    @Param('id', ParseIntPipe) advertId: number,
-    @Body() updateAdvertDto: UpdateAdvertDto,
-    @GetCurrentUserId() userId: number,
+    file?: Express.Multer.File,
   ) {
     return this.advertService.updateAdvertInfo(
       advertId,
