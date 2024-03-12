@@ -17,6 +17,7 @@ import { Advert } from './advert.entity';
 import { Country } from './country.entity';
 import { Mail } from './mail.entity';
 import { AdvertLike } from './advertLike.entity';
+// import Schedule from './schedule.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -97,4 +98,7 @@ export class User {
   @OneToMany(() => Mail, (mail) => mail.fromUser, { cascade: true })
   @JoinColumn({ name: 'sended_mails' })
   sentMails: Mail[];
+
+  // @OneToMany(() => Schedule, (schedule) => schedule.user)
+  // schedules: Schedule[];
 }
