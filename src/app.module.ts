@@ -16,9 +16,11 @@ import { CloudinaryService } from './utils/cloudinary.service';
 import { Country } from './models/country.entity';
 import { FeedBack } from './models/feedback.entity';
 import { Mail } from './models/mail.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forFeature([
       Language,
       Specialization,
