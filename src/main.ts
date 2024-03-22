@@ -41,5 +41,6 @@ async function bootstrap() {
   await utilsService.initializeLanguages();
   await utilsService.initializeSpecializations();
   await utilsService.initializeCountries();
+  // console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
