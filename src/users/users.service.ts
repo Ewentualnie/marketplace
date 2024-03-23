@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from '../models/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +14,8 @@ import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
+import { Message } from 'src/models/message.entity';
+import { Chat } from 'src/models/chat.entity';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +24,8 @@ export class UsersService {
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
     @InjectRepository(Mail) private mailRepository: Repository<Mail>,
+    @InjectRepository(Message) private messageRepository: Repository<Message>,
+    @InjectRepository(Chat) private chatRepository: Repository<Chat>,
     private cloudinaryService: CloudinaryService,
     private utilServise: UtilsService,
   ) {}
@@ -189,5 +197,70 @@ export class UsersService {
     await this.usersRepository.save([toUser, fromUser]);
 
     return await this.mailRepository.save(mail);
+  }
+
+  async findOrCreateChat(dto: MailDto, fromUserId: number, toUserId: number) {
+    const toUser = await this.usersRepository.findOne({
+      where: { id: toUserId },
+      relations: ['chatsAsUser1', 'chatsAsUser2'],
+    });
+    const fromUser = await this.usersRepository.findOne({
+      where: { id: fromUserId },
+      relations: ['chatsAsUser1', 'chatsAsUser2'],
+    });
+    if (!fromUser || !toUserId) {
+      throw new NotFoundException('Sender or receiver not found');
+    }
+    if (toUser.id == fromUser.id) {
+      throw new BadRequestException('User cannot send mails to himself');
+    }
+
+    const chat = await this.chatRepository
+      .createQueryBuilder('chat')
+      .leftJoinAndSelect('chat.messages', 'messages')
+      .leftJoinAndSelect('chat.user1', 'user1')
+      .leftJoinAndSelect('chat.user2', 'user2')
+      .where(
+        '(chat.user1Id = :fromUserId AND chat.user2Id = :toUserId) OR (chat.user1Id = :toUserId AND chat.user2Id = :fromUserId)',
+        {
+          fromUserId,
+          toUserId,
+        },
+      )
+      .getOne();
+
+    if (!chat) {
+      const newChat = this.chatRepository.create();
+      newChat.user1 = fromUser;
+      newChat.user2 = toUser;
+      // await this.chatRepository.save(newChat);
+
+      fromUser.chatsAsUser1.push(newChat);
+      toUser.chatsAsUser2.push(newChat);
+      // await this.usersRepository.save([fromUser, toUser]);
+
+      const message = this.messageRepository.create({ isReaded: false });
+      message.text = dto.message;
+      message.chat = newChat;
+      // await this.messageRepository.save(message);
+
+      newChat.messages.push(message);
+
+      // await this.chatRepository.save(newChat);
+
+      return message;
+    } else {
+      const message = this.messageRepository.create({ isReaded: false });
+      message.text = dto.message;
+      message.chat = chat;
+      // await this.messageRepository.save(message);
+
+      chat.messages.push(message);
+
+      // await this.chatRepository.save(chat);
+      console.log(message, chat);
+
+      return message;
+    }
   }
 }
