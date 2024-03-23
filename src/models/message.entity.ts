@@ -16,12 +16,6 @@ export class Message {
   @Column({ nullable: false })
   text: string;
 
-  @Column({ nullable: false })
-  senderId: number;
-
-  @Column({ nullable: false })
-  receiverId: number;
-
   @Column({ default: false })
   isReaded: boolean;
 
