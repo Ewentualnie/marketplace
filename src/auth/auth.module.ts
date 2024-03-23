@@ -17,6 +17,8 @@ import { Specialization } from 'src/models/specialization.entity';
 import { Country } from 'src/models/country.entity';
 import { Advert } from 'src/models/advert.entity';
 import { Mail } from 'src/models/mail.entity';
+import { Message } from 'src/models/message.entity';
+import { Chat } from 'src/models/chat.entity';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { Mail } from 'src/models/mail.entity';
       Country,
       Advert,
       Mail,
+      Message,
+      Chat,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: 'at-secret' }),

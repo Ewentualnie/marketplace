@@ -16,6 +16,8 @@ import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { Country } from 'src/models/country.entity';
 import { Mail } from 'src/models/mail.entity';
 import { AdvertLike } from 'src/models/advertLike.entity';
+import { Message } from 'src/models/message.entity';
+import { Chat } from 'src/models/chat.entity';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { AdvertLike } from 'src/models/advertLike.entity';
       Country,
       Mail,
       AdvertLike,
+      Message,
+      Chat,
     ]),
     JwtModule.register({
       secret: 'at-secret',
