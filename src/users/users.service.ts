@@ -229,7 +229,13 @@ export class UsersService {
       )
       .getOne();
 
+    // console.log(chat);
+    const message = this.messageRepository.create({ isReaded: false });
+    message.text = dto.message;
+
     if (!chat) {
+      console.log('in if');
+
       const newChat = this.chatRepository.create();
       newChat.user1 = fromUser;
       newChat.user2 = toUser;
@@ -239,28 +245,23 @@ export class UsersService {
       toUser.chatsAsUser2.push(newChat);
       // await this.usersRepository.save([fromUser, toUser]);
 
-      const message = this.messageRepository.create({ isReaded: false });
-      message.text = dto.message;
       message.chat = newChat;
       // await this.messageRepository.save(message);
 
-      newChat.messages.push(message);
+      newChat.messages = [message];
+      console.log(newChat);
 
       // await this.chatRepository.save(newChat);
-
-      return message;
     } else {
-      const message = this.messageRepository.create({ isReaded: false });
-      message.text = dto.message;
+      console.log('in else');
+
       message.chat = chat;
       // await this.messageRepository.save(message);
 
       chat.messages.push(message);
 
       // await this.chatRepository.save(chat);
-      console.log(message, chat);
-
-      return message;
     }
+    return message;
   }
 }
