@@ -22,6 +22,7 @@ import { User } from '../models/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
+import { Message } from 'src/models/message.entity';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -75,8 +76,9 @@ export class UsersController {
     @Param('id', ParseIntPipe) userId: number,
     @GetCurrentUserId() currentUserId: number,
     @Body() dto: MailDto,
-  ): Promise<Mail> {
-    return this.usersService.sendMail(dto, currentUserId, userId);
+  ): Promise<Message> {
+    return this.usersService.findOrCreateChat(dto, currentUserId, userId);
+    // return this.usersService.sendMail(dto, currentUserId, userId);
   }
 
   @Get(':id/conversation')
