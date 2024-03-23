@@ -98,18 +98,18 @@ export class AdvertService {
     const queryBuilder = this.advertRepository.createQueryBuilder('advert');
 
     if (queryParams.country) {
-      queryBuilder.andWhere('user.country = :id', {
-        id: queryParams.country,
+      queryBuilder.andWhere('user.country = :countryId', {
+        countryId: queryParams.country,
       });
     }
     if (queryParams.language) {
-      queryBuilder.andWhere('teachingLanguage.id = :id', {
-        id: queryParams.language,
+      queryBuilder.andWhere('teachingLanguage.id = :languageId', {
+        languageId: queryParams.language,
       });
     }
     if (queryParams.specialization) {
-      queryBuilder.andWhere('specialization.id = :id', {
-        id: queryParams.specialization,
+      queryBuilder.andWhere('specialization.id = :specializationId', {
+        specializationId: queryParams.specialization,
       });
     }
 
