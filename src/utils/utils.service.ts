@@ -278,7 +278,6 @@ export class UtilsService {
         { alpha2: 'QA' }, // Qatar
         { alpha2: 'RE' }, // Reunion
         { alpha2: 'RO' }, // Romania
-        { alpha2: 'RU' }, // Russian Federation
         { alpha2: 'RW' }, // Rwanda
         { alpha2: 'BL' }, // Saint Barthelemy
         { alpha2: 'SH' }, // Saint Helena
