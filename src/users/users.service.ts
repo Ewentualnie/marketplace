@@ -229,39 +229,40 @@ export class UsersService {
       )
       .getOne();
 
-    // console.log(chat);
     const message = this.messageRepository.create({ isReaded: false });
     message.text = dto.message;
 
     if (!chat) {
-      console.log('in if');
-
       const newChat = this.chatRepository.create();
       newChat.user1 = fromUser;
       newChat.user2 = toUser;
-      // await this.chatRepository.save(newChat);
 
       fromUser.chatsAsUser1.push(newChat);
       toUser.chatsAsUser2.push(newChat);
-      // await this.usersRepository.save([fromUser, toUser]);
+      await this.usersRepository.save([fromUser, toUser]);
 
       message.chat = newChat;
-      // await this.messageRepository.save(message);
-
+      console.log(message);
+      await this.messageRepository.save(message);
+      console.log(newChat);
       newChat.messages = [message];
+
+      console.log('in if');
+
       console.log(newChat);
 
-      // await this.chatRepository.save(newChat);
+      return await this.chatRepository.save(newChat);
     } else {
-      console.log('in else');
-
       message.chat = chat;
-      // await this.messageRepository.save(message);
+      await this.messageRepository.save(message);
 
       chat.messages.push(message);
 
-      // await this.chatRepository.save(chat);
+      console.log('in else');
+
+      console.log(chat);
+
+      return await this.chatRepository.save(chat);
     }
-    return message;
   }
 }

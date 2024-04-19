@@ -23,6 +23,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
 import { Message } from 'src/models/message.entity';
+import { Chat } from 'src/models/chat.entity';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -76,7 +77,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) userId: number,
     @GetCurrentUserId() currentUserId: number,
     @Body() dto: MailDto,
-  ): Promise<Message> {
+  ): Promise<Chat> {
     return this.usersService.findOrCreateChat(dto, currentUserId, userId);
     // return this.usersService.sendMail(dto, currentUserId, userId);
   }
