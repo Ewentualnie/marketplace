@@ -45,14 +45,6 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Patch()
-  updateInfo(
-    @GetCurrentUserId() id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return this.usersService.updateUserInfo(id, updateUserDto);
-  }
-
   @Patch('photo')
   @UseInterceptors(FileInterceptor('photo'))
   updatePhoto(
@@ -60,6 +52,14 @@ export class UsersController {
     @GetCurrentUserId() id: number,
   ): Promise<User> {
     return this.usersService.updateUserPhoto(id, photo);
+  }
+
+  @Patch()
+  updateInfo(
+    @GetCurrentUserId() id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return this.usersService.updateUserInfo(id, updateUserDto);
   }
 
   @Put()
