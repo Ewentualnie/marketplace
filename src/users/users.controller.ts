@@ -46,13 +46,20 @@ export class UsersController {
   }
 
   @Patch()
-  @UseInterceptors(FileInterceptor('photo'))
-  update(
-    @UploadedFile() photo: Express.Multer.File,
+  updateInfo(
     @GetCurrentUserId() id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return this.usersService.updateUserInfo(id, updateUserDto, photo);
+    return this.usersService.updateUserInfo(id, updateUserDto);
+  }
+
+  @Patch('photo')
+  @UseInterceptors(FileInterceptor('photo'))
+  updatePhoto(
+    @UploadedFile() photo: Express.Multer.File,
+    @GetCurrentUserId() id: number,
+  ): Promise<User> {
+    return this.usersService.updateUserPhoto(id, photo);
   }
 
   @Put()
