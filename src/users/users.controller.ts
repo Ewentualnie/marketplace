@@ -24,6 +24,7 @@ import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
 import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
 import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
+import { UserRes } from 'src/types/user-response';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -71,7 +72,7 @@ export class UsersController {
   updatePassword(
     @GetCurrentUserId() id: number,
     @Body() updateUserPasswordDto: UpdateUserPasswordDto,
-  ): Promise<User> {
+  ): Promise<UserRes> {
     return this.usersService.updatePassword(id, updateUserPasswordDto);
   }
 

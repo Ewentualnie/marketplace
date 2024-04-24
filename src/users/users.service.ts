@@ -16,6 +16,7 @@ import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
 import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
 import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
+import { UserRes } from 'src/types/user-response';
 
 @Injectable()
 export class UsersService {
@@ -128,6 +129,7 @@ export class UsersService {
       throw new BadRequestException('New email already exists');
     } else {
       user.email = await updateUserEmailDto.email;
+      user.lastVisit = new Date();
       return await this.usersRepository.save(user);
     }
   }
@@ -135,36 +137,44 @@ export class UsersService {
   async updatePassword(
     id: number,
     updateUserPasswordDto: UpdateUserPasswordDto,
-  ): Promise<User> {
+  ): Promise<UserRes> {
     const user = await this.findOne(id);
-    if (updateUserPasswordDto.oldPassword) {
-      const resultCompare = await this.utilServise.compareHash(
-        updateUserPasswordDto.oldPassword,
-        user.hashedPass,
-      );
 
-      if (!resultCompare) {
-        throw new ForbiddenException('Current password is incorrect');
-      }
+    const resultCompare = await this.utilServise.compareHash(
+      updateUserPasswordDto.oldPassword,
+      user.hashedPass,
+    );
 
-      if (updateUserPasswordDto.newPassword) {
-        user.hashedPass = await this.utilServise.hashData(
-          updateUserPasswordDto.newPassword,
-        );
-
-        await this.usersRepository.save(user);
-
-        const tokens = await this.utilServise.getTokens(
-          user.id,
-          user.email,
-          user.role,
-        );
-        await this.utilServise.updateRtHash(user.id, tokens.refreshToken);
-      } else {
-        throw new ForbiddenException('Enter a new password');
-      }
+    if (!resultCompare) {
+      throw new ForbiddenException('Current password is incorrect');
     }
-    return await this.usersRepository.save(user);
+
+    const newHashedPass = await this.utilServise.hashData(
+      updateUserPasswordDto.newPassword,
+    );
+
+    const passwordCompare = await this.utilServise.compareHash(
+      updateUserPasswordDto.newPassword,
+      user.hashedPass,
+    );
+
+    if (passwordCompare) {
+      throw new BadRequestException(
+        'The the new password must be different from the old',
+      );
+    } else {
+      user.hashedPass = newHashedPass;
+    }
+
+    const tokens = await this.utilServise.getTokens(
+      user.id,
+      user.email,
+      user.role,
+    );
+    await this.utilServise.updateRtHash(user.id, tokens.refreshToken);
+    user.lastVisit = new Date();
+    await this.usersRepository.save(user);
+    return { user, tokens };
   }
 
   async getConversation(userId: number, currentUserId: number) {
