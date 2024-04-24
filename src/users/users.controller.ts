@@ -16,7 +16,12 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { CreateFeedback } from '../models/dto/add-feedback.dto';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { FeedBack } from '../models/feedback.entity';
 import { User } from '../models/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -60,6 +65,33 @@ export class UsersController {
 
   @Patch('email')
   @ApiOperation({ summary: 'Update user`s email' })
+  @ApiResponse({
+    status: 200,
+    description: 'User information ',
+    content: {
+      'application/json': {
+        example: {
+          id: 3,
+          email: 'test1@test.com',
+          firstName: 'Boris',
+          lastName: null,
+          role: 'user',
+          isDeleted: false,
+          lastVisit: '2024-04-24T10:10:49.265Z',
+          registeredAt: '2024-04-24T05:21:05.714Z',
+          rating: 5,
+          birthday: null,
+          sex: null,
+          photoPath: null,
+          aboutMe: null,
+          advert: null,
+          feedbacksToMe: [],
+          feedbacksFromMe: [],
+          country: null,
+        },
+      },
+    },
+  })
   updateEmail(
     @GetCurrentUserId() id: number,
     @Body() updateUserEmailDto: UpdateUserEmailDto,
@@ -69,6 +101,39 @@ export class UsersController {
 
   @Patch('password')
   @ApiOperation({ summary: 'Update user`s password' })
+  @ApiResponse({
+    status: 200,
+    description: 'User information ',
+    content: {
+      'application/json': {
+        example: {
+          user: {
+            id: 3,
+            email: 'test1@test.com',
+            firstName: 'Boris',
+            lastName: null,
+            role: 'user',
+            isDeleted: false,
+            lastVisit: '2024-04-24T10:10:49.265Z',
+            registeredAt: '2024-04-24T05:21:05.714Z',
+            rating: 5,
+            birthday: null,
+            sex: null,
+            photoPath: null,
+            aboutMe: null,
+            advert: null,
+            feedbacksToMe: [],
+            feedbacksFromMe: [],
+            country: null,
+          },
+          tokens: {
+            accessToken: 'accessToken',
+            refreshToken: 'refreshToken',
+          },
+        },
+      },
+    },
+  })
   updatePassword(
     @GetCurrentUserId() id: number,
     @Body() updateUserPasswordDto: UpdateUserPasswordDto,
