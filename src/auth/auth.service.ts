@@ -81,15 +81,13 @@ export class AuthService {
 
   async createAdminUser() {
     const admin = await this.usersRepository.findOne({
-      where: { email: process.env.ADMIN_USER || 'admin@email.com' },
+      where: { email: process.env.ADMIN_USER },
     });
 
     if (!admin) {
       const adminUser = new User();
-      adminUser.email = process.env.ADMIN_USER || 'admin@email.com';
-      adminUser.hashedPass = await this.hashData(
-        process.env.ADMIN_PASS || 'passW0rd',
-      );
+      adminUser.email = process.env.ADMIN_USER;
+      adminUser.hashedPass = await this.hashData(process.env.ADMIN_PASS);
       adminUser.firstName = 'ADMIN';
       adminUser.role = Role.Admin;
 
@@ -143,7 +141,7 @@ export class AuthService {
   }
 
   async hashData(data: string) {
-    const saltRounds = +process.env.SALT_FOR_BCRYPT || 10;
+    const saltRounds = +process.env.SALT_FOR_BCRYPT;
     const salt = await genSalt(saltRounds);
     return await bcrypt.hash(data, salt);
   }
