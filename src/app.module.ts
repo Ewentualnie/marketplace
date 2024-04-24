@@ -17,6 +17,8 @@ import { Country } from './models/country.entity';
 import { FeedBack } from './models/feedback.entity';
 import { Mail } from './models/mail.entity';
 import { ConfigModule } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { User } from './models/user.entity';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { ConfigModule } from '@nestjs/config';
       Country,
       FeedBack,
       Mail,
+      User,
     ]),
     TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,
@@ -36,6 +39,7 @@ import { ConfigModule } from '@nestjs/config';
   ],
   controllers: [AppController],
   providers: [
+    JwtService,
     UtilsService,
     CloudinaryService,
     AppService,

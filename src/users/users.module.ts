@@ -11,6 +11,7 @@ import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
 import { Advert } from 'src/models/advert.entity';
 import { Mail } from 'src/models/mail.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -25,6 +26,6 @@ import { Mail } from 'src/models/mail.entity';
     ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, CloudinaryService, UtilsService],
+  providers: [UsersService, CloudinaryService, UtilsService, JwtService],
 })
 export class UsersModule {}

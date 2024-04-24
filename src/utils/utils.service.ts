@@ -12,6 +12,11 @@ import { FeedBack } from 'src/models/feedback.entity';
 import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { genSalt } from 'bcrypt';
+import { Tokens } from 'src/types/tokens.type';
+import { User } from 'src/models/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UtilsService {
@@ -24,6 +29,9 @@ export class UtilsService {
     private countryRepository: Repository<Country>,
     @InjectRepository(FeedBack)
     private feedbackRepository: Repository<FeedBack>,
+    @InjectRepository(User)
+    public usersRepository: Repository<User>,
+    public jwtService: JwtService,
   ) {}
 
   async initializeLanguages() {
@@ -513,5 +521,57 @@ export class UtilsService {
       );
     }
     return await this.countryRepository.remove(toRemove);
+  }
+
+  async updateRtHash(userId: number, rt: string) {
+    const hashRt = await this.hashData(rt);
+    await this.usersRepository.update(userId, {
+      refreshToken: hashRt,
+    });
+  }
+
+  async getTokens(
+    userId: number,
+    email: string,
+    role: string,
+  ): Promise<Tokens> {
+    const [at, rt] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          email,
+          role: role,
+        },
+        {
+          secret: 'at-secret',
+          expiresIn: '24h',
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          email,
+          role: role,
+        },
+        {
+          secret: 'rt-secret',
+          expiresIn: 60 * 60 * 24 * 7,
+        },
+      ),
+    ]);
+    return {
+      accessToken: at,
+      refreshToken: rt,
+    };
+  }
+
+  async hashData(data: string) {
+    const saltRounds = +process.env.SALT_FOR_BCRYPT;
+    const salt = await genSalt(saltRounds);
+    return await bcrypt.hash(data, salt);
+  }
+
+  compareHash(password: string, hashDataPass: string) {
+    return bcrypt.compare(password, hashDataPass);
   }
 }

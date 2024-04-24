@@ -16,12 +16,20 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { CreateFeedback } from '../models/dto/add-feedback.dto';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { FeedBack } from '../models/feedback.entity';
 import { User } from '../models/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
+import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
+import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
+import { UserRes } from 'src/types/user-response';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -60,6 +68,84 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return this.usersService.updateUserInfo(id, updateUserDto);
+  }
+
+  @Patch('email')
+  @ApiOperation({ summary: 'Update user`s email' })
+  @ApiResponse({
+    status: 200,
+    description: 'User information ',
+    content: {
+      'application/json': {
+        example: {
+          id: 3,
+          email: 'test1@test.com',
+          firstName: 'Boris',
+          lastName: null,
+          role: 'user',
+          isDeleted: false,
+          lastVisit: '2024-04-24T10:10:49.265Z',
+          registeredAt: '2024-04-24T05:21:05.714Z',
+          rating: 5,
+          birthday: null,
+          sex: null,
+          photoPath: null,
+          aboutMe: null,
+          advert: null,
+          feedbacksToMe: [],
+          feedbacksFromMe: [],
+          country: null,
+        },
+      },
+    },
+  })
+  updateEmail(
+    @GetCurrentUserId() id: number,
+    @Body() updateUserEmailDto: UpdateUserEmailDto,
+  ): Promise<User> {
+    return this.usersService.updateEmail(id, updateUserEmailDto);
+  }
+
+  @Patch('password')
+  @ApiOperation({ summary: 'Update user`s password' })
+  @ApiResponse({
+    status: 200,
+    description: 'User information ',
+    content: {
+      'application/json': {
+        example: {
+          user: {
+            id: 3,
+            email: 'test1@test.com',
+            firstName: 'Boris',
+            lastName: null,
+            role: 'user',
+            isDeleted: false,
+            lastVisit: '2024-04-24T10:10:49.265Z',
+            registeredAt: '2024-04-24T05:21:05.714Z',
+            rating: 5,
+            birthday: null,
+            sex: null,
+            photoPath: null,
+            aboutMe: null,
+            advert: null,
+            feedbacksToMe: [],
+            feedbacksFromMe: [],
+            country: null,
+          },
+          tokens: {
+            accessToken: 'accessToken',
+            refreshToken: 'refreshToken',
+          },
+        },
+      },
+    },
+  })
+  updatePassword(
+    @GetCurrentUserId() id: number,
+    @Body() updateUserPasswordDto: UpdateUserPasswordDto,
+  ): Promise<UserRes> {
+    return this.usersService.updatePassword(id, updateUserPasswordDto);
   }
 
   @Put()

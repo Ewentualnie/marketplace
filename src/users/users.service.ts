@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { User } from '../models/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +14,9 @@ import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
+import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
+import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
+import { UserRes } from 'src/types/user-response';
 
 @Injectable()
 export class UsersService {
@@ -111,6 +118,67 @@ export class UsersService {
     );
 
     return await this.usersRepository.save(user);
+  }
+
+  async updateEmail(
+    id: number,
+    updateUserEmailDto: UpdateUserEmailDto,
+  ): Promise<User> {
+    const user = await this.findOne(id);
+    const checkEmail = await this.usersRepository.findOne({
+      where: { email: updateUserEmailDto.email },
+    });
+
+    if (checkEmail) {
+      throw new BadRequestException('New email already exists');
+    } else {
+      user.email = await updateUserEmailDto.email;
+      user.lastVisit = new Date();
+      return await this.usersRepository.save(user);
+    }
+  }
+
+  async updatePassword(
+    id: number,
+    updateUserPasswordDto: UpdateUserPasswordDto,
+  ): Promise<UserRes> {
+    const user = await this.findOne(id);
+
+    const resultCompare = await this.utilServise.compareHash(
+      updateUserPasswordDto.oldPassword,
+      user.hashedPass,
+    );
+
+    if (!resultCompare) {
+      throw new ForbiddenException('Current password is incorrect');
+    }
+
+    const newHashedPass = await this.utilServise.hashData(
+      updateUserPasswordDto.newPassword,
+    );
+
+    const passwordCompare = await this.utilServise.compareHash(
+      updateUserPasswordDto.newPassword,
+      user.hashedPass,
+    );
+
+    if (passwordCompare) {
+      throw new BadRequestException(
+        'The the new password must be different from the old',
+      );
+    } else {
+      user.hashedPass = newHashedPass;
+    }
+
+    const tokens = await this.utilServise.getTokens(
+      user.id,
+      user.email,
+      user.role,
+    );
+    await this.utilServise.updateRtHash(user.id, tokens.refreshToken);
+    user.lastVisit = new Date();
+    await this.usersRepository.save(user);
+    return { user, tokens };
   }
 
   async getConversation(userId: number, currentUserId: number) {
