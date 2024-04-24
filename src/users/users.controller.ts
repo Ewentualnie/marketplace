@@ -22,6 +22,8 @@ import { User } from '../models/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
+import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
+import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -53,6 +55,24 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return this.usersService.updateUserInfo(id, updateUserDto, photo);
+  }
+
+  @Patch('email')
+  @ApiOperation({ summary: 'Update user`s email' })
+  updateEmail(
+    @GetCurrentUserId() id: number,
+    @Body() updateUserEmailDto: UpdateUserEmailDto,
+  ): Promise<User> {
+    return this.usersService.updateEmail(id, updateUserEmailDto);
+  }
+
+  @Patch('password')
+  @ApiOperation({ summary: 'Update user`s password' })
+  updatePassword(
+    @GetCurrentUserId() id: number,
+    @Body() updateUserPasswordDto: UpdateUserPasswordDto,
+  ): Promise<User> {
+    return this.usersService.updatePassword(id, updateUserPasswordDto);
   }
 
   @Put()
