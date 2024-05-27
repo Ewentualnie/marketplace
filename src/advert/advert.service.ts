@@ -192,7 +192,6 @@ export class AdvertService {
     id: number,
     updateAdvertDto: UpdateAdvertDto,
     userId: number,
-    file?: Express.Multer.File,
   ) {
     const advert = await this.findOne(id);
     const user = await this.userService.findOne(userId);
@@ -207,12 +206,23 @@ export class AdvertService {
         ? await this.getLangs(updateAdvertDto.teachingLanguages)
         : advert.teachingLanguages;
 
-      if (file) {
-        if (advert.imagePath) {
-          this.cloudinaryService.deleteFile(advert.imagePath);
-        }
-        advert.imagePath = (await this.cloudinaryService.uploadFile(file)).url;
+      return this.advertRepository.save(advert);
+    }
+  }
+
+  async updateAdvertImage(
+    id: number,
+    userId: number,
+    file: Express.Multer.File,
+  ) {
+    const advert = await this.findOne(id);
+    const user = await this.userService.findOne(userId);
+
+    if (user.advert.id == advert.id || user.role == Role.Admin) {
+      if (advert.imagePath) {
+        this.cloudinaryService.deleteFile(advert.imagePath);
       }
+      advert.imagePath = (await this.cloudinaryService.uploadFile(file)).url;
 
       return this.advertRepository.save(advert);
     }

@@ -57,11 +57,10 @@ export class AdvertController {
     return this.advertService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(':id/image')
   @UseInterceptors(FileInterceptor('image'))
-  update(
+  updateImage(
     @Param('id', ParseIntPipe) advertId: number,
-    @Body() updateAdvertDto: UpdateAdvertDto,
     @GetCurrentUserId() userId: number,
     @UploadedFile(
       new ParseFilePipe({
@@ -73,11 +72,19 @@ export class AdvertController {
     )
     file?: Express.Multer.File,
   ) {
+    return this.advertService.updateAdvertImage(advertId, userId, file);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) advertId: number,
+    @Body() updateAdvertDto: UpdateAdvertDto,
+    @GetCurrentUserId() userId: number,
+  ) {
     return this.advertService.updateAdvertInfo(
       advertId,
       updateAdvertDto,
       userId,
-      file,
     );
   }
 

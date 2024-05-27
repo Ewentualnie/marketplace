@@ -86,7 +86,6 @@ export class UsersService {
   async updateUserInfo(
     id: number,
     updateUserDto: UpdateUserDto,
-    photo?: Express.Multer.File,
   ): Promise<User> {
     const user = await this.findOne(id);
 
@@ -102,16 +101,21 @@ export class UsersService {
         user.country;
     }
 
-    if (photo) {
-      if (user.photoPath) {
-        this.cloudinaryService.deleteFile(user.photoPath);
-      }
-      const res = await this.cloudinaryService.uploadFile(photo);
-      user.photoPath = res.url;
-      console.log(
-        `User with id ${user.id}, upload photo with public_id: ${res.public_id}`,
-      );
+    return await this.usersRepository.save(user);
+  }
+
+  async updateUserPhoto(id: number, photo: Express.Multer.File) {
+    const user = await this.findOne(id);
+
+    if (user.photoPath) {
+      this.cloudinaryService.deleteFile(user.photoPath);
     }
+
+    const res = await this.cloudinaryService.uploadFile(photo);
+    user.photoPath = res.url;
+    console.log(
+      `User with id ${user.id}, upload photo with public_id: ${res.public_id}`,
+    );
 
     return await this.usersRepository.save(user);
   }
