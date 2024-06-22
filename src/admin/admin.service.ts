@@ -95,4 +95,8 @@ export class AdminService {
   async addCountry(newCountry: CountryDto) {
     return await this.utilsService.addCountry(newCountry);
   }
+
+  async addTestUsers(count: number) {
+    return await this.usersService.createTestUsers(count);
+  }
 }

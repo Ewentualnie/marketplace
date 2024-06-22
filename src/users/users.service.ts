@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { User } from '../models/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
 import { CreateFeedback } from '../models/dto/add-feedback.dto';
@@ -261,5 +261,30 @@ export class UsersService {
     await this.usersRepository.save([toUser, fromUser]);
 
     return await this.mailRepository.save(mail);
+  }
+
+  async createTestUsers(count: number) {
+    const testUsers = await this.usersRepository.find({
+      where: { firstName: Like('testUser_%') },
+    });
+    let lastTestUserNum = 0;
+    const users = [];
+    if (testUsers.length > 0) {
+      lastTestUserNum =
+        Math.max(
+          ...testUsers
+            .map((user) => user.firstName)
+            .map((name) => +name.split('_')[1]),
+        ) + 1;
+    }
+    for (let i = 0; i < count; i++, lastTestUserNum++) {
+      const testUser = new User();
+      testUser.email = `user${lastTestUserNum}@gmail.com`;
+      testUser.firstName = `testUser_${lastTestUserNum}`;
+      testUser.hashedPass = await this.utilServise.hashData('TestUserPassw0rd');
+      users.push(testUser);
+    }
+    await this.usersRepository.save(users);
+    return `Added ${count} users, last user has number ${lastTestUserNum - 1}`;
   }
 }
