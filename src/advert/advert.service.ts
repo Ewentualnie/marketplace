@@ -23,7 +23,6 @@ import { AdvertLike } from 'src/models/advertLike.entity';
 export class AdvertService {
   constructor(
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
-    @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(AdvertLike)
     private readonly advertLikeRepository: Repository<AdvertLike>,
     @InjectRepository(Language)
