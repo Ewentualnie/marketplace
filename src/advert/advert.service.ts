@@ -205,6 +205,9 @@ export class AdvertService {
       advert.teachingLanguages = updateAdvertDto.teachingLanguages
         ? await this.getLangs(updateAdvertDto.teachingLanguages)
         : advert.teachingLanguages;
+      advert.specializations = updateAdvertDto.specializations
+        ? await this.getSpecs(updateAdvertDto.specializations)
+        : advert.specializations;
 
       return this.advertRepository.save(advert);
     }
