@@ -281,6 +281,7 @@ export class UsersService {
       testUser.email = `user${lastTestUserNum}@gmail.com`;
       testUser.firstName = `testUser_${lastTestUserNum}`;
       testUser.hashedPass = await this.utilServise.hashData('TestUserPassw0rd');
+      testUser.country = await this.utilServise.findCountry(2);
 
       const advert = new Advert();
       advert.createdAt = new Date();
