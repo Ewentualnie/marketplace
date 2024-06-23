@@ -268,7 +268,6 @@ export class UsersService {
       where: { firstName: Like('testUser_%') },
     });
     let lastTestUserNum = 0;
-    const users = [];
     if (testUsers.length > 0) {
       lastTestUserNum =
         Math.max(
@@ -282,9 +281,20 @@ export class UsersService {
       testUser.email = `user${lastTestUserNum}@gmail.com`;
       testUser.firstName = `testUser_${lastTestUserNum}`;
       testUser.hashedPass = await this.utilServise.hashData('TestUserPassw0rd');
-      users.push(testUser);
+
+      const advert = new Advert();
+      advert.createdAt = new Date();
+      advert.description = `It is test advert of user ${testUser.firstName}`;
+      advert.imagePath =
+        'https://res.cloudinary.com/dbccoiwll/image/upload/v1719060371/kgxh8tx2lg1gcg3vetnb.jpg';
+      advert.price = 111;
+
+      testUser.advert = advert;
+      await this.usersRepository.save(testUser);
+
+      advert.user = testUser;
+      this.advertRepository.save(advert);
     }
-    await this.usersRepository.save(users);
     return `Added ${count} users, last user has number ${lastTestUserNum - 1}`;
   }
 }
