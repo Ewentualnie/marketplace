@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { User } from '../models/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
 import { CreateFeedback } from '../models/dto/add-feedback.dto';
@@ -261,5 +261,41 @@ export class UsersService {
     await this.usersRepository.save([toUser, fromUser]);
 
     return await this.mailRepository.save(mail);
+  }
+
+  async createTestUsers(count: number) {
+    const testUsers = await this.usersRepository.find({
+      where: { firstName: Like('testUser_%') },
+    });
+    let lastTestUserNum = 0;
+    if (testUsers.length > 0) {
+      lastTestUserNum =
+        Math.max(
+          ...testUsers
+            .map((user) => user.firstName)
+            .map((name) => +name.split('_')[1]),
+        ) + 1;
+    }
+    for (let i = 0; i < count; i++, lastTestUserNum++) {
+      const testUser = new User();
+      testUser.email = `user${lastTestUserNum}@gmail.com`;
+      testUser.firstName = `testUser_${lastTestUserNum}`;
+      testUser.hashedPass = await this.utilServise.hashData('TestUserPassw0rd');
+      testUser.country = await this.utilServise.findCountry(2);
+
+      const advert = new Advert();
+      advert.createdAt = new Date();
+      advert.description = `It is test advert of user ${testUser.firstName}`;
+      advert.imagePath =
+        'https://res.cloudinary.com/dbccoiwll/image/upload/v1719060371/kgxh8tx2lg1gcg3vetnb.jpg';
+      advert.price = 111;
+
+      testUser.advert = advert;
+      await this.usersRepository.save(testUser);
+
+      advert.user = testUser;
+      this.advertRepository.save(advert);
+    }
+    return `Added ${count} users, last user has number ${lastTestUserNum - 1}`;
   }
 }

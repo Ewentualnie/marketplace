@@ -137,4 +137,9 @@ export class AdminController {
   async deleteCountry(@Param('id', ParseIntPipe) id: number) {
     return this.adminService.deleteCountry(id);
   }
+
+  @Post('test-users/:count')
+  async addTestUsers(@Param('count', ParseIntPipe) count: number) {
+    return this.adminService.addTestUsers(count);
+  }
 }

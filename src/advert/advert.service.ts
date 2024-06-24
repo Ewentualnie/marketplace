@@ -23,7 +23,6 @@ import { AdvertLike } from 'src/models/advertLike.entity';
 export class AdvertService {
   constructor(
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
-    @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(AdvertLike)
     private readonly advertLikeRepository: Repository<AdvertLike>,
     @InjectRepository(Language)
@@ -205,6 +204,9 @@ export class AdvertService {
       advert.teachingLanguages = updateAdvertDto.teachingLanguages
         ? await this.getLangs(updateAdvertDto.teachingLanguages)
         : advert.teachingLanguages;
+      advert.specializations = updateAdvertDto.specializations
+        ? await this.getSpecs(updateAdvertDto.specializations)
+        : advert.specializations;
 
       return this.advertRepository.save(advert);
     }

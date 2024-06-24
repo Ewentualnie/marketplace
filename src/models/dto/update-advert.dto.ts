@@ -2,7 +2,7 @@ export class UpdateAdvertDto {
   price?: number;
   description?: string;
   imagePath?: string;
-  specializations: number[];
+  specializations: string;
   spokenLanguages?: string;
   teachingLanguages?: string;
 }
