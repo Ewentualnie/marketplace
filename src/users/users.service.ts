@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { User } from '../models/user.entity';
 import { Like, Repository } from 'typeorm';
@@ -12,11 +13,12 @@ import { FeedBack } from '../models/feedback.entity';
 import { Advert } from 'src/models/advert.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { Mail } from 'src/models/mail.entity';
 import { MailDto } from 'src/models/dto/create-mail.dto';
 import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
 import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
 import { UserRes } from 'src/types/user-response';
+import { Chat } from 'src/models/chat.entity';
+import { Message } from 'src/models/message.entity';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +26,8 @@ export class UsersService {
     @InjectRepository(User) public usersRepository: Repository<User>,
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
-    @InjectRepository(Mail) private mailRepository: Repository<Mail>,
+    @InjectRepository(Chat) private chatRepository: Repository<Chat>,
+    @InjectRepository(Message) private messageRepository: Repository<Message>,
     private cloudinaryService: CloudinaryService,
     private utilServise: UtilsService,
   ) {}
@@ -181,17 +184,18 @@ export class UsersService {
     return { user, tokens };
   }
 
-  async getConversation(userId: number, currentUserId: number) {
-    const chatMails = await this.mailRepository
-      .createQueryBuilder('mail')
+  async getChat(userId: number, currentUserId: number) {
+    const chat = await this.chatRepository
+      .createQueryBuilder('chat')
+      .leftJoinAndSelect('chat.messages', 'messages')
       .where(
-        '(mail.fromUser = :userId AND mail.toUser = :currentUserId) OR (mail.fromUser = :currentUserId AND mail.toUser = :userId)',
+        '(chat.user1 = :userId AND chat.user2 = :currentUserId) OR (chat.user1 = :currentUserId AND chat.user2 = :userId)',
         { userId, currentUserId },
       )
-      .orderBy('mail.writtedAt', 'DESC')
-      .getMany();
+      .orderBy('messages.writtedAt', 'DESC')
+      .getOne();
 
-    return chatMails;
+    return chat;
   }
 
   async addFeedback(
@@ -225,42 +229,35 @@ export class UsersService {
     return await this.feedbackRepository.save(newFeedback);
   }
 
-  async getMails(id: number): Promise<Mail[]> {
-    return (
-      await this.usersRepository.findOne({
-        where: { id },
-        relations: ['receivedMails'],
+  async getChats(id: number): Promise<Chat[]> {
+    const chats = await this.chatRepository
+      .createQueryBuilder('chat')
+      .leftJoinAndSelect('chat.messages', 'messages')
+      .where('chat.user1Id = :id OR chat.user2Id = :id', {
+        id,
       })
-    ).receivedMails;
+      .getMany();
+    return chats;
   }
 
   async saveUser(user: User) {
     return await this.usersRepository.save(user);
   }
 
-  async sendMail(dto: MailDto, fromUserId: number, toUserId: number) {
-    const toUser = await this.usersRepository.findOne({
-      where: { id: toUserId },
-      relations: ['receivedMails'],
+  async sendMessage(dto: MailDto, fromUserId: number, toUserId: number) {
+    const chat = await this.findOrCreateChat(toUserId, fromUserId);
+
+    const message = this.messageRepository.create({
+      isReaded: false,
+      text: dto.message,
+      chat,
+      senderId: fromUserId,
+      receiverId: toUserId,
     });
-    const fromUser = await this.usersRepository.findOne({
-      where: { id: fromUserId },
-      relations: ['sentMails'],
-    });
 
-    if (toUser.id == fromUser.id) {
-      throw new BadRequestException('User cannot send mails to himself');
-    }
-
-    const mail = this.mailRepository.create({ ...dto, isReaded: false });
-
-    toUser.receivedMails.push(mail);
-    fromUser.sentMails.push(mail);
-    fromUser.lastVisit = new Date();
-
-    await this.usersRepository.save([toUser, fromUser]);
-
-    return await this.mailRepository.save(mail);
+    chat.messages.push(message);
+    await this.messageRepository.save(message);
+    return await this.chatRepository.save(chat);
   }
 
   async createTestUsers(count: number) {
@@ -297,5 +294,50 @@ export class UsersService {
       this.advertRepository.save(advert);
     }
     return `Added ${count} users, last user has number ${lastTestUserNum - 1}`;
+  }
+
+  async findOrCreateChat(fromUserId: number, toUserId: number): Promise<Chat> {
+    const toUser = await this.usersRepository.findOne({
+      where: { id: toUserId },
+      relations: ['chatsAsUser1', 'chatsAsUser2'],
+    });
+    const fromUser = await this.usersRepository.findOne({
+      where: { id: fromUserId },
+      relations: ['chatsAsUser1', 'chatsAsUser2'],
+    });
+    if (!fromUser || !toUserId) {
+      throw new NotFoundException('Sender or receiver not found');
+    }
+    if (toUser.id == fromUser.id) {
+      throw new BadRequestException('User cannot send mails to himself');
+    }
+    let chat = await this.chatRepository
+      .createQueryBuilder('chat')
+      .leftJoinAndSelect('chat.messages', 'messages')
+      .leftJoinAndSelect('chat.user1', 'user1')
+      .leftJoinAndSelect('chat.user2', 'user2')
+      .where(
+        '(chat.user1Id = :fromUserId AND chat.user2Id = :toUserId) OR (chat.user1Id = :toUserId AND chat.user2Id = :fromUserId)',
+        {
+          fromUserId,
+          toUserId,
+        },
+      )
+      .getOne();
+    if (!chat) {
+      chat = this.chatRepository.create();
+      fromUser.chatsAsUser1.push(chat);
+      toUser.chatsAsUser2.push(chat);
+
+      chat.user1 = fromUser;
+      chat.user2 = toUser;
+      chat.messages = [];
+      await this.usersRepository.save([fromUser, toUser]);
+      await this.chatRepository.save(chat);
+    }
+    return await this.chatRepository.findOne({
+      where: { id: chat.id },
+      relations: ['user1', 'user2', 'messages'],
+    });
   }
 }

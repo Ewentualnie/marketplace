@@ -10,8 +10,9 @@ import { UtilsService } from 'src/utils/utils.service';
 import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
 import { Advert } from 'src/models/advert.entity';
-import { Mail } from 'src/models/mail.entity';
 import { JwtService } from '@nestjs/jwt';
+import { Chat } from 'src/models/chat.entity';
+import { Message } from 'src/models/message.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { JwtService } from '@nestjs/jwt';
       Language,
       Specialization,
       Advert,
-      Mail,
+      Chat,
+      Message,
     ]),
   ],
   controllers: [UsersController],
