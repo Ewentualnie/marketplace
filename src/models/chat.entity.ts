@@ -5,8 +5,8 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Message } from './message.entity';
+import User from './user.entity';
+import Message from './message.entity';
 
 @Entity()
 export class Chat {
@@ -24,3 +24,4 @@ export class Chat {
   @OneToMany(() => Message, (message) => message.chat)
   messages: Message[];
 }
+export default Chat;

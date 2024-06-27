@@ -7,7 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './user.entity';
+import User from './user.entity';
 
 @Entity({ name: 'feedback' })
 export class FeedBack {
@@ -32,3 +32,4 @@ export class FeedBack {
   @JoinColumn({ name: 'from_user' })
   fromUser: User;
 }
+export default FeedBack;

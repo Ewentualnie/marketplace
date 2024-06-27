@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Chat } from './chat.entity';
 import { Exclude } from 'class-transformer';
+import Chat from './chat.entity';
 
 @Entity()
 export class Message {
@@ -35,3 +35,5 @@ export class Message {
   @Exclude()
   chat: Chat;
 }
+
+export default Message;

@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.entity';
+import User from './user.entity';
 
 @Entity({ name: 'country' })
 export class Country {
@@ -12,3 +12,4 @@ export class Country {
   @OneToMany(() => User, (user) => user.country)
   user: User[];
 }
+export default Country;

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Advert } from './advert.entity';
-import { User } from './user.entity';
+import Advert from './advert.entity';
+import User from './user.entity';
 
 @Entity({ name: 'advert_likes' })
 export class AdvertLike {
@@ -15,3 +15,5 @@ export class AdvertLike {
   @JoinColumn({ name: 'advert_id' })
   advert: Advert;
 }
+
+export default AdvertLike;
