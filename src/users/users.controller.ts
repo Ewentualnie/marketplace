@@ -12,24 +12,25 @@ import {
   UploadedFile,
   Put,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UpdateUserDto } from '../models/dto/update-user.dto';
-import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
-import { CreateFeedback } from '../models/dto/add-feedback.dto';
 import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { FeedBack } from '../models/feedback.entity';
-import { User } from '../models/user.entity';
+import { UsersService } from './users.service';
+import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { MailDto } from 'src/models/dto/create-mail.dto';
-import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
-import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
-import { UserRes } from 'src/types/user-response';
-import { Chat } from 'src/models/chat.entity';
+import UpdateUserDto from '../models/dto/update-user.dto';
+import CreateFeedback from '../models/dto/add-feedback.dto';
+import FeedBack from '../models/feedback.entity';
+import User from '../models/user.entity';
+import MailDto from 'src/models/dto/create-mail.dto';
+import UpdateUserEmailDto from 'src/models/dto/updateUserEmail.dto';
+import UpdateUserPasswordDto from 'src/models/dto/updateUserPassword.dto';
+import UserRes from 'src/types/user-response';
+import Chat from 'src/models/chat.entity';
+import CreateScheduleDto from 'src/models/dto/create-schedule.dto';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -42,6 +43,19 @@ export class UsersController {
   getCurrentUser(@GetCurrentUserId() currentUserId: number) {
     return this, this.usersService.findOne(currentUserId);
   }
+
+  // @Get('schedule')
+  // getSchedule(@GetCurrentUserId() id: number) {
+  //   return this, this.usersService.getSchedule(id);
+  // }
+
+  // @Post('schedule')
+  // addSchedule(
+  //   @Body() createScheduleDto: CreateScheduleDto,
+  //   @GetCurrentUserId() id: number,
+  // ) {
+  //   return this, this.usersService.addSchedule(createScheduleDto, id);
+  // }
 
   @Get('/conversations')
   getChats(@GetCurrentUserId() currentUserId: number): Promise<Chat[]> {

@@ -8,3 +8,5 @@ export class UpdateUserEmailDto {
   @IsValidEmail()
   email: string;
 }
+
+export default UpdateUserEmailDto;

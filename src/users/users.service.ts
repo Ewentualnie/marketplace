@@ -4,21 +4,21 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '../models/user.entity';
 import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateUserDto } from '../models/dto/update-user.dto';
-import { CreateFeedback } from '../models/dto/add-feedback.dto';
-import { FeedBack } from '../models/feedback.entity';
-import { Advert } from 'src/models/advert.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { MailDto } from 'src/models/dto/create-mail.dto';
-import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
-import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
-import { UserRes } from 'src/types/user-response';
-import { Chat } from 'src/models/chat.entity';
-import { Message } from 'src/models/message.entity';
+import UpdateUserDto from '../models/dto/update-user.dto';
+import CreateFeedback from '../models/dto/add-feedback.dto';
+import FeedBack from '../models/feedback.entity';
+import Advert from 'src/models/advert.entity';
+import User from '../models/user.entity';
+import MailDto from 'src/models/dto/create-mail.dto';
+import UpdateUserEmailDto from 'src/models/dto/updateUserEmail.dto';
+import UpdateUserPasswordDto from 'src/models/dto/updateUserPassword.dto';
+import UserRes from 'src/types/user-response';
+import Chat from 'src/models/chat.entity';
+import Message from 'src/models/message.entity';
 
 @Injectable()
 export class UsersService {

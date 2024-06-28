@@ -13,6 +13,8 @@ import { Advert } from 'src/models/advert.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Chat } from 'src/models/chat.entity';
 import { Message } from 'src/models/message.entity';
+import Schedule from 'src/models/schedule.entity';
+import TimeSlot from 'src/models/timeslot.entity';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { Message } from 'src/models/message.entity';
       Advert,
       Chat,
       Message,
+      Schedule,
+      TimeSlot,
     ]),
   ],
   controllers: [UsersController],

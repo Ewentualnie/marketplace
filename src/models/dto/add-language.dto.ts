@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
+import exp from 'constants';
 
 export class LanguageDto {
   @IsNotEmpty()
@@ -12,3 +13,5 @@ export class LanguageDto {
   @IsNotEmpty()
   languageUa: string;
 }
+
+export default LanguageDto;

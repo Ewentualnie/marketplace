@@ -7,3 +7,5 @@ export class UpdateUserDto {
   aboutMe?: string;
   photo?: File;
 }
+
+export default UpdateUserDto;

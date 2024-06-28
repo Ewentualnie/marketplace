@@ -11,13 +11,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { FeedBack } from './feedback.entity';
 import { IsDate, IsIn } from 'class-validator';
-import { Advert } from './advert.entity';
-import { Country } from './country.entity';
-import { AdvertLike } from './advertLike.entity';
-import { Chat } from './chat.entity';
-// import Schedule from './schedule.entity';
+import FeedBack from './feedback.entity';
+import Advert from './advert.entity';
+import Country from './country.entity';
+import AdvertLike from './advertLike.entity';
+import Chat from './chat.entity';
+import Schedule from './schedule.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -43,10 +43,10 @@ export class User {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   lastVisit: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   registeredAt: Date;
 
   @Column({ type: 'double precision', default: 5, scale: 2 })
@@ -100,6 +100,9 @@ export class User {
   @JoinColumn({ name: 'chats_as_user2' })
   chatsAsUser2: Chat[];
 
-  // @OneToMany(() => Schedule, (schedule) => schedule.user)
-  // schedules: Schedule[];
+  @OneToOne(() => Schedule, (schedule) => schedule.user)
+  @JoinColumn()
+  schedule: Schedule;
 }
+
+export default User;

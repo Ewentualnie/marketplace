@@ -18,6 +18,7 @@ import { FeedBack } from './models/feedback.entity';
 import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './models/user.entity';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { User } from './models/user.entity';
     AdvertModule,
     AuthModule,
     AdminModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [

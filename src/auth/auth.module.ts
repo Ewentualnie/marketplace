@@ -18,6 +18,8 @@ import { Country } from 'src/models/country.entity';
 import { Advert } from 'src/models/advert.entity';
 import { Chat } from 'src/models/chat.entity';
 import { Message } from 'src/models/message.entity';
+import Schedule from 'src/models/schedule.entity';
+import TimeSlot from 'src/models/timeslot.entity';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { Message } from 'src/models/message.entity';
       Advert,
       Chat,
       Message,
+      Schedule,
+      TimeSlot,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: 'at-secret' }),
