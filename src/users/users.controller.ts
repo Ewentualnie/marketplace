@@ -30,7 +30,6 @@ import UpdateUserEmailDto from 'src/models/dto/updateUserEmail.dto';
 import UpdateUserPasswordDto from 'src/models/dto/updateUserPassword.dto';
 import UserRes from 'src/types/user-response';
 import Chat from 'src/models/chat.entity';
-import CreateScheduleDto from 'src/models/dto/create-schedule.dto';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -43,19 +42,6 @@ export class UsersController {
   getCurrentUser(@GetCurrentUserId() currentUserId: number) {
     return this, this.usersService.findOne(currentUserId);
   }
-
-  // @Get('schedule')
-  // getSchedule(@GetCurrentUserId() id: number) {
-  //   return this, this.usersService.getSchedule(id);
-  // }
-
-  // @Post('schedule')
-  // addSchedule(
-  //   @Body() createScheduleDto: CreateScheduleDto,
-  //   @GetCurrentUserId() id: number,
-  // ) {
-  //   return this, this.usersService.addSchedule(createScheduleDto, id);
-  // }
 
   @Get('/conversations')
   getChats(@GetCurrentUserId() currentUserId: number): Promise<Chat[]> {
