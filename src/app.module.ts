@@ -15,10 +15,10 @@ import { Specialization } from './models/specialization.entity';
 import { CloudinaryService } from './utils/cloudinary.service';
 import { Country } from './models/country.entity';
 import { FeedBack } from './models/feedback.entity';
-import { Mail } from './models/mail.entity';
 import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './models/user.entity';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
@@ -28,7 +28,6 @@ import { User } from './models/user.entity';
       Specialization,
       Country,
       FeedBack,
-      Mail,
       User,
     ]),
     TypeOrmModule.forRoot(dataSourceOptionst),
@@ -36,6 +35,7 @@ import { User } from './models/user.entity';
     AdvertModule,
     AuthModule,
     AdminModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [

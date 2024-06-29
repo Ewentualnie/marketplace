@@ -12,24 +12,24 @@ import {
   UploadedFile,
   Put,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UpdateUserDto } from '../models/dto/update-user.dto';
-import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
-import { CreateFeedback } from '../models/dto/add-feedback.dto';
 import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { FeedBack } from '../models/feedback.entity';
-import { User } from '../models/user.entity';
+import { UsersService } from './users.service';
+import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Mail } from 'src/models/mail.entity';
-import { MailDto } from 'src/models/dto/create-mail.dto';
-import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
-import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
-import { UserRes } from 'src/types/user-response';
+import UpdateUserDto from '../models/dto/update-user.dto';
+import CreateFeedback from '../models/dto/add-feedback.dto';
+import FeedBack from '../models/feedback.entity';
+import User from '../models/user.entity';
+import MailDto from 'src/models/dto/create-mail.dto';
+import UpdateUserEmailDto from 'src/models/dto/updateUserEmail.dto';
+import UpdateUserPasswordDto from 'src/models/dto/updateUserPassword.dto';
+import UserRes from 'src/types/user-response';
+import Chat from 'src/models/chat.entity';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -44,8 +44,8 @@ export class UsersController {
   }
 
   @Get('/conversations')
-  getMails(@GetCurrentUserId() currentUserId: number) {
-    return this.usersService.getMails(currentUserId);
+  getChats(@GetCurrentUserId() currentUserId: number): Promise<Chat[]> {
+    return this.usersService.getChats(currentUserId);
   }
 
   @Get(':id')
@@ -164,19 +164,19 @@ export class UsersController {
   }
 
   @Post(':id/conversation')
-  sendMail(
+  sendMessage(
     @Param('id', ParseIntPipe) userId: number,
     @GetCurrentUserId() currentUserId: number,
     @Body() dto: MailDto,
-  ): Promise<Mail> {
-    return this.usersService.sendMail(dto, currentUserId, userId);
+  ): Promise<Chat> {
+    return this.usersService.sendMessage(dto, currentUserId, userId);
   }
 
   @Get(':id/conversation')
-  getConversation(
+  getChat(
     @Param('id', ParseIntPipe) userId: number,
     @GetCurrentUserId() currentUserId: number,
-  ): Promise<Mail[]> {
-    return this.usersService.getConversation(currentUserId, userId);
+  ): Promise<Chat> {
+    return this.usersService.getChat(currentUserId, userId);
   }
 }

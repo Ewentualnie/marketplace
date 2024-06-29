@@ -6,3 +6,5 @@ export class CountryDto {
   @IsString({ message: 'Field must be a string' })
   alpha2: string;
 }
+
+export default CountryDto;

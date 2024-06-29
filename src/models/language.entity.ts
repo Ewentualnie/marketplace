@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Advert } from './advert.entity';
+import Advert from './advert.entity';
 
 @Entity()
 export class Language {
@@ -21,3 +21,5 @@ export class Language {
   @ManyToMany(() => Advert, (advert) => advert.teachingLanguages)
   teachingLanguages: Advert[];
 }
+
+export default Language;

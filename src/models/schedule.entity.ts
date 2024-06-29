@@ -1,22 +1,24 @@
-// import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-// import { User } from './user.entity';
+import {
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import User from './user.entity';
+import TimeSlot from './timeslot.entity';
 
-// @Entity({ name: 'schedule' })
-// export class Schedule {
-//   @PrimaryGeneratedColumn()
-//   id: number;
+@Entity({ name: 'schedule' })
+export class Schedule {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-//   @ManyToOne(() => User, (user) => user.schedules)
-//   user: User;
+  @OneToOne(() => User, (user) => user.schedule)
+  @JoinColumn()
+  user: User;
 
-//   @Column()
-//   public week!: number;
+  @OneToMany(() => TimeSlot, (timeslot) => timeslot.schedule)
+  timeslots: TimeSlot[];
+}
 
-//   @Column()
-//   public dayOfWeek!: string;
-
-//   @Column('simple-array')
-//   public timeSlots!: string[];
-// }
-
-// export default Schedule;
+export default Schedule;

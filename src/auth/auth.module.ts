@@ -16,7 +16,10 @@ import { Language } from 'src/models/language.entity';
 import { Specialization } from 'src/models/specialization.entity';
 import { Country } from 'src/models/country.entity';
 import { Advert } from 'src/models/advert.entity';
-import { Mail } from 'src/models/mail.entity';
+import { Chat } from 'src/models/chat.entity';
+import { Message } from 'src/models/message.entity';
+import Schedule from 'src/models/schedule.entity';
+import TimeSlot from 'src/models/timeslot.entity';
 
 @Module({
   imports: [
@@ -28,7 +31,10 @@ import { Mail } from 'src/models/mail.entity';
       Specialization,
       Country,
       Advert,
-      Mail,
+      Chat,
+      Message,
+      Schedule,
+      TimeSlot,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: 'at-secret' }),

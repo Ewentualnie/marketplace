@@ -9,10 +9,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Language } from './language.entity';
-import { User } from 'src/models/user.entity';
-import { Specialization } from './specialization.entity';
-import { AdvertLike } from './advertLike.entity';
+import Language from './language.entity';
+import User from 'src/models/user.entity';
+import Specialization from './specialization.entity';
+import AdvertLike from './advertLike.entity';
 
 @Entity({ name: 'advert' })
 export class Advert {
@@ -55,3 +55,5 @@ export class Advert {
   @JoinTable({ name: 'advert_specializations' })
   specializations: Specialization[];
 }
+
+export default Advert;

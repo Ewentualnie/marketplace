@@ -4,3 +4,5 @@ export type UserRes = {
   user: User;
   tokens: Tokens;
 };
+
+export default UserRes;
