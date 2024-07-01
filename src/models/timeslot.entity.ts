@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import Schedule from './schedule.entity';
+import TimeSlots from './user-slots.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'timeslot' })
@@ -14,10 +14,10 @@ export class TimeSlot {
   @Exclude()
   id: number;
 
-  @ManyToOne(() => Schedule, (schedule) => schedule.timeslots)
+  @ManyToOne(() => TimeSlots, (schedule) => schedule.timeslots)
   @JoinColumn()
   @Exclude()
-  schedule: Schedule;
+  schedule: TimeSlots;
 
   @Column({ type: 'timestamptz' })
   start: Date;

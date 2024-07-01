@@ -8,12 +8,12 @@ import {
 import User from './user.entity';
 import TimeSlot from './timeslot.entity';
 
-@Entity({ name: 'schedule' })
-export class Schedule {
+@Entity({ name: 'user_slots' })
+export class TimeSlots {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.schedule)
+  @OneToOne(() => User, (user) => user.slots)
   @JoinColumn()
   user: User;
 
@@ -21,4 +21,4 @@ export class Schedule {
   timeslots: TimeSlot[];
 }
 
-export default Schedule;
+export default TimeSlots;

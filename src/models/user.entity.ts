@@ -17,7 +17,7 @@ import Advert from './advert.entity';
 import Country from './country.entity';
 import AdvertLike from './advertLike.entity';
 import Chat from './chat.entity';
-import Schedule from './schedule.entity';
+import TimeSlots from './user-slots.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -100,9 +100,9 @@ export class User {
   @JoinColumn({ name: 'chats_as_user2' })
   chatsAsUser2: Chat[];
 
-  @OneToOne(() => Schedule, (schedule) => schedule.user)
+  @OneToOne(() => TimeSlots, (slots) => slots.user)
   @JoinColumn()
-  schedule: Schedule;
+  slots: TimeSlots;
 }
 
 export default User;

@@ -10,15 +10,15 @@ import { AtGuard } from './utils/guards/at-guard';
 import { AdminModule } from './admin/admin.module';
 import { dataSourceOptionst } from './database/database-config';
 import { UtilsService } from './utils/utils.service';
-import { Language } from './models/language.entity';
-import { Specialization } from './models/specialization.entity';
 import { CloudinaryService } from './utils/cloudinary.service';
-import { Country } from './models/country.entity';
-import { FeedBack } from './models/feedback.entity';
 import { ConfigModule } from '@nestjs/config';
+import { TimeSlotsModule } from './schedule/timeslots.module';
 import { JwtService } from '@nestjs/jwt';
-import { User } from './models/user.entity';
-import { ScheduleModule } from './schedule/schedule.module';
+import Language from './models/language.entity';
+import Specialization from './models/specialization.entity';
+import Country from './models/country.entity';
+import FeedBack from './models/feedback.entity';
+import User from './models/user.entity';
 
 @Module({
   imports: [
@@ -35,7 +35,7 @@ import { ScheduleModule } from './schedule/schedule.module';
     AdvertModule,
     AuthModule,
     AdminModule,
-    ScheduleModule,
+    TimeSlotsModule,
   ],
   controllers: [AppController],
   providers: [
