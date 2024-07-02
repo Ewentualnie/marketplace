@@ -35,7 +35,13 @@ export class UsersService {
   async findByEmail(email: string) {
     const user = await this.usersRepository.findOne({
       where: { email: email },
-      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe', 'country'],
+      relations: [
+        'advert',
+        'feedbacksToMe',
+        'feedbacksFromMe',
+        'country',
+        'likes.advert',
+      ],
     });
     if (user) return user;
     throw new BadRequestException(`User with email ${email} not found`);
@@ -55,7 +61,7 @@ export class UsersService {
         'feedbacksToMe',
         'feedbacksFromMe',
         'country',
-        'likes',
+        'likes.advert',
       ],
     });
     if (user) return user;
