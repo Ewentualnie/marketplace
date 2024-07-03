@@ -292,7 +292,7 @@ export class UsersService {
       testUser.hashedPass = await this.utilServise.hashData('TestUserPassw0rd');
       testUser.country = await this.utilServise.findCountry(2);
 
-      const advert = new Advert();
+      let advert = new Advert();
       advert.createdAt = new Date();
       advert.description = `It is test advert of user ${testUser.firstName}`;
       advert.imagePath =
@@ -303,7 +303,9 @@ export class UsersService {
       await this.usersRepository.save(testUser);
 
       advert.user = testUser;
-      await this.advertRepository.save(advert);
+      advert = await this.advertRepository.save(advert);
+      testUser.advert = advert;
+      await this.usersRepository.save(testUser);
     }
     return `Added ${count} users, last user has number ${lastTestUserNum - 1}`;
   }
