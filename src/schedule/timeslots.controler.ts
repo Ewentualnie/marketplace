@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body } from '@nestjs/common';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { TimeSlotsService } from './timeslots.service';
-import TimeSlotsRequestDto from 'src/models/dto/add-timeslots.dto';
+import TimeSlotsRequestDto from 'src/models/dto/timeslots-request.dto';
 
 @ApiTags('Timeslots')
 @Controller('timeslots')
@@ -11,10 +11,10 @@ export class TimeSlotsController {
 
   @Post('')
   addTimeSlots(
-    @Body() scheduleDto: TimeSlotsRequestDto,
+    @Body() timeslotsDto: TimeSlotsRequestDto,
     @GetCurrentUserId() id: number,
   ) {
-    return this, this.timeslotsService.addTimeSlots(scheduleDto, id);
+    return this, this.timeslotsService.addTimeSlots(timeslotsDto, id);
   }
 
   @Get('')

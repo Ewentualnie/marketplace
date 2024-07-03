@@ -19,7 +19,6 @@ import { Advert } from 'src/models/advert.entity';
 import { Chat } from 'src/models/chat.entity';
 import { Message } from 'src/models/message.entity';
 import TimeSlot from 'src/models/timeslot.entity';
-import TimeSlots from 'src/models/user-slots.entity';
 
 @Module({
   imports: [
@@ -33,7 +32,6 @@ import TimeSlots from 'src/models/user-slots.entity';
       Advert,
       Chat,
       Message,
-      TimeSlots,
       TimeSlot,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),

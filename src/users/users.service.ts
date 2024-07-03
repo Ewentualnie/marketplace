@@ -303,7 +303,7 @@ export class UsersService {
       await this.usersRepository.save(testUser);
 
       advert.user = testUser;
-      this.advertRepository.save(advert);
+      await this.advertRepository.save(advert);
     }
     return `Added ${count} users, last user has number ${lastTestUserNum - 1}`;
   }
