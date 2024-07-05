@@ -1,4 +1,11 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { TimeSlotsService } from './timeslots.service';
@@ -15,6 +22,11 @@ export class TimeSlotsController {
     @GetCurrentUserId() id: number,
   ) {
     return this, this.timeslotsService.addTimeSlots(timeslotsDto, id);
+  }
+
+  @Get(':id')
+  getUserTimeSlots(@Param('id', ParseIntPipe) userId: number) {
+    return this, this.timeslotsService.getTimeSlots(userId);
   }
 
   @Get('')
