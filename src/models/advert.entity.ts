@@ -13,6 +13,7 @@ import Language from './language.entity';
 import User from 'src/models/user.entity';
 import Specialization from './specialization.entity';
 import AdvertLike from './advertLike.entity';
+import Booking from './booking.entity';
 
 @Entity({ name: 'advert' })
 export class Advert {
@@ -54,6 +55,10 @@ export class Advert {
   })
   @JoinTable({ name: 'advert_specializations' })
   specializations: Specialization[];
+
+  @OneToMany(() => Booking, (booking) => booking.advert)
+  @JoinColumn()
+  bookings: Booking[];
 }
 
 export default Advert;

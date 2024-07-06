@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Timeslots1719594553149 implements MigrationInterface {
-    name = 'Timeslots1719594553149'
+export class Booking1720246368314 implements MigrationInterface {
+    name = 'Booking1720246368314'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "language" ("id" SERIAL NOT NULL, "alpha2" character varying NOT NULL, "languageEn" character varying NOT NULL, "languageUa" character varying NOT NULL, CONSTRAINT "UQ_d72425d86fbf13a89b0ff4230d8" UNIQUE ("alpha2"), CONSTRAINT "PK_cc0a99e710eb3733f6fb42b1d4c" PRIMARY KEY ("id"))`);
@@ -10,9 +10,9 @@ export class Timeslots1719594553149 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "advert_likes" ("id" SERIAL NOT NULL, "user_id" integer, "advert_id" integer, CONSTRAINT "PK_52ceb8655220bf136f3f0d7bb5d" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "message" ("id" SERIAL NOT NULL, "text" character varying NOT NULL, "isReaded" boolean NOT NULL DEFAULT false, "writtedAt" TIMESTAMP NOT NULL DEFAULT now(), "senderId" integer NOT NULL, "receiverId" integer NOT NULL, "chatId" integer, CONSTRAINT "PK_ba01f0a3e0123651915008bc578" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "chat" ("id" SERIAL NOT NULL, "user1Id" integer, "user2Id" integer, CONSTRAINT "PK_9d0b2ba74336710fd31154738a5" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "timeslot" ("id" SERIAL NOT NULL, "start" TIMESTAMP WITH TIME ZONE NOT NULL, "end" TIMESTAMP WITH TIME ZONE NOT NULL, "scheduleId" integer, CONSTRAINT "PK_cd8bca557ee1eb5b090b9e63009" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "schedule" ("id" SERIAL NOT NULL, "userId" integer, CONSTRAINT "REL_d796103491cf0bae197dda5947" UNIQUE ("userId"), CONSTRAINT "PK_1c05e42aec7371641193e180046" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "user" ("id" SERIAL NOT NULL, "email" character varying NOT NULL, "hashedPass" character varying NOT NULL, "firstName" character varying NOT NULL, "lastName" character varying, "role" character varying NOT NULL DEFAULT 'user', "isDeleted" boolean NOT NULL DEFAULT false, "lastVisit" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "registeredAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "rating" double precision NOT NULL DEFAULT '5', "birthday" TIMESTAMP, "sex" character varying, "photo" character varying, "refreshToken" character varying, "aboutMe" character varying, "country" integer, "advertId" integer, "scheduleId" integer, CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "REL_b78cd9491419afdda263fffdea" UNIQUE ("advertId"), CONSTRAINT "REL_137987426659ac1570c018c071" UNIQUE ("scheduleId"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "timeslot" ("id" SERIAL NOT NULL, "start" TIMESTAMP WITH TIME ZONE NOT NULL, "end" TIMESTAMP WITH TIME ZONE NOT NULL, "userId" integer, CONSTRAINT "PK_cd8bca557ee1eb5b090b9e63009" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "booking" ("id" SERIAL NOT NULL, "date" TIMESTAMP WITH TIME ZONE NOT NULL, "studingLanguage" character varying NOT NULL, "teacherId" integer, "studentId" integer, CONSTRAINT "PK_49171efc69702ed84c812f33540" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "user" ("id" SERIAL NOT NULL, "email" character varying NOT NULL, "hashedPass" character varying NOT NULL, "firstName" character varying NOT NULL, "lastName" character varying, "role" character varying NOT NULL DEFAULT 'user', "isDeleted" boolean NOT NULL DEFAULT false, "lastVisit" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "registeredAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "rating" double precision NOT NULL DEFAULT '5', "birthday" TIMESTAMP, "sex" character varying, "photo" character varying, "refreshToken" character varying, "aboutMe" character varying, "country" integer, "advertId" integer, CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "REL_b78cd9491419afdda263fffdea" UNIQUE ("advertId"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "specialization" ("id" SERIAL NOT NULL, "specializationEn" character varying, "specializationUa" character varying, CONSTRAINT "PK_904dfcbdb57f56f5b57b9c09cc5" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "advert" ("id" SERIAL NOT NULL, "price" numeric NOT NULL, "description" character varying NOT NULL, "imagePath" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "isDeleted" boolean NOT NULL DEFAULT false, "userId" integer, CONSTRAINT "REL_2a3714047a0c902fd9d5077fdc" UNIQUE ("userId"), CONSTRAINT "PK_4bd8b4cdfb562b02706beece450" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "adverts_specializations" ("specializationId" integer NOT NULL, "advertId" integer NOT NULL, CONSTRAINT "PK_4f8c55f301a6fb60636fc8a96f3" PRIMARY KEY ("specializationId", "advertId"))`);
@@ -34,11 +34,11 @@ export class Timeslots1719594553149 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "message" ADD CONSTRAINT "FK_619bc7b78eba833d2044153bacc" FOREIGN KEY ("chatId") REFERENCES "chat"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "chat" ADD CONSTRAINT "FK_e263d1c2fdcbc5a97216a28e226" FOREIGN KEY ("user1Id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "chat" ADD CONSTRAINT "FK_99f86fa5d1a0f13f9cbbeae3120" FOREIGN KEY ("user2Id") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "timeslot" ADD CONSTRAINT "FK_07d9f4ced4681d78a56e4605b51" FOREIGN KEY ("scheduleId") REFERENCES "schedule"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "schedule" ADD CONSTRAINT "FK_d796103491cf0bae197dda59477" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "timeslot" ADD CONSTRAINT "FK_47d06adf246fcfea1d318423ee3" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "booking" ADD CONSTRAINT "FK_9f46fa28cd1be174e2ad12bc2a3" FOREIGN KEY ("teacherId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "booking" ADD CONSTRAINT "FK_16524af86c0e3b3dd66517eec6a" FOREIGN KEY ("studentId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "user" ADD CONSTRAINT "FK_5cb2b3e0419a73a360d327d497f" FOREIGN KEY ("country") REFERENCES "country"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "user" ADD CONSTRAINT "FK_b78cd9491419afdda263fffdead" FOREIGN KEY ("advertId") REFERENCES "advert"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "user" ADD CONSTRAINT "FK_137987426659ac1570c018c0711" FOREIGN KEY ("scheduleId") REFERENCES "schedule"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "advert" ADD CONSTRAINT "FK_2a3714047a0c902fd9d5077fdcb" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "adverts_specializations" ADD CONSTRAINT "FK_220b3a0ed76876797d77d22d4b3" FOREIGN KEY ("specializationId") REFERENCES "specialization"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
         await queryRunner.query(`ALTER TABLE "adverts_specializations" ADD CONSTRAINT "FK_c198272c66d3efb41c7c2b0e480" FOREIGN KEY ("advertId") REFERENCES "advert"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -60,11 +60,11 @@ export class Timeslots1719594553149 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "adverts_specializations" DROP CONSTRAINT "FK_c198272c66d3efb41c7c2b0e480"`);
         await queryRunner.query(`ALTER TABLE "adverts_specializations" DROP CONSTRAINT "FK_220b3a0ed76876797d77d22d4b3"`);
         await queryRunner.query(`ALTER TABLE "advert" DROP CONSTRAINT "FK_2a3714047a0c902fd9d5077fdcb"`);
-        await queryRunner.query(`ALTER TABLE "user" DROP CONSTRAINT "FK_137987426659ac1570c018c0711"`);
         await queryRunner.query(`ALTER TABLE "user" DROP CONSTRAINT "FK_b78cd9491419afdda263fffdead"`);
         await queryRunner.query(`ALTER TABLE "user" DROP CONSTRAINT "FK_5cb2b3e0419a73a360d327d497f"`);
-        await queryRunner.query(`ALTER TABLE "schedule" DROP CONSTRAINT "FK_d796103491cf0bae197dda59477"`);
-        await queryRunner.query(`ALTER TABLE "timeslot" DROP CONSTRAINT "FK_07d9f4ced4681d78a56e4605b51"`);
+        await queryRunner.query(`ALTER TABLE "booking" DROP CONSTRAINT "FK_16524af86c0e3b3dd66517eec6a"`);
+        await queryRunner.query(`ALTER TABLE "booking" DROP CONSTRAINT "FK_9f46fa28cd1be174e2ad12bc2a3"`);
+        await queryRunner.query(`ALTER TABLE "timeslot" DROP CONSTRAINT "FK_47d06adf246fcfea1d318423ee3"`);
         await queryRunner.query(`ALTER TABLE "chat" DROP CONSTRAINT "FK_99f86fa5d1a0f13f9cbbeae3120"`);
         await queryRunner.query(`ALTER TABLE "chat" DROP CONSTRAINT "FK_e263d1c2fdcbc5a97216a28e226"`);
         await queryRunner.query(`ALTER TABLE "message" DROP CONSTRAINT "FK_619bc7b78eba833d2044153bacc"`);
@@ -87,7 +87,7 @@ export class Timeslots1719594553149 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "advert"`);
         await queryRunner.query(`DROP TABLE "specialization"`);
         await queryRunner.query(`DROP TABLE "user"`);
-        await queryRunner.query(`DROP TABLE "schedule"`);
+        await queryRunner.query(`DROP TABLE "booking"`);
         await queryRunner.query(`DROP TABLE "timeslot"`);
         await queryRunner.query(`DROP TABLE "chat"`);
         await queryRunner.query(`DROP TABLE "message"`);

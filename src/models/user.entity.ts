@@ -18,6 +18,7 @@ import Country from './country.entity';
 import AdvertLike from './advertLike.entity';
 import Chat from './chat.entity';
 import TimeSlot from './timeslot.entity';
+import Booking from './booking.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -93,7 +94,6 @@ export class User {
 
   @OneToMany(() => Chat, (chat) => chat.user1)
   @JoinColumn({ name: 'chats_as_user1' })
-  @Exclude({ toPlainOnly: true })
   chatsAsUser1: Chat[];
 
   @OneToMany(() => Chat, (chat) => chat.user2)
@@ -102,6 +102,14 @@ export class User {
 
   @OneToMany(() => TimeSlot, (timeslot) => timeslot.user)
   timeslots: TimeSlot[];
+
+  @OneToMany(() => Booking, (booking) => booking.teacher)
+  @JoinColumn()
+  bookingsAsTeacher: Booking[];
+
+  @OneToMany(() => Booking, (booking) => booking.student)
+  @JoinColumn()
+  bookingsAsStudent: Booking[];
 }
 
 export default User;
