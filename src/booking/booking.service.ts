@@ -22,8 +22,6 @@ export class BookingService {
       advert: teacher.advert,
       isActive: true,
     });
-    console.log(teacher);
-    
     const savedBooking = await this.bookingRepository.save(booking);
     teacher.bookingsAsTeacher.push(savedBooking);
     await this.usersRepository.save(teacher);
@@ -49,8 +47,6 @@ export class BookingService {
     if (!student) {
       throw new BadRequestException(`User with id ${studentId} is not found`);
     }
-console.log(student);
-
     booking.student = student;
     booking.language = await this.utilService.findLanguage(
       acceptBooking.languageId,
