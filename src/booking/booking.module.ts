@@ -14,6 +14,7 @@ import Advert from 'src/models/advert.entity';
 import Chat from 'src/models/chat.entity';
 import Message from 'src/models/message.entity';
 import TimeSlot from 'src/models/timeslot.entity';
+import Booking from 'src/models/booking.entity';
 
 @Module({
   imports: [
@@ -27,9 +28,10 @@ import TimeSlot from 'src/models/timeslot.entity';
       Chat,
       Message,
       TimeSlot,
+      Booking,
     ]),
   ],
   controllers: [BookingController],
   providers: [BookingService, CloudinaryService, UtilsService, JwtService],
 })
-export class TimeSlotsModule {}
+export class BookingModule {}

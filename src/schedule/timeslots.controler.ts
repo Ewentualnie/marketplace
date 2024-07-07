@@ -21,7 +21,7 @@ export class TimeSlotsController {
     @Body() timeslotsDto: TimeSlotsRequestDto,
     @GetCurrentUserId() id: number,
   ) {
-    return this, this.timeslotsService.addTimeSlots(timeslotsDto, id);
+    return this, this.timeslotsService.addBookings(timeslotsDto, id);
   }
 
   @Get(':id')

@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import User from './user.entity';
 import Advert from './advert.entity';
+import Language from './language.entity';
 
 @Entity({ name: 'booking' })
 export class Booking {
@@ -18,19 +19,26 @@ export class Booking {
   @JoinColumn()
   teacher: User;
 
-  @ManyToOne(() => User, (user) => user.bookingsAsStudent)
+  @ManyToOne(() => User, (user) => user.bookingsAsStudent, { nullable: true })
   @JoinColumn()
   student: User;
 
   @Column({ type: 'timestamptz' })
   date: Date;
 
-  @Column()
-  studingLanguage: string;
+  @ManyToOne(() => Language, (lang) => lang.bookings, { nullable: true })
+  @JoinColumn({ name: 'languageId' })
+  language: Language;
 
   @OneToMany(() => Advert, (advert) => advert.bookings)
   @JoinColumn()
   advert: Advert;
+
+  @Column()
+  isActive: boolean;
+
+  @Column({ default: false })
+  isBooked: boolean;
 }
 
 export default Booking;

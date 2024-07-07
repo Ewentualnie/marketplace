@@ -19,6 +19,7 @@ import Specialization from './models/specialization.entity';
 import Country from './models/country.entity';
 import FeedBack from './models/feedback.entity';
 import User from './models/user.entity';
+import { BookingModule } from './booking/booking.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import User from './models/user.entity';
     AuthModule,
     AdminModule,
     TimeSlotsModule,
+    BookingModule,
   ],
   controllers: [AppController],
   providers: [
