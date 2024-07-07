@@ -206,6 +206,11 @@ export class UsersService {
       )
       .orderBy('messages.writtedAt', 'DESC')
       .getOne();
+    if (!chat) {
+      throw new BadRequestException(
+        `There is no chat between user ${currentUserId} and user ${userId}`,
+      );
+    }
 
     return chat;
   }
@@ -298,6 +303,8 @@ export class UsersService {
       advert.imagePath =
         'https://res.cloudinary.com/dbccoiwll/image/upload/v1719060371/kgxh8tx2lg1gcg3vetnb.jpg';
       advert.price = 111;
+      advert.teachingLanguages = await this.getLangs('[1,2]');
+      advert.spokenLanguages = await this.getLangs('[1,2,3]');
 
       testUser.advert = advert;
       await this.usersRepository.save(testUser);
@@ -353,5 +360,19 @@ export class UsersService {
       where: { id: chat.id },
       relations: ['user1', 'user2', 'messages'],
     });
+  }
+
+  async getLangs(languages: string) {
+    const res = (
+      await Promise.all(
+        JSON.parse(languages).map(
+          async (id: number) => await this.utilServise.findLanguage(id),
+        ),
+      )
+    ).filter((val) => val != null);
+    if (res.length == 0) {
+      throw new BadRequestException('You must add correct languages!');
+    }
+    return res;
   }
 }
