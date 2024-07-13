@@ -12,7 +12,6 @@ export class TimeSlotsService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(TimeSlot)
-    private timeslotRepository: Repository<TimeSlot>,
     private bookingService: BookingService,
   ) {}
 
@@ -33,34 +32,6 @@ export class TimeSlotsService {
     return user.bookingsAsTeacher;
   }
 
-  async addTimeSlots(timeslotsRequestDto: TimeSlotsRequestDto, id: number) {
-    let user = await this.usersRepository.findOne({
-      where: { id },
-      relations: ['timeslots'],
-    });
-    if (!user) {
-      throw new BadRequestException(`User with id ${id} does not exist`);
-    }
-
-    const existingDates = user.timeslots.map((slot) =>
-      slot.start.toDateString(),
-    );
-
-    const uniqueTimeSlots = timeslotsRequestDto.timeslots.filter((slot) => {
-      const startDateString = new Date(slot.start).toDateString();
-      if (existingDates.includes(startDateString)) {
-        return false;
-      }
-      existingDates.push(startDateString);
-      return true;
-    });
-
-    const savedSlots = await this.timeslotRepository.save(uniqueTimeSlots);
-    user.timeslots.push(...savedSlots);
-    user = await this.usersRepository.save(user);
-    return user.timeslots;
-  }
-
   async addBookings(timeslotsRequestDto: TimeSlotsRequestDto, id: number) {
     const user = await this.usersRepository.findOne({
       where: { id },
@@ -79,17 +50,15 @@ export class TimeSlotsService {
     for (const slot of timeslotsRequestDto.timeslots) {
       const startTime = new Date(slot.start);
       const endTime = new Date(slot.end);
-      const dates: Date[] = [];
-
       const currentTime = new Date(startTime);
       while (currentTime < endTime) {
-        dates.push(new Date(currentTime));
-
         bookings.push(
-          await this.bookingService.createBooking(new Date(currentTime), user),
+          await this.bookingService.createBooking(
+            new Date(currentTime),
+            user,
+          ),
         );
-
-        currentTime.setHours(currentTime.getHours() + 1);
+        // currentTime.setHours(currentTime.getHours() + 1);
         if (currentTime >= endTime) break;
       }
     }
