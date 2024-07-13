@@ -16,11 +16,11 @@ export class Booking {
   id: number;
 
   @ManyToOne(() => User, (user) => user.bookingsAsTeacher)
-  @JoinColumn()
+  @JoinColumn({ name: 'teacher' })
   teacher: User;
 
   @ManyToOne(() => User, (user) => user.bookingsAsStudent, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'student' })
   student: User;
 
   @Column({ type: 'timestamptz' })
