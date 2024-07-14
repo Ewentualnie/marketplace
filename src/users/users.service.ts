@@ -77,6 +77,15 @@ export class UsersService {
     throw new BadRequestException(`User with id ${id} not found`);
   }
 
+  async getLikes(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['likes', 'likes.advert'],
+    });
+    if (user) return user.likes;
+    throw new BadRequestException(`User with id ${id} not found`);
+  }
+
   async updateAdvert(id: number, advert: Advert) {
     return await this.usersRepository.update(id, { advert: advert });
   }

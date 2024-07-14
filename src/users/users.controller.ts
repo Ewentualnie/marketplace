@@ -179,4 +179,12 @@ export class UsersController {
   ): Promise<Chat> {
     return this.usersService.getChat(currentUserId, userId);
   }
+
+  @Get(':id/favorite')
+  getLikes(
+    @Param('id', ParseIntPipe) userId: number,
+    @GetCurrentUserId() currentUserId: number,
+  ) {
+    return this.usersService.getLikes(userId);
+  }
 }
