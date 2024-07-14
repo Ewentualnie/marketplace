@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import AcceptBookingDto from 'src/models/dto/accept-booking.dto';
@@ -22,5 +22,15 @@ export class BookingController {
     @GetCurrentUserId() studentId: number,
   ) {
     return this.bookingservice.acceptBooking(acceptBookingDto, studentId);
+  }
+
+  @Get('')
+  getTeacherSchedule(@GetCurrentUserId() id: number) {
+    return this.bookingservice.getTeacherSchedule(id);
+  }
+
+  @Get(':id')
+  getStudentSchedule(@Param() id: number) {
+    return this.bookingservice.getStudentSchedule(id);
   }
 }

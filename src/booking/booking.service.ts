@@ -120,4 +120,20 @@ export class BookingService {
       where: { teacher: { id } },
     });
   }
+
+  async getTeacherSchedule(id: number): Promise<Booking[]> {
+    return await this.bookingRepository.find({
+      where: { teacher: { id } },
+      relations: ['advert', 'language', 'student'],
+      order: { date: 'ASC' },
+    });
+  }
+
+  async getStudentSchedule(id: number): Promise<Booking[]> {
+    return await this.bookingRepository.find({
+      where: { student: { id } },
+      relations: ['advert', 'language', 'teacher'],
+      order: { date: 'ASC' },
+    });
+  }
 }
