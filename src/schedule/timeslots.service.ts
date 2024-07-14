@@ -53,10 +53,7 @@ export class TimeSlotsService {
       const currentTime = new Date(startTime);
       while (currentTime < endTime) {
         bookings.push(
-          await this.bookingService.createBooking(
-            new Date(currentTime),
-            user,
-          ),
+          await this.bookingService.createBooking(new Date(currentTime), user),
         );
         // currentTime.setHours(currentTime.getHours() + 1);
         if (currentTime >= endTime) break;
