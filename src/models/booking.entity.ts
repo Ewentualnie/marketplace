@@ -30,7 +30,7 @@ export class Booking {
   @JoinColumn({ name: 'languageId' })
   language: Language;
 
-  @OneToMany(() => Advert, (advert) => advert.bookings)
+  @ManyToOne(() => Advert, (advert) => advert.bookings)
   @JoinColumn()
   advert: Advert;
 
