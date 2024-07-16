@@ -12,7 +12,6 @@ import { dataSourceOptionst } from './database/database-config';
 import { UtilsService } from './utils/utils.service';
 import { CloudinaryService } from './utils/cloudinary.service';
 import { ConfigModule } from '@nestjs/config';
-import { TimeSlotsModule } from './schedule/timeslots.module';
 import { JwtService } from '@nestjs/jwt';
 import Language from './models/language.entity';
 import Specialization from './models/specialization.entity';
@@ -36,7 +35,6 @@ import { BookingModule } from './booking/booking.module';
     AdvertModule,
     AuthModule,
     AdminModule,
-    TimeSlotsModule,
     BookingModule,
   ],
   controllers: [AppController],
