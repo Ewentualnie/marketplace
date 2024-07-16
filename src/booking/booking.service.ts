@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UtilsService } from 'src/utils/utils.service';
 import User from 'src/models/user.entity';
@@ -121,17 +121,37 @@ export class BookingService {
     });
   }
 
-  async getTeacherSchedule(id: number): Promise<Booking[]> {
+  async getTeacherSchedule(
+    id: number,
+    from?: Date,
+    to?: Date,
+  ): Promise<Booking[]> {
+    const condition: any = {
+      teacher: { id },
+    };
+    if (from && to) {
+      condition.date = Between(from, to);
+    }
     return await this.bookingRepository.find({
-      where: { teacher: { id } },
+      where: condition,
       relations: ['advert', 'language', 'student'],
       order: { date: 'ASC' },
     });
   }
 
-  async getStudentSchedule(id: number): Promise<Booking[]> {
+  async getStudentSchedule(
+    id: number,
+    from: Date,
+    to: Date,
+  ): Promise<Booking[]> {
+    const condition: any = {
+      student: { id },
+    };
+    if (from && to) {
+      condition.date = Between(from, to);
+    }
     return await this.bookingRepository.find({
-      where: { student: { id } },
+      where: condition,
       relations: ['advert', 'language', 'teacher'],
       order: { date: 'ASC' },
     });
