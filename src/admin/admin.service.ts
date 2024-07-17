@@ -5,6 +5,7 @@ import { LanguageDto } from 'src/models/dto/add-language.dto';
 import { SpecializationDto } from 'src/models/dto/add-specialization.dto';
 import { UpdateAdvertDto } from 'src/models/dto/update-advert.dto';
 import { UpdateUserDto } from 'src/models/dto/update-user.dto';
+import { Flags, Order } from 'src/types/filterAdnSort.type';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
 
@@ -16,8 +17,8 @@ export class AdminService {
     private readonly utilsService: UtilsService,
   ) {}
 
-  async getUsers() {
-    return await this.usersService.findAll();
+  async getUsers(sort?: Order, filter?: Flags) {
+    return this.usersService.findAll(sort, filter);
   }
 
   async getAdverts() {

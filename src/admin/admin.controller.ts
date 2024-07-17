@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
@@ -28,8 +30,13 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get('users')
-  async getUsers() {
-    return await this.adminService.getUsers();
+  async getUsers(
+    @Query('sort') sort?: string,
+    @Query('filter') filter?: string,
+  ) {
+    const sortObj = sort ? JSON.parse(sort) : undefined;
+    const filterObj = filter ? JSON.parse(filter) : undefined;
+    return await this.adminService.getUsers(sortObj, filterObj);
   }
 
   @Get('adverts')

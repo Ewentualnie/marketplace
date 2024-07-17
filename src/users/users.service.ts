@@ -19,6 +19,7 @@ import UpdateUserPasswordDto from 'src/models/dto/updateUserPassword.dto';
 import UserRes from 'src/types/user-response';
 import Chat from 'src/models/chat.entity';
 import Message from 'src/models/message.entity';
+import { Flags, Order } from 'src/types/filterAdnSort.type';
 
 @Injectable()
 export class UsersService {
@@ -47,10 +48,30 @@ export class UsersService {
     throw new BadRequestException(`User with email ${email} not found`);
   }
 
-  async findAll() {
-    return await this.usersRepository.find({
-      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe', 'country'],
-    });
+  async findAll(sort?: Order, filter?: Flags) {
+    const query = this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.advert', 'advert')
+      .leftJoinAndSelect('user.feedbacksToMe', 'feedbacksToMe')
+      .leftJoinAndSelect('user.feedbacksFromMe', 'feedbacksFromMe')
+      .leftJoinAndSelect('user.country', 'country');
+
+    if (filter) {
+      if (filter.photoPath) {
+        query.andWhere('user.photoPath IS NOT NULL');
+      }
+      if (filter.advert) {
+        query.andWhere('user.advert IS NOT NULL');
+      }
+    }
+
+    if (sort) {
+      Object.keys(sort).forEach((key) => {
+        query.addOrderBy(`user.${key}`, sort[key]);
+      });
+    }
+
+    return await query.getMany();
   }
 
   async findOne(id: number) {
