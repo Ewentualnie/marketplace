@@ -38,14 +38,7 @@ export class AdminController {
   ) {
     const sortObj = sort ? JSON.parse(sort) : undefined;
     const filterObj = filter ? JSON.parse(filter) : undefined;
-    const limitNum = limit ? +limit : undefined;
-    const pageNum = page ? +page : undefined;
-    return await this.adminService.getUsers(
-      sortObj,
-      filterObj,
-      limitNum,
-      pageNum,
-    );
+    return await this.adminService.getUsers(sortObj, filterObj, +limit, +page);
   }
 
   @Get('adverts')

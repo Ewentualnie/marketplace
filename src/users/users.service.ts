@@ -63,11 +63,16 @@ export class UsersService {
       if (filter.advert) {
         query.andWhere('user.advert IS NOT NULL');
       }
+      if (filter.countryId) {
+        query.andWhere('user.countryId = :countryId', {
+          countryId: filter.countryId,
+        });
+      }
     }
 
     if (sort) {
       Object.keys(sort).forEach((key) => {
-        query.addOrderBy(`user.${key}`, sort[key]);
+        query.addOrderBy(`user.${key}`, sort[key] as 'ASC' | 'DESC');
       });
     }
 
