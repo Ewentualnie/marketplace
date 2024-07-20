@@ -18,6 +18,7 @@ import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Specialization } from 'src/models/specialization.entity';
 import { AdvertLike } from 'src/models/advertLike.entity';
+import { FilterParams, SortParams } from 'src/types/advertsFilterAndSort.type';
 
 @Injectable()
 export class AdvertService {
@@ -148,22 +149,86 @@ export class AdvertService {
     };
   }
 
-  async findAllAdverts() {
-    return await this.advertRepository.find({
-      relations: [
-        'user',
-        'spokenLanguages',
-        'teachingLanguages',
-        'specializations',
-        'user.country',
-        'user.feedbacksToMe',
-        'user.feedbacksFromMe',
-        'user.feedbacksToMe.toUser',
-        'user.feedbacksToMe.fromUser',
-        'user.feedbacksFromMe.toUser',
-        'user.feedbacksFromMe.fromUser',
-      ],
-    });
+  // async findAllAdverts() {
+  //   return await this.advertRepository.find({
+  //     relations: [
+  //       'user',
+  //       'spokenLanguages',
+  //       'teachingLanguages',
+  //       'specializations',
+  //       'user.country',
+  //       'user.feedbacksToMe',
+  //       'user.feedbacksFromMe',
+  //       'user.feedbacksToMe.toUser',
+  //       'user.feedbacksToMe.fromUser',
+  //       'user.feedbacksFromMe.toUser',
+  //       'user.feedbacksFromMe.fromUser',
+  //     ],
+  //   });
+  // }
+
+  async findAllAdverts(
+    sort?: SortParams,
+    filter?: FilterParams,
+    limit = 10,
+    page = 0,
+  ) {
+    const query = this.advertRepository
+      .createQueryBuilder('advert')
+      .leftJoinAndSelect('advert.user', 'user')
+      .leftJoinAndSelect('advert.teachingLanguages', 'teachingLanguages')
+      .leftJoinAndSelect('advert.spokenLanguages', 'spokenLanguages')
+      .leftJoinAndSelect('advert.specializations', 'specializations')
+      .leftJoinAndSelect('user.country', 'country')
+      .leftJoinAndSelect('user.feedbacksToMe', 'feedbacksToMe')
+      .leftJoinAndSelect('user.feedbacksFromMe', 'feedbacksFromMe')
+      .leftJoinAndSelect('feedbacksToMe.toUser', 'feedbacksToMeToUser')
+      .leftJoinAndSelect('feedbacksToMe.fromUser', 'feedbacksToMeFromUser')
+      .leftJoinAndSelect('feedbacksFromMe.toUser', 'feedbacksFromMeToUser')
+      .leftJoinAndSelect('feedbacksFromMe.fromUser', 'feedbacksFromMeFromUser');
+
+    if (filter) {
+      if (filter.teachingLanguages && filter.teachingLanguages.length > 0) {
+        query.andWhere(
+          'advert.teachingLanguagesId IN (:...teachingLanguages)',
+          { teachingLanguages: filter.teachingLanguages },
+        );
+      }
+
+      if (filter.spokenLanguages && filter.spokenLanguages.length > 0) {
+        query.andWhere('advert.spokenLanguagesId IN (:...spokenLanguages)', {
+          spokenLanguages: filter.spokenLanguages,
+        });
+      }
+
+      if (filter.specializations && filter.specializations.length > 0) {
+        query.andWhere('advert.specializationsId IN (:...specializations)', {
+          specializations: filter.specializations,
+        });
+      }
+    }
+
+    if (sort) {
+      if (sort.teachingLanguages) {
+        query.addOrderBy('teachingLanguages.alpha2', sort.teachingLanguages);
+      }
+      if (sort.spokenLanguages) {
+        query.addOrderBy('spokenLanguages.alpha2', sort.spokenLanguages);
+      }
+      if (sort.specializations) {
+        query.addOrderBy('specializations.id', sort.specializations);
+      }
+    }
+
+    const skip = page * limit;
+    const totalRecords = await query.getCount();
+    const totalPages = Math.ceil(totalRecords / limit);
+    if (page >= totalPages) {
+      throw new Error(`Requested page ${page} does not exist`);
+    }
+
+    query.skip(skip).take(limit);
+    return await query.getMany();
   }
 
   async findOne(id: number) {

@@ -19,7 +19,7 @@ import UpdateUserPasswordDto from 'src/models/dto/updateUserPassword.dto';
 import UserRes from 'src/types/user-response';
 import Chat from 'src/models/chat.entity';
 import Message from 'src/models/message.entity';
-import { Flags, Order } from 'src/types/filterAndSort.type';
+import { Order, Flags } from 'src/types/usersFilterAndSort.type';
 
 @Injectable()
 export class UsersService {
@@ -80,7 +80,7 @@ export class UsersService {
     const totalRecords = await query.getCount();
     const totalPages = Math.ceil(totalRecords / limit);
     if (page >= totalPages) {
-      throw new Error('Requested page does not exist');
+      throw new Error(`Requested page ${page} does not exist`);
     }
 
     query.skip(skip).take(limit);
