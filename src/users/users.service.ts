@@ -19,7 +19,7 @@ import UpdateUserPasswordDto from 'src/models/dto/updateUserPassword.dto';
 import UserRes from 'src/types/user-response';
 import Chat from 'src/models/chat.entity';
 import Message from 'src/models/message.entity';
-import { Flags, Order } from 'src/types/filterAdnSort.type';
+import { Flags, Order } from 'src/types/filterAndSort.type';
 
 @Injectable()
 export class UsersService {
