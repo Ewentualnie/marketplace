@@ -17,8 +17,8 @@ export class AdminService {
     private readonly utilsService: UtilsService,
   ) {}
 
-  async getUsers(sort?: Order, filter?: Flags) {
-    return this.usersService.findAll(sort, filter);
+  async getUsers(sort?: Order, filter?: Flags, limit?: number, page?: number) {
+    return this.usersService.findAll(sort, filter, limit, page);
   }
 
   async getAdverts() {

@@ -48,7 +48,7 @@ export class UsersService {
     throw new BadRequestException(`User with email ${email} not found`);
   }
 
-  async findAll(sort?: Order, filter?: Flags) {
+  async findAll(sort?: Order, filter?: Flags, limit = 10, page = 0) {
     const query = this.usersRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.advert', 'advert')
@@ -71,6 +71,14 @@ export class UsersService {
       });
     }
 
+    const skip = page * limit;
+    const totalRecords = await query.getCount();
+    const totalPages = Math.ceil(totalRecords / limit);
+    if (page >= totalPages) {
+      throw new Error('Requested page does not exist');
+    }
+
+    query.skip(skip).take(limit);
     return await query.getMany();
   }
 

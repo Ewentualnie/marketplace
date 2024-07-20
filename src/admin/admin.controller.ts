@@ -33,10 +33,19 @@ export class AdminController {
   async getUsers(
     @Query('sort') sort?: string,
     @Query('filter') filter?: string,
+    @Query('limit') limit?: string,
+    @Query('page') page?: string,
   ) {
     const sortObj = sort ? JSON.parse(sort) : undefined;
     const filterObj = filter ? JSON.parse(filter) : undefined;
-    return await this.adminService.getUsers(sortObj, filterObj);
+    const limitNum = limit ? +limit : undefined;
+    const pageNum = page ? +page : undefined;
+    return await this.adminService.getUsers(
+      sortObj,
+      filterObj,
+      limitNum,
+      pageNum,
+    );
   }
 
   @Get('adverts')
