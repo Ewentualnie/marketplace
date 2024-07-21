@@ -55,6 +55,9 @@ export class BookingService {
     const booking = await this.getBookingIfNotBooked(acceptBooking.bookingId);
     const studentToSave = await this.userService.getStudentById(studentId);
 
+    if (booking.teacher.id == studentId)
+      throw new BadRequestException(`User can not accept own bookings`);
+
     studentToSave.bookingsAsStudent.push(booking);
     await this.userService.saveUser(studentToSave);
 
