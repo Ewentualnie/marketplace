@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
+import { DateValidationPipe } from 'src/utils/validators/date_validator';
 import AcceptBookingDto from 'src/models/dto/accept-booking.dto';
 import TimeSlotsRequestDto from 'src/models/dto/timeslots-request.dto';
-import { DateValidationPipe } from 'src/utils/validators/date_validator';
 
 @Controller('booking')
 export class BookingController {

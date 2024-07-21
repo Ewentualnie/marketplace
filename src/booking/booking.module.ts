@@ -5,6 +5,7 @@ import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { BookingController } from './booking.controller';
 import { BookingService } from './booking.service';
 import { UtilsService } from 'src/utils/utils.service';
+import { UsersService } from 'src/users/users.service';
 import User from '../models/user.entity';
 import FeedBack from '../models/feedback.entity';
 import Country from 'src/models/country.entity';
@@ -32,6 +33,12 @@ import Booking from 'src/models/booking.entity';
     ]),
   ],
   controllers: [BookingController],
-  providers: [BookingService, CloudinaryService, UtilsService, JwtService],
+  providers: [
+    BookingService,
+    CloudinaryService,
+    UtilsService,
+    JwtService,
+    UsersService,
+  ],
 })
 export class BookingModule {}

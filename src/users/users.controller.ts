@@ -21,6 +21,7 @@ import {
 import { UsersService } from './users.service';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ChatService } from 'src/utils/chat.service';
 import UpdateUserDto from '../models/dto/update-user.dto';
 import CreateFeedback from '../models/dto/add-feedback.dto';
 import FeedBack from '../models/feedback.entity';
@@ -36,7 +37,10 @@ import Chat from 'src/models/chat.entity';
 @Controller('users')
 @UsePipes(new ValidationPipe())
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly chatService: ChatService,
+  ) {}
 
   @Get()
   getCurrentUser(@GetCurrentUserId() currentUserId: number) {
@@ -45,7 +49,7 @@ export class UsersController {
 
   @Get('/conversations')
   getChats(@GetCurrentUserId() currentUserId: number): Promise<Chat[]> {
-    return this.usersService.getChats(currentUserId);
+    return this.chatService.getChats(currentUserId);
   }
 
   @Get(':id')
@@ -169,7 +173,7 @@ export class UsersController {
     @GetCurrentUserId() currentUserId: number,
     @Body() dto: MailDto,
   ): Promise<Chat> {
-    return this.usersService.sendMessage(dto, currentUserId, userId);
+    return this.chatService.sendMessage(dto, currentUserId, userId);
   }
 
   @Get(':id/conversation')
@@ -177,7 +181,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) userId: number,
     @GetCurrentUserId() currentUserId: number,
   ): Promise<Chat> {
-    return this.usersService.getChat(currentUserId, userId);
+    return this.chatService.getChat(currentUserId, userId);
   }
 
   @Get(':id/favorite')

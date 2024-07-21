@@ -274,25 +274,6 @@ export class UsersService {
     return { user, tokens };
   }
 
-  async getChat(userId: number, currentUserId: number) {
-    const chat = await this.chatRepository
-      .createQueryBuilder('chat')
-      .leftJoinAndSelect('chat.messages', 'messages')
-      .where(
-        '(chat.user1 = :userId AND chat.user2 = :currentUserId) OR (chat.user1 = :currentUserId AND chat.user2 = :userId)',
-        { userId, currentUserId },
-      )
-      .orderBy('messages.writtedAt', 'DESC')
-      .getOne();
-    if (!chat) {
-      throw new BadRequestException(
-        `There is no chat between user ${currentUserId} and user ${userId}`,
-      );
-    }
-
-    return chat;
-  }
-
   async addFeedback(
     userId: number,
     currentUserId: number,
@@ -324,35 +305,8 @@ export class UsersService {
     return await this.feedbackRepository.save(newFeedback);
   }
 
-  async getChats(id: number): Promise<Chat[]> {
-    const chats = await this.chatRepository
-      .createQueryBuilder('chat')
-      .leftJoinAndSelect('chat.messages', 'messages')
-      .where('chat.user1Id = :id OR chat.user2Id = :id', {
-        id,
-      })
-      .getMany();
-    return chats;
-  }
-
   async saveUser(user: User) {
     return await this.usersRepository.save(user);
-  }
-
-  async sendMessage(dto: MailDto, fromUserId: number, toUserId: number) {
-    const chat = await this.findOrCreateChat(toUserId, fromUserId);
-
-    const message = this.messageRepository.create({
-      isReaded: false,
-      text: dto.message,
-      chat,
-      senderId: fromUserId,
-      receiverId: toUserId,
-    });
-
-    chat.messages.push(message);
-    await this.messageRepository.save(message);
-    return await this.chatRepository.save(chat);
   }
 
   async createTestUsers(count: number) {
@@ -395,49 +349,13 @@ export class UsersService {
     return `Added ${count} users, last user has number ${lastTestUserNum - 1}`;
   }
 
-  async findOrCreateChat(fromUserId: number, toUserId: number): Promise<Chat> {
-    const toUser = await this.usersRepository.findOne({
-      where: { id: toUserId },
+  async getUserWithChats(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
       relations: ['chatsAsUser1', 'chatsAsUser2'],
     });
-    const fromUser = await this.usersRepository.findOne({
-      where: { id: fromUserId },
-      relations: ['chatsAsUser1', 'chatsAsUser2'],
-    });
-    if (!fromUser || !toUserId) {
-      throw new NotFoundException('Sender or receiver not found');
-    }
-    if (toUser.id == fromUser.id) {
-      throw new BadRequestException('User cannot send mails to himself');
-    }
-    let chat = await this.chatRepository
-      .createQueryBuilder('chat')
-      .leftJoinAndSelect('chat.messages', 'messages')
-      .leftJoinAndSelect('chat.user1', 'user1')
-      .leftJoinAndSelect('chat.user2', 'user2')
-      .where(
-        '(chat.user1Id = :fromUserId AND chat.user2Id = :toUserId) OR (chat.user1Id = :toUserId AND chat.user2Id = :fromUserId)',
-        {
-          fromUserId,
-          toUserId,
-        },
-      )
-      .getOne();
-    if (!chat) {
-      chat = this.chatRepository.create();
-      fromUser.chatsAsUser1.push(chat);
-      toUser.chatsAsUser2.push(chat);
-
-      chat.user1 = fromUser;
-      chat.user2 = toUser;
-      chat.messages = [];
-      await this.usersRepository.save([fromUser, toUser]);
-      await this.chatRepository.save(chat);
-    }
-    return await this.chatRepository.findOne({
-      where: { id: chat.id },
-      relations: ['user1', 'user2', 'messages'],
-    });
+    if (user) return user;
+    throw new BadRequestException(`User with id ${id} not found`);
   }
 
   async getLangs(languages: string) {
