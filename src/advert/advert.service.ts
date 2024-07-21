@@ -149,24 +149,6 @@ export class AdvertService {
     };
   }
 
-  // async findAllAdverts() {
-  //   return await this.advertRepository.find({
-  //     relations: [
-  //       'user',
-  //       'spokenLanguages',
-  //       'teachingLanguages',
-  //       'specializations',
-  //       'user.country',
-  //       'user.feedbacksToMe',
-  //       'user.feedbacksFromMe',
-  //       'user.feedbacksToMe.toUser',
-  //       'user.feedbacksToMe.fromUser',
-  //       'user.feedbacksFromMe.toUser',
-  //       'user.feedbacksFromMe.fromUser',
-  //     ],
-  //   });
-  // }
-
   async findAllAdverts(
     sort?: SortParams,
     filter?: FilterParams,
