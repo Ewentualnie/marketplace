@@ -22,7 +22,12 @@ export class AdminService {
     return this.usersService.findAll(sort, filter, limit, page);
   }
 
-  async getAdverts(sort?: SortParams, filter?: FilterParams, limit?, page?) {
+  async getAdverts(
+    sort?: SortParams,
+    filter?: FilterParams,
+    limit?: number,
+    page?: number,
+  ) {
     return await this.advertService.findAllAdverts(sort, filter, limit, page);
   }
 
