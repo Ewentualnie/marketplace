@@ -54,7 +54,7 @@ export class AdminService {
     return this.utilsService.removeCountry(id);
   }
 
-  async deleteRestoreUser(userId) {
+  async deleteRestoreUser(userId: number) {
     const user = await this.usersService.findOne(userId);
     if (user.advert != null && !user.advert.isDeleted) {
       await this.advertService.deleteRestoreAdvert(user.advert.id);
@@ -62,7 +62,7 @@ export class AdminService {
     return await this.usersService.deleteRestoreUser(userId);
   }
 
-  async deleteRestoreAdvert(advertId) {
+  async deleteRestoreAdvert(advertId: number) {
     return this.advertService.deleteRestoreAdvert(advertId);
   }
 
