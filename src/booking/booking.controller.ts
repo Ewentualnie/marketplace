@@ -39,7 +39,7 @@ export class BookingController {
     @Query('from', DateValidationPipe) from?: Date,
     @Query('to', DateValidationPipe) to?: Date,
   ) {
-    return this.bookingservice.getTeacherSchedule(id, from, to);
+    return this.bookingservice.getSchedule(id, from, to);
   }
 
   @Get(':id')
@@ -48,6 +48,6 @@ export class BookingController {
     @Query('from', DateValidationPipe) from?: Date,
     @Query('to', DateValidationPipe) to?: Date,
   ) {
-    return this.bookingservice.getStudentSchedule(id, from, to);
+    return this.bookingservice.getSchedule(id, from, to, false);
   }
 }

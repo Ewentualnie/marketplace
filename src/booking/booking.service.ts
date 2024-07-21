@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UtilsService } from 'src/utils/utils.service';
+import { UsersService } from 'src/users/users.service';
 import User from 'src/models/user.entity';
 import Booking from 'src/models/booking.entity';
 import AcceptBookingDto from 'src/models/dto/accept-booking.dto';
@@ -10,14 +11,14 @@ import TimeSlotsRequestDto from 'src/models/dto/timeslots-request.dto';
 @Injectable()
 export class BookingService {
   constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Booking)
     private bookingRepository: Repository<Booking>,
     private utilService: UtilsService,
+    private userService: UsersService,
   ) {}
 
   async addBookings(timeslotsRequestDto: TimeSlotsRequestDto, id: number) {
-    const teacher = await this.getTeacher(id);
+    const teacher = await this.userService.getTeacherById(id);
 
     for (const slot of timeslotsRequestDto.timeslots) {
       const startTime = new Date(slot.start);
@@ -46,20 +47,18 @@ export class BookingService {
     });
     const savedBooking = await this.bookingRepository.save(booking);
     teacher.bookingsAsTeacher.push(savedBooking);
-    await this.usersRepository.save(teacher);
+    await this.userService.saveUser(teacher);
     return savedBooking;
   }
 
   async acceptBooking(acceptBooking: AcceptBookingDto, studentId: number) {
     const booking = await this.getBookingIfNotBooked(acceptBooking.bookingId);
-    const studentToSave = await this.getStudent(studentId);
+    const studentToSave = await this.userService.getStudentById(studentId);
 
     studentToSave.bookingsAsStudent.push(booking);
-    await this.usersRepository.save(studentToSave);
+    await this.userService.saveUser(studentToSave);
 
-    booking.student = await this.usersRepository.findOne({
-      where: { id: studentToSave.id },
-    });
+    booking.student = await this.userService.getUserById(studentToSave.id);
     booking.language = await this.utilService.findLanguage(
       acceptBooking.languageId,
     );
@@ -82,33 +81,6 @@ export class BookingService {
     return booking;
   }
 
-  async getStudent(id: number): Promise<User> {
-    const student = await this.usersRepository.findOne({
-      where: { id },
-      relations: ['bookingsAsStudent'],
-    });
-    if (!student) {
-      throw new BadRequestException(`User with id ${id} is not found`);
-    }
-    return student;
-  }
-
-  async getTeacher(id: number) {
-    const teacher = await this.usersRepository.findOne({
-      where: { id },
-      relations: ['advert', 'bookingsAsTeacher'],
-    });
-    if (!teacher) {
-      throw new BadRequestException(`User with id ${id} is not found`);
-    }
-    if (!teacher.advert) {
-      throw new BadRequestException(
-        `Only user with advert can claim timeslots`,
-      );
-    }
-    return teacher;
-  }
-
   async getTeacherBookingByDate(id: number, date: Date) {
     return await this.bookingRepository.findOne({
       where: { teacher: { id }, date },
@@ -121,28 +93,11 @@ export class BookingService {
     });
   }
 
-  async getTeacherSchedule(
-    id: number,
-    from?: Date,
-    to?: Date,
-  ): Promise<Booking[]> {
-    const condition: any = {
-      teacher: { id },
-    };
-    if (from && to) {
-      condition.date = Between(from, to);
-    }
-    return await this.bookingRepository.find({
-      where: condition,
-      relations: ['advert', 'language', 'student'],
-      order: { date: 'ASC' },
-    });
-  }
-
-  async getStudentSchedule(
+  async getSchedule(
     id: number,
     from: Date,
     to: Date,
+    isTeacher = true,
   ): Promise<Booking[]> {
     const condition: any = {
       student: { id },
@@ -152,7 +107,7 @@ export class BookingService {
     }
     return await this.bookingRepository.find({
       where: condition,
-      relations: ['advert', 'language', 'teacher'],
+      relations: ['advert', 'language', isTeacher ? 'teacher' : 'student'],
       order: { date: 'ASC' },
     });
   }

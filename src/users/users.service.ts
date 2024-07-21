@@ -102,6 +102,41 @@ export class UsersService {
     throw new BadRequestException(`User with id ${id} not found`);
   }
 
+  async getUserById(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+    if (user) return user;
+    throw new BadRequestException(`User with id ${id} not found`);
+  }
+
+  async getTeacherById(id: number) {
+    const teacher = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['advert', 'bookingsAsTeacher'],
+    });
+    if (teacher) {
+      throw new BadRequestException(`User with id ${id} is not found`);
+    }
+    if (!teacher.advert) {
+      throw new BadRequestException(
+        `Only user with advert can claim timeslots`,
+      );
+    }
+    return teacher;
+  }
+
+  async getStudentById(id: number): Promise<User> {
+    const student = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['bookingsAsStudent'],
+    });
+    if (!student) {
+      throw new BadRequestException(`User with id ${id} is not found`);
+    }
+    return student;
+  }
+
   async getUserWithLikes(id: number) {
     const user = await this.usersRepository.findOne({
       where: { id },
