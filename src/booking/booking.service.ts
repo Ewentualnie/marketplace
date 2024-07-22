@@ -102,15 +102,16 @@ export class BookingService {
     to: Date,
     isTeacher = true,
   ): Promise<Booking[]> {
-    const condition: any = {
-      student: { id },
-    };
+    const condition: any = isTeacher
+      ? { teacher: { id } }
+      : { student: { id } };
+
     if (from && to) {
       condition.date = Between(from, to);
     }
     return await this.bookingRepository.find({
       where: condition,
-      relations: ['advert', 'language', isTeacher ? 'teacher' : 'student'],
+      relations: ['advert', 'language', isTeacher ? 'student' : 'teacher'],
       order: { date: 'ASC' },
     });
   }
