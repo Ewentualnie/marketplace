@@ -31,7 +31,7 @@ export class ChatService {
         `There is no chat between user ${currentUserId} and user ${userId}`,
       );
     }
-
+    this.turnToReaded(userId, chat.messages);
     return chat;
   }
 
@@ -98,5 +98,14 @@ export class ChatService {
       where: { id: chat.id },
       relations: ['user1', 'user2', 'messages'],
     });
+  }
+
+  async turnToReaded(userId: number, messages: Message[]) {
+    for (const message of messages) {
+      if (message.receiverId == userId) {
+        message.isReaded = true;
+        this.messageRepository.save(message);
+      }
+    }
   }
 }
