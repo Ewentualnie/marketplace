@@ -117,7 +117,7 @@ export class UsersService {
       where: { id },
       relations: ['advert', 'bookingsAsTeacher'],
     });
-    if (teacher) {
+    if (!teacher) {
       throw new BadRequestException(`User with id ${id} is not found`);
     }
     if (!teacher.advert) {
