@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Role } from 'src/utils/role.enum';
+import { Role } from 'src/types/role.enum';
 import {
   Column,
   CreateDateColumn,
