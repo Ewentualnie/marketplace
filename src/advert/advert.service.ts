@@ -7,27 +7,24 @@ import {
 import { CreateAdvertDto } from '../models/dto/create-advert.dto';
 import { UpdateAdvertDto } from '../models/dto/update-advert.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Advert } from 'src/models/advert.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/models/user.entity';
-import { Language } from 'src/models/language.entity';
 import { Role } from 'src/utils/role.enum';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { Specialization } from 'src/models/specialization.entity';
-import { AdvertLike } from 'src/models/advertLike.entity';
 import { FilterParams, SortParams } from 'src/types/advertsFilterAndSort.type';
+import Specialization from 'src/models/specialization.entity';
+import AdvertLike from 'src/models/advertLike.entity';
+import Language from 'src/models/language.entity';
+import Advert from 'src/models/advert.entity';
 
 @Injectable()
 export class AdvertService {
   constructor(
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
     @InjectRepository(AdvertLike)
-    private readonly advertLikeRepository: Repository<AdvertLike>,
-    @InjectRepository(Language)
-    private languageRepository: Repository<Language>,
+    private advertLikeRepository: Repository<AdvertLike>,
     private userService: UsersService,
     public jwtService: JwtService,
     public cloudinaryService: CloudinaryService,
@@ -281,8 +278,8 @@ export class AdvertService {
   }
 
   async deleteRestoreOwnAdvert(userId: number) {
-    const user = await this.getCurrentUser(userId);
-    if (user.advert == null) {
+    const user = await this.userService.findOne(userId);
+    if (!user.advert) {
       throw new BadRequestException(`User with ID ${user.id} has no advert`);
     }
     return await this.deleteRestoreAdvert(user.advert.id);
@@ -311,20 +308,6 @@ export class AdvertService {
     }
   }
 
-  async getLanguages(languages: Language[]): Promise<Language[]> {
-    return Promise.all(
-      languages.map(async (data) => {
-        return await this.languageRepository.findOne({
-          where: {
-            alpha2: data.alpha2,
-            languageEn: data.languageEn,
-            languageUa: data.languageUa,
-          },
-        });
-      }),
-    );
-  }
-
   async getLangs(languages: string): Promise<Language[]> {
     const res = (
       await Promise.all(
@@ -351,10 +334,6 @@ export class AdvertService {
       throw new BadRequestException('You must add correct specializations!');
     }
     return res;
-  }
-
-  async getCurrentUser(id: number): Promise<User> {
-    return await this.userService.findOne(id);
   }
 
   convertQueryParams(query: Record<string, string>) {

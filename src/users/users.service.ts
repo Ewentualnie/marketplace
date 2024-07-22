@@ -16,8 +16,6 @@ import User from '../models/user.entity';
 import UpdateUserEmailDto from 'src/models/dto/updateUserEmail.dto';
 import UpdateUserPasswordDto from 'src/models/dto/updateUserPassword.dto';
 import UserRes from 'src/types/user-response';
-import Chat from 'src/models/chat.entity';
-import Message from 'src/models/message.entity';
 
 @Injectable()
 export class UsersService {
@@ -25,8 +23,6 @@ export class UsersService {
     @InjectRepository(User) public usersRepository: Repository<User>,
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
-    @InjectRepository(Chat) private chatRepository: Repository<Chat>,
-    @InjectRepository(Message) private messageRepository: Repository<Message>,
     private cloudinaryService: CloudinaryService,
     private utilServise: UtilsService,
   ) {}
