@@ -201,15 +201,17 @@ export class AdvertService {
         query.addOrderBy('specializations.id', sort.specializations);
       }
     }
+    const validLimit = isNaN(limit) || limit <= 0 ? 10 : limit;
+    const validPage = isNaN(page) || page < 0 ? 0 : page;
 
-    const skip = page * limit;
+    const skip = validPage * validLimit;
     const totalRecords = await query.getCount();
-    const totalPages = Math.ceil(totalRecords / limit);
-    if (page >= totalPages) {
-      throw new Error(`Requested page ${page} does not exist`);
-    }
+    const totalPages = Math.ceil(totalRecords / validLimit);
 
-    query.skip(skip).take(limit);
+    if (validPage >= totalPages) {
+      throw new Error(`Requested page ${validPage} does not exist`);
+    }
+    query.skip(skip).take(validLimit);
     return await query.getMany();
   }
 
