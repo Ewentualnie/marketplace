@@ -19,6 +19,11 @@ import Country from './models/country.entity';
 import FeedBack from './models/feedback.entity';
 import User from './models/user.entity';
 import { BookingModule } from './booking/booking.module';
+import { CronService } from './utils/cron.service';
+import { BookingService } from './booking/booking.service';
+import Booking from './models/booking.entity';
+import { UsersService } from './users/users.service';
+import Advert from './models/advert.entity';
 
 @Module({
   imports: [
@@ -29,6 +34,8 @@ import { BookingModule } from './booking/booking.module';
       Country,
       FeedBack,
       User,
+      Booking,
+      Advert,
     ]),
     TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,
@@ -43,6 +50,9 @@ import { BookingModule } from './booking/booking.module';
     UtilsService,
     CloudinaryService,
     AppService,
+    CronService,
+    BookingService,
+    UsersService,
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
