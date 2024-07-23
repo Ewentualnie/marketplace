@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
+import { Between, LessThan, Repository } from 'typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UtilsService } from 'src/utils/utils.service';
 import { UsersService } from 'src/users/users.service';
@@ -116,5 +116,31 @@ export class BookingService {
       relations: ['advert', 'language', isTeacher ? 'student' : 'teacher'],
       order: { date: 'ASC' },
     });
+  }
+
+  async deactivateTimeslot(userId: number, id: number) {
+    const teacher = await this.userService.getTeacherById(userId);
+    const timeslot = await this.bookingRepository.findOne({
+      where: { id },
+      relations: ['teacher'],
+    });
+    if (!timeslot) {
+      throw new BadRequestException(`Timeslot with id ${id} not found`);
+    }
+    if (teacher.id != timeslot.teacher.id) {
+      throw new BadRequestException(
+        `Slot with id ${id} does not belong to user with id ${userId}`,
+      );
+    }
+    timeslot.isActive = !timeslot.isActive;
+    return await this.bookingRepository.save(timeslot);
+  }
+
+  async cronDeactivateTimeslot(date: Date) {
+    const timeslots = await this.bookingRepository.find({
+      where: { date: LessThan(date) },
+    });
+    timeslots.forEach((slot) => (slot.isActive = false));
+    return await this.bookingRepository.save(timeslots);
   }
 }

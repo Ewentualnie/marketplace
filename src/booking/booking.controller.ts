@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -49,5 +50,13 @@ export class BookingController {
     @Query('to', DateValidationPipe) to?: Date,
   ) {
     return this.bookingservice.getSchedule(id, from, to, false);
+  }
+
+  @Patch(':id')
+  deactivateTimeslot(
+    @Param('id', ParseIntPipe) id: number,
+    @GetCurrentUserId() userId: number,
+  ) {
+    return this.bookingservice.deactivateTimeslot(userId, id);
   }
 }
