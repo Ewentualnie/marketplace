@@ -55,8 +55,9 @@ export class BookingService {
     const booking = await this.getBookingIfNotBooked(acceptBooking.bookingId);
     const studentToSave = await this.userService.getStudentById(studentId);
 
-    if (booking.teacher.id == studentId)
+    if (booking.teacher.id == studentId) {
       throw new BadRequestException(`User cannot accept his own bookings`);
+    }
 
     studentToSave.bookingsAsStudent.push(booking);
     await this.userService.saveUser(studentToSave);
@@ -81,6 +82,9 @@ export class BookingService {
     if (booking.isBooked) {
       throw new BadRequestException(`Timeslot with id ${id} is booked`);
     }
+    if (!booking.isActive) {
+      throw new BadRequestException(`Timeslot with id ${id} is inactive`);
+    }
     return booking;
   }
 
@@ -102,9 +106,7 @@ export class BookingService {
     to: Date,
     isTeacher = true,
   ): Promise<Booking[]> {
-    const condition: any = isTeacher
-      ? { teacher: { id } }
-      : { student: { id } };
+    const condition: any = { [isTeacher ? 'teacher' : 'student']: { id } };
 
     if (from && to) {
       condition.date = Between(from, to);
