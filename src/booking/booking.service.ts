@@ -138,9 +138,10 @@ export class BookingService {
 
   async cronDeactivateTimeslot(date: Date) {
     const timeslots = await this.bookingRepository.find({
-      where: { date: LessThan(date) },
+      where: { date: LessThan(date), isActive: true },
     });
     timeslots.forEach((slot) => (slot.isActive = false));
-    return await this.bookingRepository.save(timeslots);
+    const count = (await this.bookingRepository.save(timeslots)).length;
+    console.log(`${count} timeslots deactivated`);
   }
 }

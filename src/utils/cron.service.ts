@@ -6,7 +6,7 @@ import { BookingService } from 'src/booking/booking.service';
 export class CronService implements OnModuleInit {
   constructor(private readonly bookingService: BookingService) {}
   onModuleInit() {
-    cron.schedule('1 0 * * *', () => {
+    cron.schedule('1 0  * * *', () => {
       this.bookingService.cronDeactivateTimeslot(new Date());
     });
     console.log(
