@@ -16,6 +16,8 @@ import { AdvertLike } from 'src/models/advertLike.entity';
 import { Chat } from 'src/models/chat.entity';
 import { Message } from 'src/models/message.entity';
 import TimeSlot from 'src/models/timeslot.entity';
+import { BookingService } from 'src/booking/booking.service';
+import Booking from 'src/models/booking.entity';
 
 @Module({
   imports: [
@@ -30,10 +32,17 @@ import TimeSlot from 'src/models/timeslot.entity';
       Chat,
       Message,
       TimeSlot,
+      Booking,
     ]),
     JwtModule,
   ],
   controllers: [AdvertController],
-  providers: [AdvertService, UsersService, CloudinaryService, UtilsService],
+  providers: [
+    AdvertService,
+    UsersService,
+    CloudinaryService,
+    UtilsService,
+    BookingService,
+  ],
 })
 export class AdvertModule {}

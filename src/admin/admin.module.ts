@@ -18,6 +18,8 @@ import { AdvertLike } from 'src/models/advertLike.entity';
 import { Chat } from 'src/models/chat.entity';
 import { Message } from 'src/models/message.entity';
 import TimeSlot from 'src/models/timeslot.entity';
+import Booking from 'src/models/booking.entity';
+import { BookingService } from 'src/booking/booking.service';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import TimeSlot from 'src/models/timeslot.entity';
       Chat,
       Message,
       TimeSlot,
+      Booking,
     ]),
     JwtModule.register({
       secret: 'at-secret',
@@ -45,6 +48,7 @@ import TimeSlot from 'src/models/timeslot.entity';
     JwtAdminStrategy,
     UtilsService,
     CloudinaryService,
+    BookingService,
   ],
 })
 export class AdminModule {}
