@@ -18,6 +18,7 @@ import Specialization from 'src/models/specialization.entity';
 import AdvertLike from 'src/models/advertLike.entity';
 import Language from 'src/models/language.entity';
 import Advert from 'src/models/advert.entity';
+import { BookingService } from 'src/booking/booking.service';
 
 @Injectable()
 export class AdvertService {
@@ -29,6 +30,7 @@ export class AdvertService {
     public jwtService: JwtService,
     public cloudinaryService: CloudinaryService,
     public utilServise: UtilsService,
+    public bookingServise: BookingService,
   ) {}
 
   async create(
@@ -306,6 +308,11 @@ export class AdvertService {
       user.likes.push(newLike);
       return await this.advertLikeRepository.save(newLike);
     }
+  }
+
+  async getTimeslots(id: number, from?: Date, to?: Date) {
+    const advert = await this.findOne(id);
+    return await this.bookingServise.getSchedule(advert.user.id, from, to);
   }
 
   async getLangs(languages: string): Promise<Language[]> {

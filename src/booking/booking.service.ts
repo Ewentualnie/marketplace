@@ -101,12 +101,14 @@ export class BookingService {
   }
 
   async getSchedule(
-    id: number,
+    userId: number,
     from: Date,
     to: Date,
     isTeacher = true,
   ): Promise<Booking[]> {
-    const condition: any = { [isTeacher ? 'teacher' : 'student']: { id } };
+    const condition: any = {
+      [isTeacher ? 'teacher' : 'student']: { id: userId },
+    };
 
     if (from && to) {
       condition.date = Between(from, to);

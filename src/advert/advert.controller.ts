@@ -21,6 +21,7 @@ import { Public } from 'src/utils/decorators/public.decorator';
 import { GetCurrentUserId } from 'src/utils/decorators/get-user-id.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { DateValidationPipe } from 'src/utils/validators/date_validator';
 
 @ApiTags('Adverts')
 @Controller('adverts')
@@ -49,6 +50,16 @@ export class AdvertController {
   @Get()
   findAll(@Query() query: Record<string, string>) {
     return this.advertService.findAllowedAdverts(query);
+  }
+
+  @Public()
+  @Get(':id/timeslots')
+  getTimeslots(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('from', DateValidationPipe) from?: Date,
+    @Query('to', DateValidationPipe) to?: Date,
+  ) {
+    return this.advertService.getTimeslots(id, from, to);
   }
 
   @Public()
