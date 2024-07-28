@@ -7,6 +7,7 @@ import User from 'src/models/user.entity';
 import Booking from 'src/models/booking.entity';
 import AcceptBookingDto from 'src/models/dto/accept-booking.dto';
 import TimeSlotsRequestDto from 'src/models/dto/timeslots-request.dto';
+import { ChatService } from 'src/utils/chat.service';
 
 @Injectable()
 export class BookingService {
@@ -15,6 +16,7 @@ export class BookingService {
     private bookingRepository: Repository<Booking>,
     private utilService: UtilsService,
     private userService: UsersService,
+    private chatService: ChatService,
   ) {}
 
   async addBookings(timeslotsRequestDto: TimeSlotsRequestDto, id: number) {
@@ -51,22 +53,46 @@ export class BookingService {
     return savedBooking;
   }
 
-  async acceptBooking(acceptBooking: AcceptBookingDto, studentId: number) {
+  async acceptBooking(
+    acceptBooking: AcceptBookingDto,
+    studentId: number,
+    info?: { level: string; from: string; motherTongue: string },
+  ) {
     const booking = await this.getBookingIfNotBooked(acceptBooking.bookingId);
     const studentToSave = await this.userService.getStudentById(studentId);
+    const language = await this.utilService.findLanguage(
+      acceptBooking.languageId,
+    );
 
     if (booking.teacher.id == studentId) {
       throw new BadRequestException(`User cannot accept his own bookings`);
     }
 
-    studentToSave.bookingsAsStudent.push(booking);
-    await this.userService.saveUser(studentToSave);
+    if (!booking.advert.teachingLanguages.includes(language)) {
+      throw new BadRequestException(
+        `Teacher ${booking.teacher.firstName} ${booking.teacher.lastName} dont teach ${language.languageEn}!`,
+      );
+    }
+
+    if (info) {
+      this.chatService.sendMessage(
+        {
+          message:
+            `Hi I am ${studentToSave.firstName} ${studentToSave.lastName}, ` +
+            `I am from ${info.from}, ` +
+            `my level of ${language} is ${info.level}.` +
+            `I want to get our first lesson on ${booking.date}`,
+        },
+        studentId,
+        booking.teacher.id,
+      );
+    }
 
     booking.student = await this.userService.getUserById(studentToSave.id);
-    booking.language = await this.utilService.findLanguage(
-      acceptBooking.languageId,
-    );
+    booking.language = language;
     booking.isBooked = true;
+    studentToSave.bookingsAsStudent.push(booking);
+    await this.userService.saveUser(studentToSave);
 
     return await this.bookingRepository.save(booking);
   }
