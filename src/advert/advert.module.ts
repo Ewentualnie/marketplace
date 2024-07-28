@@ -18,6 +18,7 @@ import { Message } from 'src/models/message.entity';
 import TimeSlot from 'src/models/timeslot.entity';
 import { BookingService } from 'src/booking/booking.service';
 import Booking from 'src/models/booking.entity';
+import { ChatService } from 'src/utils/chat.service';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import Booking from 'src/models/booking.entity';
     CloudinaryService,
     UtilsService,
     BookingService,
+    ChatService,
   ],
 })
 export class AdvertModule {}

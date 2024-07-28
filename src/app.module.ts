@@ -24,6 +24,9 @@ import { BookingService } from './booking/booking.service';
 import Booking from './models/booking.entity';
 import { UsersService } from './users/users.service';
 import Advert from './models/advert.entity';
+import { ChatService } from './utils/chat.service';
+import Chat from './models/chat.entity';
+import Message from './models/message.entity';
 
 @Module({
   imports: [
@@ -36,6 +39,8 @@ import Advert from './models/advert.entity';
       User,
       Booking,
       Advert,
+      Chat,
+      Message,
     ]),
     TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,
@@ -53,6 +58,7 @@ import Advert from './models/advert.entity';
     CronService,
     BookingService,
     UsersService,
+    ChatService,
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,

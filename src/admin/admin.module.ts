@@ -20,6 +20,7 @@ import { Message } from 'src/models/message.entity';
 import TimeSlot from 'src/models/timeslot.entity';
 import Booking from 'src/models/booking.entity';
 import { BookingService } from 'src/booking/booking.service';
+import { ChatService } from 'src/utils/chat.service';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { BookingService } from 'src/booking/booking.service';
     UtilsService,
     CloudinaryService,
     BookingService,
+    ChatService,
   ],
 })
 export class AdminModule {}
