@@ -8,6 +8,7 @@ export class AcceptBookingDto {
   @IsNotEmpty()
   @IsNumber()
   languageId: number;
+  info?: { level: string; from: string; motherTongue: string };
 }
 
 export default AcceptBookingDto;

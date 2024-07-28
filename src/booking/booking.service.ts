@@ -53,11 +53,7 @@ export class BookingService {
     return savedBooking;
   }
 
-  async acceptBooking(
-    acceptBooking: AcceptBookingDto,
-    studentId: number,
-    info?: { level: string; from: string; motherTongue: string },
-  ) {
+  async acceptBooking(acceptBooking: AcceptBookingDto, studentId: number) {
     const booking = await this.getBookingIfNotBooked(acceptBooking.bookingId);
     const studentToSave = await this.userService.getStudentById(studentId);
     const language = await this.utilService.findLanguage(
@@ -74,13 +70,13 @@ export class BookingService {
       );
     }
 
-    if (info) {
+    if (acceptBooking.info) {
       this.chatService.sendMessage(
         {
           message:
             `Hi I am ${studentToSave.firstName} ${studentToSave.lastName}, ` +
-            `I am from ${info.from}, ` +
-            `my level of ${language} is ${info.level}.` +
+            `I am from ${acceptBooking.info.from}, ` +
+            `my level of ${language} is ${acceptBooking.info.level}. ` +
             `I want to get our first lesson on ${booking.date}`,
         },
         studentId,
