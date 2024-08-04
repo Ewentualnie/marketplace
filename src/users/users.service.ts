@@ -3,20 +3,19 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { User } from '../models/user.entity';
 import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateUserDto } from '../models/dto/update-user.dto';
-import { CreateFeedback } from '../models/dto/add-feedback.dto';
-import { FeedBack } from '../models/feedback.entity';
-import { Advert } from 'src/models/advert.entity';
 import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
-import { Mail } from 'src/models/mail.entity';
-import { MailDto } from 'src/models/dto/create-mail.dto';
-import { UpdateUserEmailDto } from 'src/models/dto/updateUserEmail.dto';
-import { UpdateUserPasswordDto } from 'src/models/dto/updateUserPassword.dto';
-import { UserRes } from 'src/types/user-response';
+import { Order, Flags } from 'src/types/usersFilterAndSort.type';
+import UpdateUserDto from '../models/dto/update-user.dto';
+import CreateFeedback from '../models/dto/add-feedback.dto';
+import FeedBack from '../models/feedback.entity';
+import Advert from 'src/models/advert.entity';
+import User from '../models/user.entity';
+import UpdateUserEmailDto from 'src/models/dto/updateUserEmail.dto';
+import UpdateUserPasswordDto from 'src/models/dto/updateUserPassword.dto';
+import UserRes from 'src/types/user-response';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +23,6 @@ export class UsersService {
     @InjectRepository(User) public usersRepository: Repository<User>,
     @InjectRepository(FeedBack) public feedbackRepository: Repository<FeedBack>,
     @InjectRepository(Advert) private advertRepository: Repository<Advert>,
-    @InjectRepository(Mail) private mailRepository: Repository<Mail>,
     private cloudinaryService: CloudinaryService,
     private utilServise: UtilsService,
   ) {}
@@ -32,25 +30,109 @@ export class UsersService {
   async findByEmail(email: string) {
     const user = await this.usersRepository.findOne({
       where: { email: email },
-      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe', 'country'],
+      relations: [
+        'advert',
+        'feedbacksToMe',
+        'feedbacksFromMe',
+        'country',
+        'likes.advert',
+      ],
     });
     if (user) return user;
     throw new BadRequestException(`User with email ${email} not found`);
   }
 
-  async findAll() {
-    return await this.usersRepository.find({
-      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe', 'country'],
-    });
+  async findAll(sort?: Order, filter?: Flags, limit = 10, page = 0) {
+    const query = this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.advert', 'advert')
+      .leftJoinAndSelect('user.feedbacksToMe', 'feedbacksToMe')
+      .leftJoinAndSelect('user.feedbacksFromMe', 'feedbacksFromMe')
+      .leftJoinAndSelect('user.country', 'country');
+
+    if (filter) {
+      if (filter.photoPath) {
+        query.andWhere('user.photoPath IS NOT NULL');
+      }
+      if (filter.advert) {
+        query.andWhere('user.advert IS NOT NULL');
+      }
+      if (filter.countryId) {
+        query.andWhere('user.countryId = :countryId', {
+          countryId: filter.countryId,
+        });
+      }
+    }
+
+    if (sort) {
+      Object.keys(sort).forEach((key) => {
+        query.addOrderBy(`user.${key}`, sort[key] as 'ASC' | 'DESC');
+      });
+    }
+
+    const validLimit = isNaN(limit) || limit <= 0 ? 10 : limit;
+    const validPage = isNaN(page) || page < 0 ? 0 : page;
+
+    const skip = validPage * validLimit;
+    const totalRecords = await query.getCount();
+    const totalPages = Math.ceil(totalRecords / validLimit);
+
+    if (validPage >= totalPages) {
+      throw new Error(`Requested page ${validPage} does not exist`);
+    }
+
+    query.skip(skip).take(validLimit);
+    return await query.getMany();
   }
 
   async findOne(id: number) {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['advert', 'feedbacksToMe', 'feedbacksFromMe', 'country'],
+      relations: [
+        'advert',
+        'feedbacksToMe',
+        'feedbacksFromMe',
+        'country',
+        'likes.advert',
+      ],
     });
     if (user) return user;
     throw new BadRequestException(`User with id ${id} not found`);
+  }
+
+  async getUserById(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+    if (user) return user;
+    throw new BadRequestException(`User with id ${id} not found`);
+  }
+
+  async getTeacherById(id: number) {
+    const teacher = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['advert', 'bookingsAsTeacher'],
+    });
+    if (!teacher) {
+      throw new BadRequestException(`User with id ${id} is not found`);
+    }
+    if (!teacher.advert) {
+      throw new BadRequestException(
+        `Only user with advert can claim timeslots`,
+      );
+    }
+    return teacher;
+  }
+
+  async getStudentById(id: number): Promise<User> {
+    const student = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['bookingsAsStudent'],
+    });
+    if (!student) {
+      throw new BadRequestException(`User with id ${id} is not found`);
+    }
+    return student;
   }
 
   async getUserWithLikes(id: number) {
@@ -59,6 +141,15 @@ export class UsersService {
       relations: ['likes'],
     });
     if (user) return user;
+    throw new BadRequestException(`User with id ${id} not found`);
+  }
+
+  async getLikes(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['likes', 'likes.advert'],
+    });
+    if (user) return user.likes;
     throw new BadRequestException(`User with id ${id} not found`);
   }
 
@@ -181,19 +272,6 @@ export class UsersService {
     return { user, tokens };
   }
 
-  async getConversation(userId: number, currentUserId: number) {
-    const chatMails = await this.mailRepository
-      .createQueryBuilder('mail')
-      .where(
-        '(mail.fromUser = :userId AND mail.toUser = :currentUserId) OR (mail.fromUser = :currentUserId AND mail.toUser = :userId)',
-        { userId, currentUserId },
-      )
-      .orderBy('mail.writtedAt', 'DESC')
-      .getMany();
-
-    return chatMails;
-  }
-
   async addFeedback(
     userId: number,
     currentUserId: number,
@@ -225,42 +303,8 @@ export class UsersService {
     return await this.feedbackRepository.save(newFeedback);
   }
 
-  async getMails(id: number): Promise<Mail[]> {
-    return (
-      await this.usersRepository.findOne({
-        where: { id },
-        relations: ['receivedMails'],
-      })
-    ).receivedMails;
-  }
-
   async saveUser(user: User) {
     return await this.usersRepository.save(user);
-  }
-
-  async sendMail(dto: MailDto, fromUserId: number, toUserId: number) {
-    const toUser = await this.usersRepository.findOne({
-      where: { id: toUserId },
-      relations: ['receivedMails'],
-    });
-    const fromUser = await this.usersRepository.findOne({
-      where: { id: fromUserId },
-      relations: ['sentMails'],
-    });
-
-    if (toUser.id == fromUser.id) {
-      throw new BadRequestException('User cannot send mails to himself');
-    }
-
-    const mail = this.mailRepository.create({ ...dto, isReaded: false });
-
-    toUser.receivedMails.push(mail);
-    fromUser.sentMails.push(mail);
-    fromUser.lastVisit = new Date();
-
-    await this.usersRepository.save([toUser, fromUser]);
-
-    return await this.mailRepository.save(mail);
   }
 
   async createTestUsers(count: number) {
@@ -283,19 +327,46 @@ export class UsersService {
       testUser.hashedPass = await this.utilServise.hashData('TestUserPassw0rd');
       testUser.country = await this.utilServise.findCountry(2);
 
-      const advert = new Advert();
+      let advert = new Advert();
       advert.createdAt = new Date();
       advert.description = `It is test advert of user ${testUser.firstName}`;
       advert.imagePath =
         'https://res.cloudinary.com/dbccoiwll/image/upload/v1719060371/kgxh8tx2lg1gcg3vetnb.jpg';
       advert.price = 111;
+      advert.teachingLanguages = await this.getLangs('[1,2]');
+      advert.spokenLanguages = await this.getLangs('[1,2,3]');
 
       testUser.advert = advert;
       await this.usersRepository.save(testUser);
 
       advert.user = testUser;
-      this.advertRepository.save(advert);
+      advert = await this.advertRepository.save(advert);
+      testUser.advert = advert;
+      await this.usersRepository.save(testUser);
     }
     return `Added ${count} users, last user has number ${lastTestUserNum - 1}`;
+  }
+
+  async getUserWithChats(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['chatsAsUser1', 'chatsAsUser2'],
+    });
+    if (user) return user;
+    throw new BadRequestException(`User with id ${id} not found`);
+  }
+
+  async getLangs(languages: string) {
+    const res = (
+      await Promise.all(
+        JSON.parse(languages).map(
+          async (id: number) => await this.utilServise.findLanguage(id),
+        ),
+      )
+    ).filter((val) => val != null);
+    if (res.length == 0) {
+      throw new BadRequestException('You must add correct languages!');
+    }
+    return res;
   }
 }

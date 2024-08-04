@@ -1,5 +1,5 @@
 # Initiate a container to build the application in.
-FROM node:16.20.0-alpine3.18 as builder
+FROM node:22.4.0-alpine3.19 as builder
 ENV NODE_ENV=build
 WORKDIR /usr/src/app
 
@@ -7,7 +7,8 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install the dependencies required to build the application.
-RUN npm install
+RUN rm -rf node_modules package-lock.json
+RUN npm install pg --save
 
 # Copy the application source into the container.
 COPY . .

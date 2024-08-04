@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Role } from 'src/utils/role.enum';
+import { Role } from 'src/types/role.enum';
 import {
   Column,
   CreateDateColumn,
@@ -11,13 +11,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { FeedBack } from './feedback.entity';
 import { IsDate, IsIn } from 'class-validator';
-import { Advert } from './advert.entity';
-import { Country } from './country.entity';
-import { Mail } from './mail.entity';
-import { AdvertLike } from './advertLike.entity';
-// import Schedule from './schedule.entity';
+import FeedBack from './feedback.entity';
+import Advert from './advert.entity';
+import Country from './country.entity';
+import AdvertLike from './advertLike.entity';
+import Chat from './chat.entity';
+import TimeSlot from './timeslot.entity';
+import Booking from './booking.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -43,10 +44,10 @@ export class User {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   lastVisit: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   registeredAt: Date;
 
   @Column({ type: 'double precision', default: 5, scale: 2 })
@@ -91,14 +92,24 @@ export class User {
   @OneToMany(() => AdvertLike, (like) => like.user)
   likes: AdvertLike[];
 
-  @OneToMany(() => Mail, (mail) => mail.toUser, { cascade: true })
-  @JoinColumn({ name: 'received_mails' })
-  receivedMails: Mail[];
+  @OneToMany(() => Chat, (chat) => chat.user1)
+  @JoinColumn({ name: 'chats_as_user1' })
+  chatsAsUser1: Chat[];
 
-  @OneToMany(() => Mail, (mail) => mail.fromUser, { cascade: true })
-  @JoinColumn({ name: 'sended_mails' })
-  sentMails: Mail[];
+  @OneToMany(() => Chat, (chat) => chat.user2)
+  @JoinColumn({ name: 'chats_as_user2' })
+  chatsAsUser2: Chat[];
 
-  // @OneToMany(() => Schedule, (schedule) => schedule.user)
-  // schedules: Schedule[];
+  @OneToMany(() => TimeSlot, (timeslot) => timeslot.user)
+  timeslots: TimeSlot[];
+
+  @OneToMany(() => Booking, (booking) => booking.teacher)
+  @JoinColumn()
+  bookingsAsTeacher: Booking[];
+
+  @OneToMany(() => Booking, (booking) => booking.student)
+  @JoinColumn()
+  bookingsAsStudent: Booking[];
 }
+
+export default User;

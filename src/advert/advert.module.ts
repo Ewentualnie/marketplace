@@ -12,8 +12,13 @@ import { CloudinaryService } from 'src/utils/cloudinary.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Specialization } from 'src/models/specialization.entity';
 import { Country } from 'src/models/country.entity';
-import { Mail } from 'src/models/mail.entity';
 import { AdvertLike } from 'src/models/advertLike.entity';
+import { Chat } from 'src/models/chat.entity';
+import { Message } from 'src/models/message.entity';
+import TimeSlot from 'src/models/timeslot.entity';
+import { BookingService } from 'src/booking/booking.service';
+import Booking from 'src/models/booking.entity';
+import { ChatService } from 'src/utils/chat.service';
 
 @Module({
   imports: [
@@ -24,12 +29,22 @@ import { AdvertLike } from 'src/models/advertLike.entity';
       FeedBack,
       Specialization,
       Country,
-      Mail,
       AdvertLike,
+      Chat,
+      Message,
+      TimeSlot,
+      Booking,
     ]),
     JwtModule,
   ],
   controllers: [AdvertController],
-  providers: [AdvertService, UsersService, CloudinaryService, UtilsService],
+  providers: [
+    AdvertService,
+    UsersService,
+    CloudinaryService,
+    UtilsService,
+    BookingService,
+    ChatService,
+  ],
 })
 export class AdvertModule {}

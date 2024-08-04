@@ -5,7 +5,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Advert } from './advert.entity';
+import Advert from './advert.entity';
 
 @Entity()
 export class Specialization {
@@ -22,3 +22,5 @@ export class Specialization {
   @JoinTable({ name: 'adverts_specializations' })
   adverts: Advert[];
 }
+
+export default Specialization;

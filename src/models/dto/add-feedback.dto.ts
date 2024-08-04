@@ -13,3 +13,5 @@ export class CreateFeedback {
   @IsNotEmpty()
   message: string;
 }
+
+export default CreateFeedback;

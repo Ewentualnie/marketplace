@@ -1,10 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Advert } from './advert.entity';
-import { User } from './user.entity';
+import Advert from './advert.entity';
+import User from './user.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'advert_likes' })
 export class AdvertLike {
   @PrimaryGeneratedColumn()
+  @Exclude()
   id: number;
 
   @ManyToOne(() => User, (user) => user.likes)
@@ -15,3 +17,5 @@ export class AdvertLike {
   @JoinColumn({ name: 'advert_id' })
   advert: Advert;
 }
+
+export default AdvertLike;

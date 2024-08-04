@@ -16,3 +16,5 @@ export class UpdateUserPasswordDto {
   })
   newPassword: string;
 }
+
+export default UpdateUserPasswordDto;

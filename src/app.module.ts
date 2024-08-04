@@ -10,15 +10,23 @@ import { AtGuard } from './utils/guards/at-guard';
 import { AdminModule } from './admin/admin.module';
 import { dataSourceOptionst } from './database/database-config';
 import { UtilsService } from './utils/utils.service';
-import { Language } from './models/language.entity';
-import { Specialization } from './models/specialization.entity';
 import { CloudinaryService } from './utils/cloudinary.service';
-import { Country } from './models/country.entity';
-import { FeedBack } from './models/feedback.entity';
-import { Mail } from './models/mail.entity';
 import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { User } from './models/user.entity';
+import Language from './models/language.entity';
+import Specialization from './models/specialization.entity';
+import Country from './models/country.entity';
+import FeedBack from './models/feedback.entity';
+import User from './models/user.entity';
+import { BookingModule } from './booking/booking.module';
+import { CronService } from './utils/cron.service';
+import { BookingService } from './booking/booking.service';
+import Booking from './models/booking.entity';
+import { UsersService } from './users/users.service';
+import Advert from './models/advert.entity';
+import { ChatService } from './utils/chat.service';
+import Chat from './models/chat.entity';
+import Message from './models/message.entity';
 
 @Module({
   imports: [
@@ -28,14 +36,18 @@ import { User } from './models/user.entity';
       Specialization,
       Country,
       FeedBack,
-      Mail,
       User,
+      Booking,
+      Advert,
+      Chat,
+      Message,
     ]),
     TypeOrmModule.forRoot(dataSourceOptionst),
     UsersModule,
     AdvertModule,
     AuthModule,
     AdminModule,
+    BookingModule,
   ],
   controllers: [AppController],
   providers: [
@@ -43,6 +55,10 @@ import { User } from './models/user.entity';
     UtilsService,
     CloudinaryService,
     AppService,
+    CronService,
+    BookingService,
+    UsersService,
+    ChatService,
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,

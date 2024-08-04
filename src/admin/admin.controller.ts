@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
@@ -28,13 +29,32 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get('users')
-  async getUsers() {
-    return await this.adminService.getUsers();
+  async getUsers(
+    @Query('sort') sort?: string,
+    @Query('filter') filter?: string,
+    @Query('limit') limit?: string,
+    @Query('page') page?: string,
+  ) {
+    const sortObj = sort ? JSON.parse(sort) : undefined;
+    const filterObj = filter ? JSON.parse(filter) : undefined;
+    return await this.adminService.getUsers(sortObj, filterObj, +limit, +page);
   }
 
   @Get('adverts')
-  async getAdverts() {
-    return await this.adminService.getAdverts();
+  async getAdverts(
+    @Query('sort') sort?: string,
+    @Query('filter') filter?: string,
+    @Query('limit') limit?: string,
+    @Query('page') page?: string,
+  ) {
+    const sortObj = sort ? JSON.parse(sort) : undefined;
+    const filterObj = filter ? JSON.parse(filter) : undefined;
+    return await this.adminService.getAdverts(
+      sortObj,
+      filterObj,
+      +limit,
+      +page,
+    );
   }
 
   @Get('feedbacks')

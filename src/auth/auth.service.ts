@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/models/user.entity';
 import { Repository } from 'typeorm';
 import { UserRes } from 'src/types/user-response';
-import { Role } from 'src/utils/role.enum';
+import { Role } from 'src/types/role.enum';
 import { UsersService } from 'src/users/users.service';
 import { UtilsService } from 'src/utils/utils.service';
 

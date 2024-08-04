@@ -5,3 +5,5 @@ export class MailDto {
   @IsString()
   message: string;
 }
+
+export default MailDto;
