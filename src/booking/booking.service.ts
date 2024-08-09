@@ -96,7 +96,7 @@ export class BookingService {
   async getBookingIfNotBooked(id: number): Promise<Booking> {
     const booking = await this.bookingRepository.findOne({
       where: { id },
-      relations: ['teacher', 'language'],
+      relations: ['teacher', 'language', 'advert.teachingLanguages'],
     });
     if (!booking) {
       throw new BadRequestException(`Timeslot with id ${id} not found`);

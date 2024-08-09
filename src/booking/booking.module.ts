@@ -44,7 +44,7 @@ import AdvertLike from 'src/models/advertLike.entity';
     JwtService,
     UsersService,
     ChatService,
-    AdvertService
+    AdvertService,
   ],
 })
 export class BookingModule {}
