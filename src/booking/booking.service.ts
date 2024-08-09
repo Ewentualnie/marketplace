@@ -59,8 +59,6 @@ export class BookingService {
     const language = await this.utilService.findLanguage(
       acceptBooking.languageId,
     );
-    console.log(booking.advert);
-    console.log(language);
 
     if (booking.teacher.id == studentId) {
       throw new BadRequestException(`User cannot accept his own bookings`);
