@@ -168,6 +168,8 @@ export class BookingService {
     });
     timeslots.forEach((slot) => (slot.isActive = false));
     const count = (await this.bookingRepository.save(timeslots)).length;
-    console.log(`${count} timeslots deactivated`);
+    console.log(
+      `At ${new Date().getHours}} service deactivate ${count} timeslots`,
+    );
   }
 }
