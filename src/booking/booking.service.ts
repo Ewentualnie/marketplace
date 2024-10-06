@@ -22,6 +22,12 @@ export class BookingService {
   async addBookings(timeslotsRequestDto: TimeSlotsRequestDto, id: number) {
     const teacher = await this.userService.getTeacherById(id);
 
+    if (!teacher.advert) {
+      throw new BadRequestException(
+        `Only user with advert can claim timeslots`,
+      );
+    }
+
     for (const slot of timeslotsRequestDto.timeslots) {
       const startTime = new Date(slot.start);
       const endTime = new Date(slot.end);
@@ -153,6 +159,11 @@ export class BookingService {
     if (!timeslot) {
       throw new BadRequestException(`Timeslot with id ${id} not found`);
     }
+    if (!teacher.advert) {
+      throw new BadRequestException(
+        `Only user with advert can claim timeslots`,
+      );
+    }
     if (teacher.id != timeslot.teacher.id) {
       throw new BadRequestException(
         `Slot with id ${id} does not belong to user with id ${userId}`,
@@ -171,5 +182,40 @@ export class BookingService {
     console.log(
       `At ${new Date().getHours}} service deactivate ${count} timeslots`,
     );
+  }
+
+  async deleteBooking(id: number, userId: number, reason: string) {
+    const booking = await this.bookingRepository.findOne({
+      where: { id },
+      relations: ['teacher', 'student'],
+    });
+    const teacher = await this.userService.getTeacherById(booking.teacher.id);
+    const student = await this.userService.getStudentById(booking.student.id);
+
+    if (teacher.id != userId || student.id != userId) {
+      throw new BadRequestException(
+        'User cannot delete a booking other than his own',
+      );
+    }
+    const isTeacherSender = userId == teacher.id;
+
+    this.chatService.sendMessage(
+      {
+        message: `Hi, I can't attend the lesson for a reason: ${reason}`,
+      },
+      userId,
+      isTeacherSender ? booking.teacher.id : booking.student.id,
+    );
+
+    teacher.bookingsAsTeacher = teacher.bookingsAsTeacher.filter(
+      (b) => b.id !== booking.id,
+    );
+    student.bookingsAsStudent = student.bookingsAsStudent.filter(
+      (b) => b.id !== booking.id,
+    );
+
+    await this.userService.saveUser([teacher, student]);
+
+    return await this.bookingRepository.remove(booking);
   }
 }

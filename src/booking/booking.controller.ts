@@ -59,4 +59,13 @@ export class BookingController {
   ) {
     return this.bookingservice.deactivateTimeslot(userId, id);
   }
+
+  @Post('delete/:id')
+  deleteBooking(
+    @Body() reason: string,
+    @Param('id', ParseIntPipe) id: number,
+    @GetCurrentUserId() userId: number,
+  ) {
+    return this.bookingservice.deleteBooking(id, userId, reason);
+  }
 }

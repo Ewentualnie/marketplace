@@ -116,11 +116,6 @@ export class UsersService {
     if (!teacher) {
       throw new BadRequestException(`User with id ${id} is not found`);
     }
-    if (!teacher.advert) {
-      throw new BadRequestException(
-        `Only user with advert can claim timeslots`,
-      );
-    }
     return teacher;
   }
 
@@ -303,7 +298,10 @@ export class UsersService {
     return await this.feedbackRepository.save(newFeedback);
   }
 
-  async saveUser(user: User) {
+  async saveUser(user: User | User[]) {
+    if (Array.isArray(user)) {
+      return await this.usersRepository.save(user);
+    }
     return await this.usersRepository.save(user);
   }
 
