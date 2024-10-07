@@ -41,6 +41,8 @@ export class ChatService {
     const chats = await this.chatRepository
       .createQueryBuilder('chat')
       .leftJoinAndSelect('chat.messages', 'messages')
+      .leftJoinAndSelect('chat.user1', 'user1')
+      .leftJoinAndSelect('chat.user2', 'user2')
       .where('chat.user1Id = :id OR chat.user2Id = :id', {
         id,
       })
