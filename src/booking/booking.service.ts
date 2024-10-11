@@ -192,10 +192,12 @@ export class BookingService {
     const teacher = await this.userService.getTeacherById(booking.teacher.id);
     const student = await this.userService.getStudentById(booking.student.id);
 
-    if (teacher.id != userId || student.id != userId) {
-      throw new BadRequestException(
-        'User cannot delete a booking other than his own',
-      );
+    if (teacher.id != userId) {
+      if (student.id != userId) {
+        throw new BadRequestException(
+          'User cannot delete a booking other than his own',
+        );
+      }
     }
     const isTeacherSender = userId == teacher.id;
 
