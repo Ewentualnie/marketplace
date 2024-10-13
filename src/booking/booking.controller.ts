@@ -62,10 +62,10 @@ export class BookingController {
 
   @Post('delete/:id')
   deleteBooking(
-    @Body() reason: string,
+    @Body() body: { reason: string },
     @Param('id', ParseIntPipe) id: number,
     @GetCurrentUserId() userId: number,
   ) {
-    return this.bookingservice.deleteBooking(id, userId, reason);
+    return this.bookingservice.deleteBooking(id, userId, body);
   }
 }

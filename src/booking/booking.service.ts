@@ -184,7 +184,7 @@ export class BookingService {
     );
   }
 
-  async deleteBooking(id: number, userId: number, reason: string) {
+  async deleteBooking(id: number, userId: number, body: { reason: string }) {
     const booking = await this.bookingRepository.findOne({
       where: { id },
       relations: ['teacher', 'student'],
@@ -192,21 +192,18 @@ export class BookingService {
     const teacher = await this.userService.getTeacherById(booking.teacher.id);
     const student = await this.userService.getStudentById(booking.student.id);
 
-    if (teacher.id != userId) {
-      if (student.id != userId) {
-        throw new BadRequestException(
-          'User cannot delete a booking other than his own',
-        );
-      }
+    if (teacher.id != userId && student.id != userId) {
+      throw new BadRequestException(
+        'User cannot delete a booking other than his own',
+      );
     }
-    const isTeacherSender = userId == teacher.id;
 
     this.chatService.sendMessage(
       {
-        message: `Hi, I can't attend the lesson for a reason: ${reason}`,
+        message: `Hi, I can't attend the lesson for a reason: ${body.reason}`,
       },
       userId,
-      isTeacherSender ? booking.teacher.id : booking.student.id,
+      userId == teacher.id ? student.id : teacher.id,
     );
 
     teacher.bookingsAsTeacher = teacher.bookingsAsTeacher.filter(
